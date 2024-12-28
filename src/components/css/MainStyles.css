@@ -1,0 +1,160 @@
+/* Resetting some default styles */
+body, h1, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    overflow: auto; 
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgb(093, 116, 162); /* 背景色 */
+    color: white;
+    z-index: 1000;
+    height: 60px; /* 设置导航栏的高度 */
+    /*overflow: hidden;  隐藏超出区域 */
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    padding: 0 20px; /* 右侧和左侧的内边距 */
+}
+
+/* 假设你的导航栏在一个特定的容器内，比如一个 ID 为 `navbar` 的 div */
+ nav {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+}
+
+ .logo {
+    margin-right: 20px;
+}
+
+ .logo img {
+    height: 40px;
+}
+
+ nav > ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    align-items: center; 
+    justify-content: flex-start;
+    height: 100%;
+}
+
+ nav > ul > li {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    position: relative; /* 添加相对定位 */
+    height: 100%;
+     
+}
+
+ nav > ul > li > a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+    transition: background 0.3s, color 0.3s;
+}
+ nav > select {
+    padding: 5px;
+    margin-right: 60px;
+    border: 1px solid rgb(093, 116, 162);
+    border-radius: 4px;
+    background-color: white;
+    margin-left: auto;
+}
+
+
+
+
+/* 也可以直接为<li>元素添加悬停效果 */
+ nav > ul > li:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+main {
+    padding-top: 60px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+}
+
+.page-section {
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.NowPage{
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.submenu {
+  position: absolute; 
+  padding: 0px;
+  background-color: #fff;
+  z-index: 2000;
+  top: 100%; /* 父菜单项高度的100% */
+  left: 0; /* 根据需要调整 */
+  transition: opacity 0.3s, visibility 0.3s;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.3);
+}
+
+.submenu.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.submenu li {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  color: black;
+  border-radius: 5px;
+}
+
+.submenu li:hover {
+    background-color: rgba(093, 116, 162, 0.3);
+}
+.submenu a {
+    text-decoration: none;
+    /* 移除下划线 */
+    color: black;
+    display: block;
+    transition: background 0.3s, color 0.3s;
+}
+ /* ----------------------------------------------------------- */
+ /* 竖屏响应*/
+ @media (orientation: portrait) or (max-width: 800px) {
+    main {
+        padding-top: 120px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+    }
+    header {
+         justify-content: space-between; 
+        width: 100%; /* 宽度填满父元素 */
+        height: auto; /* 高度自动调整 */
+    }
+
+    nav {
+         justify-content: space-between; 
+        height: auto; /* 高度自动调整 */
+        width: 100%; /* 宽度填满父元素 */
+        flex-wrap: wrap; /* 允许子元素在必要时换行 */
+    }
+    nav > ul {
+        flex-wrap: wrap; /* 允许子元素在必要时换行 */
+    }
+
+}

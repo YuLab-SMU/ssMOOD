@@ -1,0 +1,298 @@
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+.information-container {
+  display: flex;
+  flex-direction: column; /* 子元素纵向排列 */
+  background-color: rgba(255, 255, 255, 0.8); /* 朦胧背景 */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex:1;
+  
+}
+.sc-cluster-content {
+  display: flex;
+  flex-direction: column; /* 子元素垂直排列 */
+  flex:1;
+}
+.title-bar {
+  background-color: rgb(93, 116, 162); /* 标题栏背景颜色 */
+  padding: 10px;
+  border-radius: 10px 10px 10px 10px; /* 圆角 */
+  color: #FFFFFF; /* 文字颜色 */
+  text-align: center; /* 文字居中 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 盒子阴影 */
+  margin-bottom: 20px; /* 与内容区域间隔 */
+}
+
+.title-bar h1 {
+  margin: 0; /* 移除默认的外边距 */
+  font-size: 24px; /* 标题字号 */
+  font-weight: normal; /* 字体权重 */
+  color: white; /* 文字颜色 */
+}
+.bold-black {
+  color: black;
+}
+.information-content {
+  display: flex;
+  justify-content: space-between; /* 子元素水平排列 */
+  flex-grow: 1; /* 内容区域填充剩余空间 */
+}
+
+.information-left, .information-right {
+  flex: 1;
+  margin: 0 10px;
+}
+.information-first, .information-second {
+  margin: 0; /* 去除原本的左右间距 */
+  flex:1;
+}
+
+/* 添加一些样式以改善布局和可读性 */
+.information-left h1, .information-right h2 {
+  color: #333;
+  margin-bottom: 0.5em;
+}
+
+.information-left p, .information-right p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 0.5em;
+}
+
+.information-left a, .information-right a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.information-left a:hover, .information-right a:hover {
+  text-decoration: underline;
+}
+.search-gene-input {
+  max-width: 300px; /* 可以根据需要调整这个值 */
+}
+
+.custom-textfield {
+  min-height: 36px; /* 可以根据需要调整高度 */
+  min-width: 50px; /* 可以根据需要调整高度 */
+  display: block;
+}
+.scroller {
+  position: absolute;
+  width: 200px;
+  z-index: 100;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0; /* 确保没有内边距 */
+}
+
+.gene-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  width: 200px;
+  will-change: transform, opacity;
+
+}
+
+.gene-item:hover,
+.gene-item.is-active {
+  background-color: rgba(93, 116, 162, 0.3);
+}
+.search-btn {
+  right: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: rgba(93, 116, 162, 0.3);
+}
+.custom-plus {
+  font-size: 24px; /* 您可以根据需要调整这个值 */
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+
+.marker-size-controller {
+  display: flex;
+  align-items: center;
+  padding: 4px; /* 减小内边距 */
+  width: 300px; /* 根据需要调整宽度 */
+  height: 30px;
+}
+
+.label {
+  margin-right: 4px; /* 减小标签与数字之间的间距 */
+  font-size: 14px; /* 减小字体大小 */
+}
+
+.size-value {
+  margin: 0 4px; /* 减小文字与按钮之间的间距 */
+  font-size: 14px; /* 减小字体大小 */
+  font-weight: bold; /* 粗体字 */
+}
+
+/* Vuetify图标按钮的样式调整 */
+.marker-size-controller .v-btn {
+  background-color: transparent; /* 根据需要调整按钮背景色 */
+  height: 30px; /* 调整按钮高度 */
+  width: 30px; /* 调整按钮宽度 */
+}
+
+.marker-size-controller .v-btn svg {
+  width: 18px; /* 调整图标大小 */
+  height: 18px;
+}
+
+.gene-search-con{
+  display: flex;
+  justify-content:  flex-start;
+  align-items: center; /* 子元素在垂直方向上居中 */
+  gap: 15px;
+}
+
+
+
+ /* ----------------------------------------------------------- */
+ /* 差异表达分析 */
+.de-analysis {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.note {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.group, .cell-type, .log2fc, .adjusted-pvalue, .de-direction {
+  margin-bottom: 15px;
+  
+}
+
+.de-direction, .de-direction-child{
+  display: flex; /* 启用flexbox布局 */
+  justify-content: flex-start; /* 子元素之间的间距 */
+  align-items: center; /* 垂直居中对齐 */
+  gap: 10px;
+}
+
+.modern-ui {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.note {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.select-style {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.slider {
+  width: calc(100% - 70px);
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  background-color: #007bff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.value-display {
+  display: inline-block;
+  width: 50px;
+  text-align: right;
+  font-size: 16px;
+  color: #333;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+}
+
+.radio-label {
+  margin-left: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+ /* ----------------------------------------------------------- */
+  /* 竖屏*/
+ @media (orientation: portrait) or (max-width: 600px) {
+    .information-content {
+      display: flex;
+      flex-direction: column; /* 子元素垂直排列 */
+      justify-content: space-between; /* 子元素在主轴方向上分散对齐 */
+      flex-grow: 1; /* 内容区域填充剩余空间 */
+    }
+    #umap-plot {
+        width: 100%; /* 宽度填满屏幕 */
+        height: auto; /* 高度自动调整 */
+    }
+    #umap-chart-gene {
+        width: 100%; /* 宽度填满屏幕 */
+        height: auto; /* 高度自动调整 */
+    }
+}

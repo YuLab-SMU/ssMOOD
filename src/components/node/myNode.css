@@ -1,0 +1,14 @@
+.showuuid {
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.vue-flow__handle {
+    height:24px;
+    width:8px;
+    border-radius:4px
+}
+
+.nomaltext{
+    font-weight: 400;
+}

@@ -1,0 +1,125 @@
+        //------------------------------------------------------
+        
+        /*
+        
+        const initialTraces = this.umapData.slice(0, 100).map((point) => ({
+          x: [point.u1],
+          y: [point.u2],
+          mode: 'markers',
+          type: 'scattergl',
+          name: "",
+          marker: {
+            color: 'rgba(128, 128, 128, 0.2)',
+            size: this.markerSize2,
+          },
+          text: this.getTooltipText(point), // 可选，显示 cell_id 信息
+        }));
+        
+        const layout = {
+          title: '',
+          xaxis: {
+            title: 'UMAP1',
+          },
+          yaxis: {
+            title: 'UMAP2',
+          },
+          showlegend: false,
+        };
+        
+        Plotly.newPlot('coord_chart_gene', initialTraces, layout);
+        */
+/*
+    <div class="information-left">
+      <h1>{{ $t('std15') }}</h1>
+      <div class="marker-size-controller">
+        <div class="label">{{ $t('std16') }}:</div>
+        <!-- 减少按钮 -->
+        <v-btn class="custom-plus" icon @click="decreaseSize1">
+          -
+        </v-btn>
+        <!-- 显示当前大小 --> 
+        <span class="size-value">{{ markerSize1 }}</span>
+        <!-- 增加按钮 -->
+        <v-btn class="custom-plus" icon @click="increaseSize1">
+          +
+        </v-btn>
+      </div>
+      <div id="umap-plot"></div>
+    </div>
+*/
+         /*
+         fetch(`../php/std_getumapdata.php?${params}`)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => {
+            
+        const compressed = new Uint8Array(arrayBuffer);
+        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const jsonString = new TextDecoder('utf-8').decode(decompressed);
+        const data = JSON.parse(jsonString); // 解析JSON字符串
+        
+        //console.log(data);
+          this.umapData = data.umap_data;
+          const clusterLabels = data.cluster_labels;
+          const labelMap = new Map();
+            clusterLabels.forEach((label, index) => {
+              labelMap.set(label, index);
+            });
+
+        clusterLabels.sort((a, b) => {
+          const partsA = a.match(/\d+/)[0];
+          const partsB = b.match(/\d+/)[0];
+          return parseInt(partsA, 10) - parseInt(partsB, 10);
+        });
+
+            //console.log(clusterLabels);
+          const umap1 = this.umapData.map(d => parseFloat(d.u1));
+          const umap2 = this.umapData.map(d => parseFloat(d.u2));
+          const cellIds = this.umapData.map(d => d.i);
+          const clusterLabelsData = this.umapData.map(d => d.c);
+
+
+        const colors = Array.from(labelMap.keys()).reduce((acc, label, index) => {
+            const hue = (index * 360 / labelMap.size);
+            const lightness = 70 + (index % 2 === 0 ? 5 : -5);
+            acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
+            return acc;
+        }, {});
+        console.log(colors);
+          const traces = clusterLabels.map((label) => {
+            const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
+            const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
+            const text = cellIds.filter((_, i) => clusterLabelsData[i] === label);
+
+            return {
+              x: x,
+              y: y,
+              mode: 'markers',
+              type: 'scattergl',
+              name: label,
+              text: text,
+              marker: {
+                size:  this.markerSize1,
+                color: colors[label]
+              }
+            };
+          });
+        //console.log(traces);
+          const layout = {
+            title: '',
+            xaxis: { title: 'UMAP1' },
+            yaxis: { title: 'UMAP2' },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            legend: {
+              orientation: 'h',
+              xanchor: 'center',
+              yanchor: 'top',
+              x: 0.5,
+              y: -0.1
+            }
+          };
+
+          Plotly.newPlot('umap-plot', traces, layout);
+        })
+        .catch(error => console.error('Error fetching UMAP data:', error));
+        */
