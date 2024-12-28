@@ -562,7 +562,7 @@ async searchgene() {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
-
+    //console.error(mergedArray);
     // 按分类信息创建轨迹
     const categories = [...new Set(mergedArray.map(item => item.c))];
     const traces = categories.map(category => {
@@ -570,8 +570,8 @@ async searchgene() {
       
        const colors = categoryPoints.map(point => this.getColor(point.nc));
       return {
-        x: categoryPoints.map(point => point.u1),
-        y: categoryPoints.map(point => point.u2),
+        x: categoryPoints.map(point => point.x),
+        y: categoryPoints.map(point => point.y),
         mode: 'markers',
         type: 'scattergl',
         name: category,
