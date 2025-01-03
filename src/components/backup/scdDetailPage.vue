@@ -246,104 +246,144 @@
                 </div>
             </section>
         </main>
-        <BackToTop />
+        <back-to-top />
     </div>
 </template>
 
-<script setup>
+<script>
+import BackToTop from './general/BackToTop.vue';
+import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import Plotly from 'plotly.js-dist-min';
 import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
-import { ref, onMounted, computed, watch} from 'vue';
-import { useRoute } from 'vue-router';
 
-//----------以下为一个ssmood页面需要的最基础的东西--------------
-import { useI18n } from 'vue-i18n';
-import BackToTop from './general/BackToTop.vue';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
-const showSubMenu = ref(false);//二级菜单
-//----------
-//语言切换
-//----------
-const { locale } = useI18n();
-
-// 处理语言切换
-const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
-};
-
-onMounted(async() => {
-  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
-});
-//----------以上为一个ssmood页面需要的最基础的东西--------------
-
-
-const route = useRoute();
-
-
-//------------------------------------------------------
-//加载数据集详细信息
-//------------------------------------------------------
-const dataset = ref({
-  dataset_id: '',
-  species: '',
-  region: '',
-  condition: '',
-  sex: '',
-  age: '',
-  information: {
-    DatasetInformation: {
-      NumberOfCells: null,
-      NumberOfIdentifiedCellTypes: null
-    },
-    DatasetSource1: {
-      Title: "",
-      Methodology: "",
-      Protocol: "",
-      PublicDataID: "",
-      Pubmed: null,
-      DOI: "",
-      Statement: ""
-    },
-  }
-});
-
-onMounted(() => {
-  const params = new URLSearchParams({
-    id: route.params.id
-  });
-
-  fetch(`../php/scd_getSCDatasetDetail.php?${params}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json(); // 直接使用 json() 方法，不需要转换为 text()
-    })
-    .then(data => {
-      if (data && data.length > 0 && data[0].information) {
-        dataset.value = data[0]; // 直接赋值，不需要使用 $set
-        dataset.value.information = JSON.parse(data[0].information); // 直接赋值，不需要使用 $set
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching dataset details:', error);
-    });
-});
-
-
-
-//------------------------------------------------------
-//加载Umap图
-//------------------------------------------------------
-const umapData = ref([]);
-onMounted(() => {
-    const params = new URLSearchParams({
-          id: route.params.id
+export default {
+  name: 'ScDatasetDetailsPage',
+  data() {
+    return {
+      showSubMenu: false,
+      datasetId: this.$route.params.id,
+    markerSize1: 4, // 默认点大小
+    markerSize2: 4, // 默认点大小
+      genes: [],
+      
+      filteredGenes: [],
+      umapData: [],
+      searchQuery: '',
+      showScroller: false,
+      dataset: {
+          dataset_id: '',
+          species: '',
+          region: '',
+          condition: '',
+          sex: '',
+          age: '',
+          information: {
+              DatasetInformation: {
+                  NumberOfCells: null,
+                  NumberOfIdentifiedCellTypes: null
+              },
+             DatasetSource1: {
+                  Title: "",
+                  Methodology: "",
+                  Protocol: "",
+                  PublicDataID: "",
+                  Pubmed: null,
+                  DOI: "",
+                  Statement: ""
+              },
+          }
+      },
+      //------------------------------------------------------
+      //差异表达分析
+      group: 'cellTypeSpecificGenes',
+      cellType: 'inhibitoryNeurons',
+      log2fc: 0.5,
+      pvalue: 0.05,
+      direction: 'all',
+        DEGdata: [],
+        currentPage: 1,
+    itemsPerPage: 10,
+      //------------------------------------------------------
+      
+    };
+  },
+  components: {
+    BackToTop,
+    LanguageSwitcher,
+    RecycleScroller,
+  },
+    computed: {
+      totalPages() {
+        // 总页数基于筛选后的数据集计算
+        return Math.ceil(this.filteredData.length / this.itemsPerPage);
+      },
+      paginatedData() {
+        // 分页应用于筛选后的数据集
+        const start = (this.currentPage - 1) * this.itemsPerPage;
+        const end = start + this.itemsPerPage;
+        return this.filteredData.slice(start, end);
+      },
+      filteredData() {
+        // 筛选逻辑保持不变
+        return this.DEGdata.filter(item => {
+          const logFoldChange = parseFloat(item.f);
+          const adjustedPvalue = parseFloat(item.p);
+          return Math.abs(logFoldChange) >= this.log2fc && adjustedPvalue <= this.pvalue;
         });
-    fetch(`../php/scd_getumapdata.php?${params}`)
+      },
+    },
+  mounted() {
+    this.fetchDatasetDetails();
+     console.log('Dataset ID:', this.datasetId);
+     this.initCharts();
+     this.loadGenes();
+     this.initDEG();
+  },
+    watch: {
+    searchQuery(newQuery) {
+      this.filterGenes(newQuery);
+    }
+  },
+  methods: {
+     //------------------------------------------------------
+    fetchDatasetDetails() {
+        const params = new URLSearchParams({
+          id: this.$route.params.id
+        });
+    
+        fetch(`../php/scd_getSCDatasetDetail.php?${params}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.text();
+          })
+          .then(data => {
+            const dataArray = JSON.parse(data);
+    
+            if (dataArray && dataArray.length > 0 && dataArray[0].information) {
+              this.$set(this, 'dataset', dataArray[0]);
+              this.$set(this.dataset, 'information', JSON.parse(dataArray[0].information));
+            }
+    
+            //console.log(this.dataset);
+          })
+          .catch(error => {
+            console.error('Error fetching dataset details:', error);
+          });
+      },
+      //------------------------------------------------------
+    onLanguageChanged(language) {
+      this.$i18n.locale = language;
+    },
+    //------------------------------------------------------
+    
+    initCharts() {
+        const params = new URLSearchParams({
+          id: this.$route.params.id
+        });
+         fetch(`../php/scd_getumapdata.php?${params}`)
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => {
             
@@ -353,7 +393,7 @@ onMounted(() => {
         const data = JSON.parse(jsonString); // 解析JSON字符串
         
         //console.log(data);
-          umapData.value = data.umap_data;
+          this.umapData = data.umap_data;
           const clusterLabels = data.cluster_labels;
           const labelMap = new Map();
             clusterLabels.forEach((label, index) => {
@@ -367,10 +407,10 @@ onMounted(() => {
         });
 
             //console.log(clusterLabels);
-          const umap1 = umapData.value.map(d => parseFloat(d.u1));
-          const umap2 = umapData.value.map(d => parseFloat(d.u2));
-          const cellIds = umapData.value.map(d => d.i);
-          const clusterLabelsData = umapData.value.map(d => d.c);
+          const umap1 = this.umapData.map(d => parseFloat(d.u1));
+          const umap2 = this.umapData.map(d => parseFloat(d.u2));
+          const cellIds = this.umapData.map(d => d.i);
+          const clusterLabelsData = this.umapData.map(d => d.c);
 
 
         const colors = Array.from(labelMap.keys()).reduce((acc, label, index) => {
@@ -393,7 +433,7 @@ onMounted(() => {
               name: label,
               text: text,
               marker: {
-                size:  markerSize1.value,
+                size:  this.markerSize1,
                 color: colors[label]
               }
             };
@@ -429,111 +469,179 @@ onMounted(() => {
           
         })
         .catch(error => console.error('Error fetching UMAP data:', error));
-});
-
-
-//更新点大小
-const markerSize1 = ref(4); // 默认点大小
-
-
-// 更新 UMAP 图1 的点大小
-const updateUmap1 = () => {
-  Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
-};
-
-// 减少 UMAP 图1 的点大小
-const decreaseSize1 = () => {
-  if (markerSize1.value > 1) {
-    markerSize1.value -= 1;
-    updateUmap1();
-  }
-};
-
-// 增加 UMAP 图1 的点大小
-const increaseSize1 = () => {
-  if (markerSize1.value < 10) {
-    markerSize1.value += 1;
-    updateUmap1();
-  }
-};
-
-//------------------------------------------------------
-//基因搜索框
-//------------------------------------------------------
-const genes = ref([]);
-const filteredGenes = ref([]);
-const searchQuery = ref('');
-const showScroller = ref(false);
-//加载基因
-onMounted(async() => {
+        
+        //基因umap图的预加载
+        /*
+        const initialTraces = this.umapData.slice(0, 100).map((point) => ({
+          x: [point.u1],
+          y: [point.u2],
+          mode: 'markers',
+          type: 'scattergl',
+          name: "",
+          marker: {
+            color: 'rgba(128, 128, 128, 0.2)',
+            size: this.markerSize2,
+          },
+          text: this.getTooltipText(point), // 可选，显示 cell_id 信息
+        }));
+        
+        const layout = {
+          title: '',
+          xaxis: {
+            title: 'UMAP1',
+          },
+          yaxis: {
+            title: 'UMAP2',
+          },
+          showlegend: false,
+        };
+        
+        Plotly.newPlot('umap-chart-gene', initialTraces, layout);
+        */
+        },
+    //------------------------------------------------------
+        updateUmap1() {
+            Plotly.restyle('umap-plot', 'marker.size', [this.markerSize1]);
+        },
+        decreaseSize1() {
+            if (this.markerSize1 > 1) {
+                this.markerSize1 -= 1;
+                this.updateUmap1();
+            }
+        },
+        increaseSize1() {
+            if (this.markerSize1 < 10) {
+                this.markerSize1 += 1;
+                this.updateUmap1();
+            }
+        },
+        updateUmap2() {
+            Plotly.restyle('umap-chart-gene', 'marker.size', [this.markerSize2]);
+        },
+        decreaseSize2() {
+            if (this.markerSize2 > 1) {
+                this.markerSize2 -= 1;
+                this.updateUmap2();
+            }
+        },
+        increaseSize2() {
+            if (this.markerSize2 < 10) {
+                this.markerSize2 += 1;
+                this.updateUmap2();
+            }
+        },
+    //------------------------------------------------------
+    
+    async loadGenes() {
+        const params = new URLSearchParams({
+            id: this.$route.params.id
+        });
+        try {
+            const response = await fetch(`../php/scd_getgene.php?${params}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error!status:${response.status}`);
+            }
+            const data = await response.json();
+            if (!data || !Array.isArray(data.genes)) {
+                throw new Error('Invalid data structure received');
+            }
+            this.genes = data.genes;
+            //console.log(this.genes);
+            this.filteredGenes = [...this.genes];
+        } catch (error) {
+            console.error('Failed to load genes:', error);
+            // 可以在这里处理错误，例如显示错误消息或设置错误状态
+        }
+    },
+    filterGenes(query) {
+      this.filteredGenes = this.genes.filter(gene =>
+        gene.toLowerCase().includes(query.toLowerCase())
+      );
+    },
+    selectItem(item) {
+      this.searchQuery = item;
+      this.showScroller = false;
+    },
+    handleBlur() {
+      setTimeout(() => {
+        if (!this.$refs.scroller.$el.contains(document.activeElement)) {
+          this.showScroller = false;
+        }
+      }, 100);
+    },
+    //------------------------------------------------------
+    /*
+async searchgene() {
+    //清除之前的点
+    const chartElement = document.getElementById('umap-chart-gene');
+    const traceCount = chartElement.data.length;
+    Plotly.deleteTraces('umap-chart-gene', Array.from(Array(traceCount).keys()));
+    //---------------
   const params = new URLSearchParams({
-    id: route.params.id
+    id: this.$route.params.id,
+    gene: this.searchQuery
   });
   try {
-    const response = await fetch(`../php/scd_getgene.php?${params}`);
+    const response = await fetch(`../php/scd_geneExpression.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    if (!data || !Array.isArray(data.genes)) {
-      throw new Error('Invalid data structure received');
-    }
-    genes.value = data.genes;
-    filteredGenes.value = [...genes.value];
+    
+    // 合并数据
+    const ncMap = data.data.reduce((acc, item) => {
+      acc[item.i] = parseFloat(item.nc) || 0;
+      return acc;
+    }, {});
+    
+    // 合并数组
+    const mergedArray = this.umapData.map(item => {
+      item.nc = ncMap[item.i] || 0;
+      return item;
+    });
+    // 分批次渲染
+
+    let batchSize = 2000; // 第一次渲染的批次大小
+    let currentIndex = 0;
+    
+    const renderBatch = () => {
+      const batch = mergedArray.slice(currentIndex, currentIndex + batchSize).map((point) => ({
+        x: [point.u1],
+        y: [point.u2],
+        mode: 'markers',
+        type: 'scattergl',
+        name: "",
+        marker: {
+          color: this.getColor(point.nc),
+          size: this.markerSize2,
+        },
+        text: `${point.i}<br>${point.nc}`, // 显示 cell_id 信息
+      }));
+    
+      Plotly.addTraces('umap-chart-gene', batch);
+    
+      currentIndex += batchSize;
+      if (currentIndex < mergedArray.length) {
+        // 将 batchSize 调整为更大的值以加快后续批次的渲染
+        batchSize = 20000; // 后续批次的大小
+        setTimeout(renderBatch, 0); // 延迟下一批次渲染
+      }
+    };
+    
+    renderBatch();
+
   } catch (error) {
     console.error('Failed to load genes:', error);
-    // 可以在这里处理错误，例如显示错误消息或设置错误状态
   }
-});
-// 响应式数据
+},
+*/
 
-// 方法：过滤基因
-const filterGenes = (query) => {
-  filteredGenes.value = genes.value.filter(gene =>
-    gene.toLowerCase().includes(query.toLowerCase())
-  );
-};
-
-// 侦听器：监听 searchQuery 的变化
-watch(searchQuery, (newQuery) => {
-  filterGenes(newQuery);
-});
-
-
-// 选择项时触发的方法
-const selectItem = (item) => {
-  searchQuery.value = item;
-  showScroller.value = false;
-};
-
-// 处理失去焦点时的方法
-const handleBlur = () => {
-  setTimeout(() => {
-    if (!document.activeElement.closest('.scroller')) { // 滚动容器类名 'scroller'
-      showScroller.value = false;
-    }
-  }, 100);
-};
-
-
-const getColor = (value) => {
-    if (value > 2) {
-        return 'rgb(142, 45, 48)';
-      } else if (value > 0) {
-        return 'rgb(93, 116, 162)';
-      } else {
-        return 'rgba(128, 128, 128, 0.2)'; 
-      }
-};
-
- 
- 
-const searchgene = async() => {
+async searchgene() {
 
   // 请求参数
   const params = new URLSearchParams({
-    id: route.params.id,
-    gene: searchQuery.value
+    id: this.$route.params.id,
+    gene: this.searchQuery
   });
 
   try {
@@ -550,7 +658,7 @@ const searchgene = async() => {
     }, {});
 
     // 合并数组
-    const mergedArray = umapData.value.map(item => {
+    const mergedArray = this.umapData.map(item => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
@@ -560,7 +668,7 @@ const searchgene = async() => {
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
       
-       const colors = categoryPoints.map(point => getColor(point.nc));
+       const colors = categoryPoints.map(point => this.getColor(point.nc));
       return {
         x: categoryPoints.map(point => point.u1),
         y: categoryPoints.map(point => point.u2),
@@ -569,7 +677,7 @@ const searchgene = async() => {
         name: category,
         marker: {
           color: colors, 
-          size: markerSize2.value,
+          size: this.markerSize2,
         },
         text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
       };
@@ -585,94 +693,49 @@ const searchgene = async() => {
   } catch (error) {
     console.error('Failed to load genes:', error);
   }
-};
+},
 
-const markerSize2 = ref(4); // 默认点大小
-// 更新 UMAP 图2 的点大小
-const updateUmap2 = () => {
-  Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
-};
-
-// 减少 UMAP 图2 的点大小
-const decreaseSize2 = () => {
-  if (markerSize2.value > 1) {
-    markerSize2.value -= 1;
-    updateUmap2();
-  }
-};
-
-// 增加 UMAP 图2 的点大小
-const increaseSize2 = () => {
-  if (markerSize2.value < 10) {
-    markerSize2.value += 1;
-    updateUmap2();
-  }
-};
-//------------------------------------------------------
-//差异表达分析
-//------------------------------------------------------
-
-const group = ref('cellTypeSpecificGenes');
-const cellType = ref('inhibitoryNeurons');
-const log2fc = ref(0.5);
-const pvalue = ref(0.05);
-const direction = ref('all');
-const DEGdata = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = ref(10);
-
-onMounted(() => {
-  const params = new URLSearchParams({
-    id: route.params.id,
-  });
-  fetch(`../php/scd_getDEG.php?${params}`)
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      DEGdata.value = data.data; 
-    })
-    .catch((error) => {
-      console.error("Failed to load DEGs:", error);
-    });
-});
-
-//------------------------------------------------------
-//差异表达分析分页计算
-//------------------------------------------------------
-const filteredData = computed(() => {
-  // 筛选逻辑保持不变
-  return DEGdata.value.filter(item => {
-    const logFoldChange = parseFloat(item.f);
-    const adjustedPvalue = parseFloat(item.p);
-    return Math.abs(logFoldChange) >= log2fc.value && adjustedPvalue <= pvalue.value;
-  });
-});
-
-const totalPages = computed(() => {
-  // 总页数基于筛选后的数据集计算
-  return Math.ceil(filteredData.value.length / itemsPerPage.value);
-});
-
-const paginatedData = computed(() => {
-  // 分页应用于筛选后的数据集
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredData.value.slice(start, end);
-});
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-//------------------------------------------------------
+    //------------------------------------------------------
+    getColor(value) {
+      if (value > 2) {
+        return 'rgb(142, 45, 48)';
+      } else if (value > 0) {
+        return 'rgb(93, 116, 162)';
+      } else {
+        return 'rgba(128, 128, 128, 0.2)'; 
+      }
+    },
+    getTooltipText(value) {
+  return `Cell ID: ${value.i}<br>Normalized Count: ${value.nc}`;
+    },
+     //------------------------------------------------------
+     //差异表达分析
+     //------------------------------------------------------
+    initDEG() {
+      const params = new URLSearchParams({
+        id: this.$route.params.id,
+      });
+      fetch(`../php/scd_getDEG.php?${params}`)
+        .then((response) => response.json())
+        .then((data) => {
+        console.log(data);
+          this.DEGdata = data.data; 
+        })
+        .catch((error) => {
+          console.error("Failed to load DEGs:", error);
+        });
+    },
+     prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) this.currentPage++;
+    },
      
+     //------------------------------------------------------
+     
+  },
+};
 </script>
 
 <style scoped>
@@ -690,7 +753,8 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
-th,td {
+th,
+td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
