@@ -97,6 +97,7 @@
   flex-direction: column;
   align-items: stretch;
   padding: 0; /* 确保没有内边距 */
+  scroll-behavior: smooth;
 }
 
 .gene-item {

@@ -140,7 +140,7 @@
           ref="scroller"
           :items="filteredGenes"
           :item-size="6"
-          :buffer="2000"
+          :buffer="1000"
         >
           <template v-slot="{ item }">
             <div
@@ -179,17 +179,18 @@
                 <div class="cell-type">
                     <label>Cell type of interest:</label>
                     <select v-model="cellType">
-                        <option value="inhibitoryNeurons">Inhibitory neurons</option>
+                      <!-- 动态生成选项 -->
+                      <option v-for="type in cellTypes" :key="type" :value="type">{{ type }}</option>
                     </select>
                 </div>
                 <div class="log2fc">
                     <label>log2 fold-change cutoff:</label>
-                    <input type="range" min="0.1" max="2" step="0.1" v-model="log2fc" /> <span>{{ log2fc }}</span>
+                    <input type="range" min="-10" max="5" step="0.1" v-model="log2fc" /> <span>{{ log2fc }}</span>
 
                 </div>
                 <div class="adjusted-pvalue">
                     <label>Adjusted p-value cutoff:</label>
-                    <input type="range" min="0.00001" max="0.1" step="0.00001" v-model="pvalue" /> <span>{{ pvalue }}</span>
+                    <input type="range" min="0.00001" max="1" step="0.00001" v-model="pvalue" /> <span>{{ pvalue }}</span>
 
                 </div>
                 <div class="de-direction">
@@ -223,10 +224,10 @@
                   <tbody>
                     <tr v-for="item in paginatedData" :key="item.i">
                       <td>{{ item.i }}</td>
-                      <td>{{ item.f }}</td>
-                      <td>{{ item.Pct_1 }}</td>
-                      <td>{{ item.Pct_2 }}</td>
-                      <td>{{ item.p }}</td>
+                      <td>{{ item.f.toFixed(6) }}</td> <!-- 保留6位小数 -->
+                      <td>{{ item.t1.toFixed(3) }}</td> <!-- 保留3位小数 -->
+                      <td>{{ item.t2.toFixed(3) }}</td> <!-- 保留3位小数 -->
+                      <td>{{ item.a.toExponential() }}</td> <!-- 使用e表示法 -->
                     </tr>
                   </tbody>
                 </table>
@@ -256,7 +257,7 @@ import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
 import { ref, onMounted, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
-
+import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
@@ -460,6 +461,17 @@ const increaseSize1 = () => {
 //------------------------------------------------------
 //基因搜索框
 //------------------------------------------------------
+/*
+import { throttle } from 'lodash';
+
+const onScroll = throttle(() => {
+}, 200); // 每 200 毫秒触发一次
+
+// 添加监听
+const scrollerElement = document.querySelector('.scroller');
+scrollerElement.addEventListener('scroll', onScroll);
+*/
+
 const genes = ref([]);
 const filteredGenes = ref([]);
 const searchQuery = ref('');
@@ -478,7 +490,7 @@ onMounted(async() => {
     if (!data || !Array.isArray(data.genes)) {
       throw new Error('Invalid data structure received');
     }
-    genes.value = data.genes;
+    genes.value = data.genes.map(gene => gene.toLowerCase());
     filteredGenes.value = [...genes.value];
   } catch (error) {
     console.error('Failed to load genes:', error);
@@ -488,15 +500,19 @@ onMounted(async() => {
 // 响应式数据
 
 // 方法：过滤基因
-const filterGenes = (query) => {
-  filteredGenes.value = genes.value.filter(gene =>
-    gene.toLowerCase().includes(query.toLowerCase())
-  );
-};
+const filterGenes = debounce((query) => {
+  filteredGenes.value = genes.value.filter(gene => gene.includes(query));
+}, 200); // 200ms 防抖
 
 // 侦听器：监听 searchQuery 的变化
-watch(searchQuery, (newQuery) => {
-  filterGenes(newQuery);
+import { nextTick } from 'vue';
+watch(searchQuery, async (newQuery) => {
+    filterGenes(newQuery.toLowerCase());
+    await nextTick(); // 等待 DOM 更新完成
+    const scroller = document.querySelector('.scroller'); // 替换为滚动框的实际引用
+    if (scroller) {
+        scroller.scrollTop = 0; // 重置滚动位置
+    }
 });
 
 
@@ -613,19 +629,40 @@ const increaseSize2 = () => {
 //------------------------------------------------------
 
 const group = ref('cellTypeSpecificGenes');
-const cellType = ref('inhibitoryNeurons');
-const log2fc = ref(0.5);
-const pvalue = ref(0.05);
+const cellTypes = ref([]);
+const cellType = ref('');
+
+
+
+const log2fc = ref(-10);
+const pvalue = ref(1);
 const direction = ref('all');
 const DEGdata = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
 onMounted(() => {
-  const params = new URLSearchParams({
+    const params = new URLSearchParams({
     id: route.params.id,
   });
-  fetch(`../php/scd_getDEG.php?${params}`)
+  fetch(`../php/scd_DEG_CellType.php?${params}`)
+    .then((response) => response.json())
+    .then((data) => {
+      cellTypes.value = data; 
+    })
+    .catch((error) => {
+      console.error("Failed to load DEGs:", error);
+    });
+});
+
+
+watch(cellType, async (newcellType) => {
+  //获取差异数据
+  const params = new URLSearchParams({
+    id: route.params.id,
+    cluster: newcellType
+  });
+  fetch(`../php/scd_getDEG_ByCluster.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -635,7 +672,6 @@ onMounted(() => {
       console.error("Failed to load DEGs:", error);
     });
 });
-
 //------------------------------------------------------
 //差异表达分析分页计算
 //------------------------------------------------------
@@ -643,7 +679,7 @@ const filteredData = computed(() => {
   // 筛选逻辑保持不变
   return DEGdata.value.filter(item => {
     const logFoldChange = parseFloat(item.f);
-    const adjustedPvalue = parseFloat(item.p);
+    const adjustedPvalue = parseFloat(item.a);
     return Math.abs(logFoldChange) >= log2fc.value && adjustedPvalue <= pvalue.value;
   });
 });
