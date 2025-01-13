@@ -142,6 +142,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import config from '@/config';
 const showSubMenu = ref(false);
 //----------
 //语言切换
@@ -173,7 +174,7 @@ const spatialNum = ref(0);
 
 onMounted(async() => {
     try {
-        const response = await fetch('../php/hv_dbInfo.php'); // 示例 API
+        const response = await fetch(config.apiUrl+'hv_dbInfo.php'); // 示例 API
         const data = await response.json();
         cellNum.value = data.cellNum;
         geneNum.value = data.geneNum;
@@ -184,7 +185,7 @@ onMounted(async() => {
     }
     
     // 绘制各数据集分布
-    fetch('../php/hv_chart1.php')
+    fetch(config.apiUrl+'hv_chart1.php')
       .then(response => response.json())
       .then(dataFromPhp => {
         // 提取标签和细胞数量
@@ -227,7 +228,7 @@ onMounted(async() => {
 //获取数据库比例
 //-------------------
 onMounted(async() => {
-    fetch('../php/hv_gender_data.php')
+    fetch(config.apiUrl+'hv_gender_data.php')
         .then(response => response.json())
         .then(data => {
         const genderData = [{
@@ -287,7 +288,7 @@ onMounted(async() => {
 //------------------------
 
 onMounted(async() => {
- fetch('../php/hv_umap.php')
+ fetch(config.apiUrl+'hv_umap.php')
           .then(response => response.arrayBuffer()) // 获取ArrayBuffer响应
           .then(arrayBuffer => {
             const compressed = new Uint8Array(arrayBuffer);

@@ -103,7 +103,7 @@ import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import ssmoodStudy1 from './study/ssmoodStudy1.vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-
+import config from '@/config';
 
 const showSubMenu = ref(false);
 const datasets = ref([]);
@@ -142,7 +142,7 @@ onMounted(async() => {
 
 const fetchDatasets = async () => {
     try {
-        const response = await fetch('../php/bsc_getSCDatasetList.php');
+        const response = await fetch(config.apiUrl+'bsc_getSCDatasetList.php');
         const data = await response.json();
         datasets.value = data;
     } catch (error) {

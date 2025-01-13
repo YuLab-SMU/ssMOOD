@@ -262,6 +262,7 @@ import debounce from 'lodash.debounce';
 import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import config from '@/config';
 const showSubMenu = ref(false);//二级菜单
 //----------
 //语言切换
@@ -316,7 +317,7 @@ onMounted(() => {
     id: route.params.id
   });
 
-  fetch(`../php/scd_getSCDatasetDetail.php?${params}`)
+  fetch(config.apiUrl+`scd_getSCDatasetDetail.php?${params}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -344,7 +345,7 @@ onMounted(() => {
     const params = new URLSearchParams({
           id: route.params.id
         });
-    fetch(`../php/scd_getumapdata.php?${params}`)
+    fetch(config.apiUrl+`scd_getumapdata.php?${params}`)
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => {
             
@@ -482,7 +483,7 @@ onMounted(async() => {
     id: route.params.id
   });
   try {
-    const response = await fetch(`../php/scd_getgene.php?${params}`);
+    const response = await fetch(config.apiUrl+`scd_getgene.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -553,7 +554,7 @@ const searchgene = async() => {
   });
 
   try {
-    const response = await fetch(`../php/scd_geneExpression.php?${params}`);
+    const response = await fetch(config.apiUrl+`scd_geneExpression.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -645,7 +646,7 @@ onMounted(() => {
     const params = new URLSearchParams({
     id: route.params.id,
   });
-  fetch(`../php/scd_DEG_CellType.php?${params}`)
+  fetch(config.apiUrl+`scd_DEG_CellType.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
       cellTypes.value = data; 
@@ -662,7 +663,7 @@ watch(cellType, async (newcellType) => {
     id: route.params.id,
     cluster: newcellType
   });
-  fetch(`../php/scd_getDEG_ByCluster.php?${params}`)
+  fetch(config.apiUrl+`scd_getDEG_ByCluster.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
       console.log(data);

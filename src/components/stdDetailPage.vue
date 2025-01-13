@@ -246,6 +246,7 @@ import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import Plotly from 'plotly.js-dist-min';
 import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
+import config from '@/config';
 
 export default {
   name: 'StDatasetDetailsPage',
@@ -347,7 +348,7 @@ export default {
           id: this.$route.params.id
         });
     //../php/std_getSTDatasetDetail.php
-        fetch(`http://172.16.165.250/ssmood3/php/std_getSTDatasetDetail.php?${params}`)
+        fetch(config.apiUrl+`std_getSTDatasetDetail.php?${params}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('Network response was not ok');
@@ -380,7 +381,7 @@ export default {
           id: this.$route.params.id
         });
         //------------------------------------------------------
-        fetch(`http://172.16.165.250/ssmood3/php/std_getCoordinate.php?${params}`)
+        fetch(config.apiUrl+`std_getCoordinate.php?${params}`)
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => {
             
@@ -503,7 +504,7 @@ export default {
             id: this.$route.params.id
         });
         try {
-            const response = await fetch(`http://172.16.165.250/ssmood3/php/scd_getgene.php?${params}`);
+            const response = await fetch(config.apiUrl+`scd_getgene.php?${params}`);
             if (!response.ok) {
                 throw new Error(`HTTP error!status:${response.status}`);
             }
@@ -545,7 +546,7 @@ async searchgene() {
   });
 
   try {
-    const response = await fetch(`http://172.16.165.250/ssmood3/php/std_geneExpression.php?${params}`);
+    const response = await fetch(config.apiUrl+`std_geneExpression.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -615,7 +616,7 @@ async searchgene() {
       const params = new URLSearchParams({
         id: this.$route.params.id,
       });
-      fetch(`../php/scd_getDEG.php?${params}`)
+      fetch(config.apiUrl+`scd_getDEG.php?${params}`)
         .then((response) => response.json())
         .then((data) => {
         console.log(data);
