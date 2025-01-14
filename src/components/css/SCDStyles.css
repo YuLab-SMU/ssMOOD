@@ -74,7 +74,28 @@
   text-decoration: underline;
 }
 .search-gene-input {
-  max-width: 300px; /* 可以根据需要调整这个值 */
+  max-width: 300px; /* 最大宽度 */
+  width: 100%; /* 宽度占满容器 */
+  padding: 10px; /* 内边距 */
+  border: 2px solid #ccc; /* 边框颜色和粗细 */
+  border-radius: 5px; /* 圆角 */
+  background-color: #fff; /* 背景颜色 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
+  font-size: 16px; /* 字体大小 */
+  color: #333; /* 字体颜色 */
+  transition: border-color 0.3s, box-shadow 0.3s; /* 平滑过渡效果 */
+  outline: none; /* 去掉聚焦时的轮廓 */
+  box-sizing: border-box; /* 边框和内边距包含在宽度内 */
+}
+
+.search-gene-input:focus {
+  border-color: #007bff; /* 聚焦时的边框颜色 */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* 聚焦时的外阴影 */
+}
+
+.search-gene-input::placeholder {
+  color: #999; /* 占位符颜色 */
+  font-style: italic; /* 占位符字体样式 */
 }
 
 .custom-textfield {
@@ -114,12 +135,47 @@
 }
 .search-btn {
   right: 8px;
+  padding: 10px 20px; /* 调整按钮内边距 */
   border: none;
+  border-radius: 5px; /* 圆角 */
   cursor: pointer;
-  background-color: rgba(93, 116, 162, 0.3);
+  background-color: #5d74a2; /* 现代的蓝色 */
+  color: white; /* 文字颜色 */
+  font-family: 'Arial', sans-serif; /* 字体 */
+  font-size: 16px; /* 字体大小 */
+  text-transform: uppercase; /* 全部大写 */
+  transition: background-color 0.3s, transform 0.3s; /* 平滑背景色和变形变化 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影 */
+  outline: none; /* 去掉点击时的轮廓 */
+}
+
+.search-btn:hover {
+  background-color: #4a5e83; /* 悬停时的背景色 */
+  transform: translateY(-2px); /* 轻微上移，增加点击感 */
+}
+
+.search-btn:active {
+  background-color: #3c4f76; /* 点击时的背景色 */
+  transform: translateY(0); /* 恢复原位 */
 }
 .custom-plus {
   font-size: 24px; /* 您可以根据需要调整这个值 */
+  padding: 5px 10px; /* 内边距 */
+  border-radius: 5px; /* 圆角 */
+  border: none; /* 无边框 */
+  background-color: transparent; /* 无背景 */
+  color: black; /* 文字颜色 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
+  outline: none; /* 去掉点击时的轮廓 */
+}
+
+.custom-plus:hover {
+  transform: scale(1.2); /* 轻微放大 */
+}
+
+.custom-plus:active {
+  transform: scale(1); /* 恢复原大小 */
 }
 .fade-enter-active,
 .fade-leave-active {
@@ -191,6 +247,102 @@
 .group, .cell-type, .log2fc, .adjusted-pvalue, .de-direction {
   margin-bottom: 15px;
   
+}
+.custom-select {
+  width: 60%;
+  padding: 10px; /* 内边距 */
+  border: 2px solid #ccc; /* 边框颜色和粗细 */
+  border-radius: 5px; /* 圆角 */
+  background-color: #fff; /* 背景颜色 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
+  font-size: 16px; /* 字体大小 */
+  color: #333; /* 字体颜色 */
+  transition: border-color 0.3s, box-shadow 0.3s; /* 平滑过渡效果 */
+  outline: none; /* 去掉聚焦时的轮廓 */
+  box-sizing: border-box; /* 边框和内边距包含在宽度内 */
+  appearance: none; /* 去除默认样式 */
+  -webkit-appearance: none; /* 去除 WebKit 浏览器默认样式 */
+  -moz-appearance: none; /* 去除 Firefox 默认样式 */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* 添加自定义箭头 */
+  background-repeat: no-repeat; /* 不重复背景图像 */
+  background-position: right 10px center; /* 箭头位置 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+}
+
+.custom-select:focus {
+  border-color: #007bff; /* 聚焦时的边框颜色 */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* 聚焦时的外阴影 */
+}
+
+.custom-select::-ms-expand {
+  display: none; /* 隐藏 IE 浏览器的默认箭头 */
+}
+/* 重置滑动条默认样式 */
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none; /* 去除 WebKit 浏览器默认样式 */
+  appearance: none;
+}
+
+.custom-range::-moz-range-thumb {
+  /* 去除 Firefox 默认样式 */
+}
+
+.custom-range::-ms-thumb {
+  /* 去除 IE 默认样式 */
+}
+
+/* 自定义滑动条样式 */
+.custom-range {
+  width: 300px; /* 滑动条宽度 */
+  height: 10px; /* 滑动条高度 */
+  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
+  border-radius: 5px; /* 滑动条圆角 */
+  outline: none; /* 去掉聚焦时的轮廓 */
+  transition: background 0.3s; /* 平滑过渡效果 */
+}
+
+.custom-range::-webkit-slider-thumb {
+  width: 20px; /* 滑块宽度 */
+  height: 20px; /* 滑块高度 */
+  background: rgb(93, 116, 162); /* 滑块背景颜色 */
+  border-radius: 50%; /* 滑块圆角 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  transition: background 0.3s, transform 0.1s; /* 平滑过渡效果 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 滑块阴影 */
+  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
+}
+
+.custom-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: rgb(93, 116, 162);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
+}
+
+.custom-range:active::-webkit-slider-thumb {
+  background: rgb(93, 116, 162); /* 点击时滑块背景颜色 */
+  transform: scale(1.5); /* 点击时滑块放大 */
+  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
+}
+
+.custom-range:active::-moz-range-thumb {
+  background: rgb(93, 116, 162);
+  transform: scale(1.2);
+}
+.page{
+  padding: 4px 8px; /* 内边距 */
+  border: none; /* 无边框 */
+  border-radius: 4px; /* 圆角 */
+  background-color: rgb(93, 116, 162); /* 背景颜色 */
+  color: white; /* 文字颜色 */
+  font-size: 14px; /* 字体大小 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
+  outline: none; /* 去掉聚焦时的轮廓 */
 }
 
 .de-direction, .de-direction-child{

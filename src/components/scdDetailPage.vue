@@ -121,15 +121,15 @@
           <div class="marker-size-controller">
             <div class="label">{{ $t('scd22') }}:</div>
             <!-- 减少按钮 -->
-            <v-btn class="custom-plus" icon @click="decreaseSize2">
+            <button class="custom-plus" @click="decreaseSize2">
               -
-            </v-btn>
+            </button>
             <!-- 显示当前大小 -->
             <span class="size-value">{{ markerSize2 }}</span>
             <!-- 增加按钮 -->
-            <v-btn class="custom-plus" icon @click="increaseSize2">
+            <button class="custom-plus" @click="increaseSize2">
               +
-            </v-btn>
+            </button>
           </div>
         </div>
 
@@ -168,41 +168,30 @@
         <div class="information-left">
             <div class="de-analysis  modern-ui">
                 <div class="note">
-                    <p>Note: The MAST package were used to calculate DEGs on normalized gene expression data (parameter: log2FC  0.25, adj.p-value 0.05).</p>
+                    <p>{{ $t('scd26') }}</p>
                 </div>
                 <div class="group">
-                    <label>Group:</label>
-                    <select v-model="group">
-                        <option value="cellTypeSpecificGenes">Cell type specific genes</option>
+                    <label>{{ $t('scd27') }}</label>
+                    <select v-model="group" class="custom-select">
+                        <option value="cellTypeSpecificGenes">One Cell type vs Other Cell types</option>
                     </select>
                 </div>
                 <div class="cell-type">
-                    <label>Cell type of interest:</label>
-                    <select v-model="cellType">
+                    <label>{{ $t('scd28') }}</label>
+                    <select v-model="cellType" class="custom-select">
                       <!-- 动态生成选项 -->
                       <option v-for="type in cellTypes" :key="type" :value="type">{{ type }}</option>
                     </select>
                 </div>
                 <div class="log2fc">
-                    <label>log2 fold-change cutoff:</label>
-                    <input type="range" min="-10" max="5" step="0.1" v-model="log2fc" /> <span>{{ log2fc }}</span>
+                    <label>{{ $t('scd29') }}</label>
+                    <input type="range" min="-10" max="5" step="0.1" v-model="log2fc" class="custom-range"/> <span>{{ log2fc }}</span>
 
                 </div>
                 <div class="adjusted-pvalue">
-                    <label>Adjusted p-value cutoff:</label>
-                    <input type="range" min="0" max="1" step="0.0001" v-model="pvalue" /> <span>{{ pvalue }}</span>
+                    <label>{{ $t('scd30') }}</label>
+                    <input type="range" min="0" max="1" step="0.0001" v-model="pvalue" class="custom-range"/> <span>{{ pvalue }}</span>
 
-                </div>
-                <div class="de-direction">
-                    <label>DE direction:</label>
-                    <div class="de-direction-child">
-                        <input type="radio" id="all" value="all" v-model="direction" />
-                        <label for="all">All</label>
-                        <input type="radio" id="up" value="up" v-model="direction" />
-                        <label for="up">UP</label>
-                        <input type="radio" id="down" value="down" v-model="direction" />
-                        <label for="down">Down</label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -210,16 +199,23 @@
         <div class="information-right">
             
             <div class="de-analysis  modern-ui">
+            <input
+              class="search-gene-input"
+              v-model="filterDEGGenes"
+              :placeholder="$t('scd31')"
+              type="text"
+            />
+                <button @click="download" class="search-btn">{{ $t('scd32') }}</button>
                 <div class="table-container">
                 <table>
                   <thead>
-                    <tr>
-                      <th>Gene name</th>
-                      <th>Log fold-change</th>
-                      <th>Pct.1</th>
-                      <th>Pct.2</th>
-                      <th>Adjusted p-value</th>
-                    </tr>
+                      <tr>
+                        <th @click="sortTable(0)">{{ $t('scd33') }}</th>
+                        <th @click="sortTable(1)">{{ $t('scd34') }}</th>
+                        <th @click="sortTable(2)">{{ $t('scd35') }}</th>
+                        <th @click="sortTable(3)">{{ $t('scd36') }}</th>
+                        <th @click="sortTable(4)">{{ $t('scd37') }}</th>
+                      </tr>
                   </thead>
                   <tbody>
                     <tr v-for="item in paginatedData" :key="item.i">
@@ -232,9 +228,9 @@
                   </tbody>
                 </table>
                 <div class="pagination">
-                  <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-                  <span>Page {{ currentPage }} of {{ totalPages }}</span>
-                  <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+                  <button @click="prevPage" :disabled="currentPage === 1" class="page">{{ $t('scd38') }}</button>
+                  <span>{{ $t('scd39') }} {{ currentPage }} {{ $t('scd40') }} {{ totalPages }}</span>
+                  <button @click="nextPage" :disabled="currentPage === totalPages" class="page">{{ $t('scd41') }}</button>
                 </div>
               </div>
                 
@@ -257,7 +253,7 @@ import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
 import { ref, onMounted, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
-import debounce from 'lodash.debounce';
+//import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
@@ -474,7 +470,7 @@ scrollerElement.addEventListener('scroll', onScroll);
 */
 
 const genes = ref([]);
-const filteredGenes = ref([]);
+//const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
 //加载基因
@@ -501,19 +497,15 @@ onMounted(async() => {
 // 响应式数据
 
 // 方法：过滤基因
-const filterGenes = debounce((query) => {
-  filteredGenes.value = genes.value.filter(gene => gene.includes(query));
-}, 200); // 200ms 防抖
 
 // 侦听器：监听 searchQuery 的变化
-import { nextTick } from 'vue';
-watch(searchQuery, async (newQuery) => {
-    filterGenes(newQuery.toLowerCase());
-    await nextTick(); // 等待 DOM 更新完成
-    const scroller = document.querySelector('.scroller'); // 替换为滚动框的实际引用
-    if (scroller) {
-        scroller.scrollTop = 0; // 重置滚动位置
-    }
+//import { nextTick } from 'vue';
+const filteredGenes = computed(() => {
+  if (!searchQuery.value) {
+    return genes.value;
+  }
+  // 将搜索查询转换为小写并进行过滤
+  return genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 
@@ -634,11 +626,12 @@ const cellTypes = ref([]);
 const cellType = ref('');
 const log2fc = ref(-10);
 const pvalue = ref(1);
-const direction = ref('all');
+//const direction = ref('all');
 const DEGdata = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
+const filterDEGGenes = ref('');
 
 onMounted(() => {
     const params = new URLSearchParams({
@@ -678,11 +671,15 @@ watch(cellType, async (newcellType) => {
 //差异表达分析分页计算
 //------------------------------------------------------
 const filteredData = computed(() => {
-  // 筛选逻辑保持不变
   return DEGdata.value.filter(item => {
     const logFoldChange = parseFloat(item.f);
     const adjustedPvalue = parseFloat(item.a);
-    return Math.abs(logFoldChange) >= log2fc.value && adjustedPvalue <= pvalue.value;
+    // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
+    const lowerCaseFilter = filterDEGGenes.value.toLowerCase();
+    const lowerCaseItemI = item.i.toLowerCase();
+    return Math.abs(logFoldChange) >= log2fc.value &&
+           adjustedPvalue <= pvalue.value &&
+           lowerCaseItemI.includes(lowerCaseFilter);
   });
 });
 
@@ -709,8 +706,29 @@ const nextPage = () => {
     currentPage.value++;
   }
 };
+
+const headers = ['gene name', 'Adjusted p-value', 'Log fold-change','Pct.1','Pct.2'];
+const download = () => {
+  // 创建一个二维数组，每个元素都是表格的一行
+  const dataForTable = filteredData.value.map((item) => {
+    return Object.values(item);
+  });
+
+  // 创建 CSV 字符串
+  const csvContent = [headers.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
+
+  // 创建一个下载链接
+  const link = document.createElement("a");
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+  link.target = "_blank";
+  link.download = "data.csv"; // 指定下载的文件名
+  link.click();
+};
+
 //------------------------------------------------------
-     
+//排序
+//------------------------------------------------------
+
 </script>
 
 <style scoped>
