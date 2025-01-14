@@ -1,11 +1,8 @@
 <?php
 ini_set('memory_limit', '512M');
 
-$servername = "localhost";
-$username = "scast";
-$password = "20030609";
-$dbname = "ssmood";
-
+include 'config.php';
+// 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     http_response_code(500);

@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: application/json');
+include 'config.php';
 
 $data = [
     "male" => 60,   // 男性人数或比例

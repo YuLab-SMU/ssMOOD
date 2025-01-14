@@ -2,7 +2,7 @@
 
 // 开发环境配置
 const devConfig = {
-  apiUrl: 'http://198.168.138.132/ssmood3/php/',
+  apiUrl: 'http://192.168.138.132/ssmood3/php/',
 };
 
 // 生产环境配置

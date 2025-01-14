@@ -1,9 +1,5 @@
 <?php
-// 数据库连接信息
-$servername = "localhost";
-$username = "scast";
-$password = "20030609";
-$dbname = "ssmood";
+include 'config.php';
 
 // 数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);

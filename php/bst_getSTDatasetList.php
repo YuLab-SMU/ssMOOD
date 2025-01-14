@@ -1,15 +1,9 @@
 <?php
-header('Content-Type: application/json');
-// 数据库配置
-$host = 'localhost'; // 或者其他服务器地址
-$dbname = 'ssmood';
-$username = 'scast';
-$password = '20030609';
-
+include 'config.php';
 
 
 // 创建数据库连接
-$conn = new mysqli($host, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // 检查连接
 if ($conn->connect_error) {
