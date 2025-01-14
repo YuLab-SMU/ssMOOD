@@ -190,7 +190,7 @@
                 </div>
                 <div class="adjusted-pvalue">
                     <label>Adjusted p-value cutoff:</label>
-                    <input type="range" min="0.00001" max="1" step="0.00001" v-model="pvalue" /> <span>{{ pvalue }}</span>
+                    <input type="range" min="0" max="1" step="0.0001" v-model="pvalue" /> <span>{{ pvalue }}</span>
 
                 </div>
                 <div class="de-direction">
@@ -227,7 +227,7 @@
                       <td>{{ item.f.toFixed(6) }}</td> <!-- 保留6位小数 -->
                       <td>{{ item.t1.toFixed(3) }}</td> <!-- 保留3位小数 -->
                       <td>{{ item.t2.toFixed(3) }}</td> <!-- 保留3位小数 -->
-                      <td>{{ item.a.toExponential() }}</td> <!-- 使用e表示法 -->
+                      <td>{{ item.a.toExponential(3) }}</td> <!-- 使用e表示法 -->
                     </tr>
                   </tbody>
                 </table>
@@ -632,15 +632,13 @@ const increaseSize2 = () => {
 const group = ref('cellTypeSpecificGenes');
 const cellTypes = ref([]);
 const cellType = ref('');
-
-
-
 const log2fc = ref(-10);
 const pvalue = ref(1);
 const direction = ref('all');
 const DEGdata = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
+
 
 onMounted(() => {
     const params = new URLSearchParams({
@@ -650,6 +648,7 @@ onMounted(() => {
     .then((response) => response.json())
     .then((data) => {
       cellTypes.value = data; 
+      cellType.value = cellTypes.value[0];
     })
     .catch((error) => {
       console.error("Failed to load DEGs:", error);
@@ -673,6 +672,8 @@ watch(cellType, async (newcellType) => {
       console.error("Failed to load DEGs:", error);
     });
 });
+
+
 //------------------------------------------------------
 //差异表达分析分页计算
 //------------------------------------------------------
