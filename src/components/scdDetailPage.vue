@@ -90,17 +90,21 @@
         <div class="marker-size-controller">
           <div class="label">{{ $t('scd22') }}:</div>
           <!-- 减少按钮 -->
-          <v-btn class="custom-plus" icon @click="decreaseSize1">
+          <button class="custom-plus" icon @click="decreaseSize1">
             -
-          </v-btn>
+          </button>
           <!-- 显示当前大小 -->
           <span class="size-value">{{ markerSize1 }}</span>
           <!-- 增加按钮 -->
-          <v-btn class="custom-plus" icon @click="increaseSize1">
+          <button class="custom-plus" icon @click="increaseSize1">
             +
-          </v-btn>
+          </button>
         </div>
         <div id="umap-plot"></div>
+      </div>
+      
+      <div class="information-second">
+        <div id="myClusterChart" style="width: 1200px; height: 300px;"></div>
       </div>
       <!-- 右侧内容：基因搜索与基因列表 -->
       <div class="information-second">
@@ -154,6 +158,7 @@
         </recycle-scroller>
 
         <div id="umap-chart-gene"></div>
+        <div id="expressionHeatmap" style="width: 1200px; height: 400px;"></div>
       </div>
     </div>
   </div>
@@ -456,8 +461,56 @@ const increaseSize1 = () => {
 };
 
 //------------------------------------------------------
+//分类表
+//------------------------------------------------------
+onMounted(async() => {
+        const params = new URLSearchParams({
+          id: route.params.id
+        });
+    // 绘制各数据集分布
+    fetch(config.apiUrl+`scd_getNumberOfCluster.php?${params}`)
+      .then(response => response.json())
+      .then(dataFromPhp => {
+        // 提取标签和细胞数量
+        const labels = Object.keys(dataFromPhp);
+        const cellCounts = Object.values(dataFromPhp);
+    
+        // 创建条形图数据
+        const trace = {
+          x: labels,
+          y: cellCounts,
+          type: 'bar',
+          marker: {
+            color: 'rgba(93, 116, 162 ,0.6)',
+            line: {
+              color: 'rgba(93, 116, 162 ,1)',
+              width: 1
+            }
+          }
+        };
+    
+        // 创建布局
+        const layout = {
+          title: 'Num of Cluster',
+          xaxis: {
+            title: ''
+          },
+          yaxis: {
+            title: '',
+            showgrid: true,
+            zeroline: true
+          }
+        };
+    
+        // 绘制图表
+        Plotly.newPlot('myClusterChart', [trace], layout);
+      })
+      .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
+});
+//------------------------------------------------------
 //基因搜索框
 //------------------------------------------------------
+
 /*
 import { throttle } from 'lodash';
 
@@ -563,9 +616,29 @@ const searchgene = async() => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
-
-    // 按分类信息创建轨迹
+    // 分类信息
     const categories = [...new Set(mergedArray.map(item => item.c))];
+    categories.sort();
+    //-----------创建热图信息------------------------
+const numCategories = categories.length;
+
+const heatmapData = Array.from({ length: 11 }, () => 
+  Array.from({ length: numCategories }, () => 0)
+);
+
+
+// 填充热图数据数组
+mergedArray.forEach(item => {
+  const categoryIndex = categories.indexOf(item.c);
+  if (categoryIndex !== -1) {  // 确保分类存在
+    // 将表达量映射到 0-10 的索引，确保大于 5 的值都记为 5
+    const expressionIndex = Math.min(Math.floor(Math.min(item.nc, 5) / 0.5), 10);
+    heatmapData[expressionIndex][categoryIndex]++;
+  }
+});
+
+    //---------------------------------------
+    // 按分类信息创建轨迹
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
       
@@ -591,9 +664,45 @@ const searchgene = async() => {
                     width: halfViewportWidth,
                     height: halfViewportWidth,
     });
+
+//-----------绘制热图------------------------
+
+
+  // 绘制热图
+  const layout = {
+    title: 'Gene expression heat map(The z axis is the number of cells)',
+    xaxis: {
+      title: '',
+      tickvals: categories.map((category, index) => index),
+      ticktext: categories
+    },
+    yaxis: {
+      title: 'Gene expression',
+      tickvals: Array.from({ length: 11 }, (_, i) => i ),
+      ticktext: Array.from({ length: 11 }, (_, i) => (i* 0.5 ).toFixed(1))
+    },
+    autosize: true
+  };
+
+  const trace = {
+    x: categories,
+    y: Array.from({ length: 11 }, (_, i) => i ),
+    z: heatmapData,
+    type: 'heatmap',
+  colorscale: [
+    [0, 'rgb(255, 255, 255)'],   // 对应值为0时的颜色（#5D74A2）
+    [1, 'rgb(93, 116, 162)']     // 对应值为1时的颜色（#FF6347，番茄红）
+  ],
+    zmin: 0,  // 设置热图颜色的最小值
+    zmax: 5,  // 设置热图颜色的最大值（对应于最大表达量）
+  };
+
+  Plotly.newPlot('expressionHeatmap', [trace], layout);
+  
   } catch (error) {
     console.error('Failed to load genes:', error);
   }
+
 };
 
 const markerSize2 = ref(4); // 默认点大小
