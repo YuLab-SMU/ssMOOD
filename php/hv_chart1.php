@@ -10,14 +10,14 @@ if ($conn->connect_error) {
     die("连接失败: " . $conn->connect_error);
 }
 
-$sql = "SELECT cluster_label, COUNT(*) as cell_count FROM cells GROUP BY cluster_label";
+$sql = "SELECT dataset_id, cells FROM datasets";
 $result = $conn->query($sql);
 
 $data = [];
 if ($result->num_rows > 0) {
     // 将数据存入数组
     while ($row = $result->fetch_assoc()) {
-        $data[$row['cluster_label']] = $row['cell_count'];
+        $data[$row['dataset_id']] = $row['cells'];
     }
 }
 

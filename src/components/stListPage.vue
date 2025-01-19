@@ -81,67 +81,73 @@
                             </tr>
                         </tbody>
                     </table>
-                    <back-to-top />
+                    <BackToTop />
                 </div>
             </section>
         </main>
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+//----------以下为一个ssmood页面需要的最基础的东西--------------
+import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import config from '@/config';
+const showSubMenu = ref(false);//二级菜单
+//----------
+//语言切换
+//----------
+const { locale } = useI18n();
 
-export default {
-    name: 'BrowseSpatialTranscriptomePage',
-    data() {
-        return {
-            showSubMenu: false,
-            datasets: [],
-            filters: {
-                species: 'all',
-                region: 'all',
-                sex: 'all'
-            }
-        };
-    },
-    components: {
-        BackToTop,
-        LanguageSwitcher
-    },
-    computed: {
-        filteredDatasets() {
-            return this.datasets.filter(dataset => {
-                return (
-                    (this.filters.species === 'all' || dataset.species === this.filters.species) &&
-                    (this.filters.region === 'all' || dataset.region === this.filters.region) &&
-                    (this.filters.sex === 'all' || dataset.sex === this.filters.sex)
-                );
-            });
-        }
-    },
-    mounted() {
-        this.fetchDatasets();
-    },
-    created() {
-        this.$i18n.locale = this.$root.$selectedLanguage || 'zh1';
-    },
-    methods: {
-        onLanguageChanged(language) {
-            this.$i18n.locale = language;
-        },
-        fetchDatasets() {
-            fetch('http://172.16.165.250/ssmood3/php/bst_getSTDatasetList.php')
-                .then(response => response.json())
-                .then(data => {
-                    this.datasets = data;
-                })
-                .catch(error => console.error('Error fetching datasets:', error));
-        },
-        goToDatasetDetails(datasetId) {
-        this.$router.push({ name: 'stdDetail', params: { id: datasetId } });
-    }
-    }
+// 处理语言切换
+const onLanguageChanged = (language) => {
+  locale.value = language; // 更新语言
+  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
+};
+
+onMounted(async() => {
+  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
+  locale.value = selectedLanguage; // 设置语言
+});
+//----------以上为一个ssmood页面需要的最基础的东西--------------
+
+const datasets = ref([]);
+const filters = ref({
+  species: 'all',
+  region: 'all',
+  sex: 'all'
+});
+
+const filteredDatasets = computed(() => {
+  return datasets.value.filter(dataset => {
+    return (
+      (filters.value.species === 'all' || dataset.species === filters.value.species) &&
+      (filters.value.region === 'all' || dataset.region === filters.value.region) &&
+      (filters.value.sex === 'all' || dataset.sex === filters.value.sex)
+    );
+  });
+});
+
+const router = useRouter();
+
+const fetchDatasets = async () => {
+  try {
+    const response = await fetch(config.apiUrl + 'bst_getSTDatasetList.php');
+    const data = await response.json();
+    datasets.value = data;
+  } catch (error) {
+    console.error('Error fetching datasets:', error);
+  }
+};
+
+onMounted(fetchDatasets);
+
+const goToDatasetDetails = (datasetId) => {
+  router.push({ name: 'stdDetail', params: { id: datasetId } });
 };
 </script>
 

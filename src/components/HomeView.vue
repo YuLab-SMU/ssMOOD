@@ -82,7 +82,7 @@
                         <p>{{ $t('hv6') }}</p>
                     </div>
                     <div class="image">
-                        <div id="myClusterChart" style="width: 600px; height: 500px;"></div>
+                        <div id="myClusterChart" style="width: 900px; height: 400px;"></div>
                     </div>
                 </div>
                 <div class="container" data-special="true">
@@ -90,9 +90,13 @@
                         <div id="genderChart" style="width: 400px; height: 400px;"></div>
                     </div>
                     <div class="text">
+                        <div id="genderChart2" style="width: 400px; height: 400px;"></div>
+                    </div>
+                    <div class="text">
                          <h2>{{ $t('hv7') }}</h2>
                         <p>{{ $t('hv8') }}</p>
                     </div>
+
                 </div>
                 <div class="container">
                     <div class="text">
@@ -208,7 +212,7 @@ onMounted(async() => {
     
         // 创建布局
         const layout = {
-          title: '各分类样本数量',
+          title: 'Num of datasets',
           xaxis: {
             title: ''
           },
@@ -225,15 +229,74 @@ onMounted(async() => {
       .catch(error => console.error('Error fetching data from chart1.php:', error));
 });
 //-------------------
-//获取数据库比例
+//获取物种比例
 //-------------------
 onMounted(async() => {
     fetch(config.apiUrl+'hv_gender_data.php')
         .then(response => response.json())
         .then(data => {
         const genderData = [{
-                labels: ['男性', '女性'],
-                values: [data.male, data.female],
+                labels: ['Human', 'Mouse'],
+                values: [data.human, data.mouse],
+                    type: 'pie',
+                    marker: {
+                        colors: ['rgba(119, 181, 106 ,0.8)', 'rgba(232, 136, 084 ,0.8)'],
+                        line: {
+                            color: 'white',
+                            width: 2
+                        }
+                    },
+                    textinfo: 'label+percent',
+                    hoverinfo: 'label+percent',
+                    hole: 0.4,
+                    pull: [0.05, 0],
+                }
+            ];
+        
+            const layout = {
+                title: {
+                    text: 'Species Ratio',
+                    font: {
+                        family: 'Arial, sans-serif',
+                        size: 20,
+                        color: 'black'
+                    }
+                },
+                height: 400,
+                width: 400,
+                paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
+                plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
+                margin: {
+                    l: 50,
+                    r: 50,
+                    b: 100,
+                    t: 80
+                },
+                showlegend: true,
+                legend: {
+                    x: 0.3,
+                    y: -0.5, // 将图例放在下方中间
+                    orientation: 'w', // 图例水平排列
+                    bgcolor: 'rgba(0,0,0,0)',
+                    bordercolor: 'grey',
+                    borderwidth: 1
+                }
+            };
+        
+            Plotly.newPlot('genderChart', genderData, layout);
+        })
+        .catch (error => console.error('Error fetching gender data:', error));
+});
+//-------------------
+//获取单细胞和空转比例
+//-------------------
+onMounted(async() => {
+    fetch(config.apiUrl+'hv_scandstRaio.php')
+        .then(response => response.json())
+        .then(data => {
+        const genderData = [{
+                labels: ['Single Cell', 'Spatial Transcriptome'],
+                values: [data.sc_cells_sum, data.st_cells_sum],
                     type: 'pie',
                     marker: {
                         colors: ['rgba(93, 116, 162 ,0.8)', 'rgba(142, 45, 48 ,0.8)'],
@@ -251,7 +314,7 @@ onMounted(async() => {
         
             const layout = {
                 title: {
-                    text: '性别比例',
+                    text: 'Cells Ratio',
                     font: {
                         family: 'Arial, sans-serif',
                         size: 20,
@@ -265,24 +328,23 @@ onMounted(async() => {
                 margin: {
                     l: 50,
                     r: 50,
-                    b: 50,
+                    b: 100,
                     t: 80
                 },
                 showlegend: true,
                 legend: {
-                    x: 1,
-                    y: 0.5,
+                    x: 0.2,
+                    y: -0.5, // 将图例放在下方中间
                     bgcolor: 'rgba(0,0,0,0)',
                     bordercolor: 'grey',
                     borderwidth: 1
                 }
             };
         
-            Plotly.newPlot('genderChart', genderData, layout);
+            Plotly.newPlot('genderChart2', genderData, layout);
         })
         .catch (error => console.error('Error fetching gender data:', error));
 });
-
 //------------------------
 //获取单细胞和空转的umap
 //------------------------
@@ -439,7 +501,7 @@ const gotoAnalyzePage = () => {
     width: 500px;
     height: 500px;
 }
-.execute-button {
+.goto-button {
   padding: 10px 20px;
   margin-top: 10px;
   background-color: rgb(093, 116, 162); 
