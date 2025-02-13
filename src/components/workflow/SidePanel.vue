@@ -35,7 +35,7 @@ const panels = ref([
   { title: '示例', component: markRaw(PanelB), isVisible: false },
 ]);
 
-const isExpanded = ref(true);
+const isExpanded = ref(false);
 
 const toggleSidebar = () => {
   isExpanded.value = !isExpanded.value;
@@ -54,12 +54,11 @@ const switchPanel = (index) => {
   width: 300px; /* 初始宽度 */
   position: fixed;
   left: 0;
-  top: 0;
+  top: 60px;
   bottom: 0;
   background-color: #f5f5f5; /* 背景颜色 */
   transition: width 0.3s; /* 平滑过渡效果 */
   overflow: hidden; /* 隐藏溢出的内容 */
-  z-index: 1000; /* 确保在最上层 */
 }
 
 .expanded {
@@ -120,7 +119,7 @@ const switchPanel = (index) => {
 
 /* 面板切换按钮激活效果 */
 .panel-buttons button.active {
-  background-color: rgb(164,105,189); /* 激活时的背景色 */
+  background-color: rgb(093, 116, 162); /* 激活时的背景色 */
   color: white;
 }
 

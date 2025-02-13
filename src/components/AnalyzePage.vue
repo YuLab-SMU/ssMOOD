@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <header>
       <nav>
         <div class="logo">
@@ -416,8 +416,11 @@ const updateNodeData = (nodeId, newData) => {
 @import '@vue-flow/controls/dist/style.css';
 @import '@vue-flow/minimap/dist/style.css';
 
+
+.main{
+    overflow: hidden;
+}
 .page-section {
-    padding: 20px;
     min-height: 100vh;
     overflow: hidden;
 }
