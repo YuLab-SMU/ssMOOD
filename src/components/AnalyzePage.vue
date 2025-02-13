@@ -31,7 +31,7 @@
             <router-link to="/about">{{ $t('about') }}</router-link>
           </li>
         </ul>
-        <LanguageSwitcher @languageChanged="onLanguageChanged" />
+        <LanguageSwitcher @languageChanged="onLanguageChanged" ></LanguageSwitcher>
       </nav>
     </header>
 
@@ -71,20 +71,21 @@
                     :id="props.id"
                     :data="props.data"
                     :newWebR="newWebR"
-                    />
+                    >
+                </DatasetSelectNode>
             </template>
         
             <template #node-delay-node="props">
-              <delayNode :id="props.id" :data="props.data"/>
+              <delayNode :id="props.id" :data="props.data"></delayNode>
             </template>
             <template #node-tips-node="props">
-              <tipsNode :id="props.id" :data="props.data"/>
+              <tipsNode :id="props.id" :data="props.data"></tipsNode>
             </template>
             <template #node-start-node="props">
-              <StartNode :id="props.id" :data="props.data"/>
+              <StartNode :id="props.id" :data="props.data"></StartNode>
             </template>
             <template #node-webr-node="props">
-                <webRPlotNode :id="props.id" :data="props.data" :newWebR="newWebR"/>
+                <webRPlotNode :id="props.id" :data="props.data" :newWebR="newWebR"></webRPlotNode>
              </template>
           
             <Panel class="node-panel" :position="PanelPosition.TopRight">
@@ -93,8 +94,8 @@
                 <input type="file" accept=".json" @change="onRestore" ref="fileInput" style="display: none;" />
                 <button title="restore graph" @click="triggerFileInput" class="Panel-button" >{{ $t('ap7') }}</button>
             </Panel>
-            <MiniMap />
-            <Controls />
+           <!--<MiniMap />-->
+            <Controls></Controls>
             
             
             <DropzoneBackground
@@ -120,7 +121,7 @@ import { ref, onMounted,inject,onUnmounted} from 'vue';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import { VueFlow, Panel, useVueFlow ,PanelPosition} from '@vue-flow/core';
-import { MiniMap } from '@vue-flow/minimap';
+//import { MiniMap } from '@vue-flow/minimap';
 import { Controls } from '@vue-flow/controls'
 import { useI18n } from 'vue-i18n';
 import { v4 as uuidv4 } from 'uuid';
