@@ -2,8 +2,6 @@ import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid';
 
-
-
 /**
  * In a real world scenario you'd want to avoid creating refs in a global scope like this as they might not be cleaned up properly.
  * @type {{draggedType: Ref<string|null>, isDragOver: Ref<boolean>, isDragging: Ref<boolean>}}
@@ -78,10 +76,11 @@ export default function useDragAndDrop() {
     })
 
     const nodeId = uuidv4();
+    const nodetype = draggedType.value;
 
     const newNode = {
       id: nodeId,
-      type: draggedType.value,
+      type: nodetype,
       position,
       data: { label: nodeId },
     }
@@ -97,8 +96,8 @@ export default function useDragAndDrop() {
 
       off()
     })
-
     addNodes(newNode);
+    
   }
 
   return {

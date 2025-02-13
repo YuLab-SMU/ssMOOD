@@ -87,7 +87,7 @@
                 <webRPlotNode :id="props.id" :data="props.data" :newWebR="newWebR"/>
              </template>
           
-            <Panel class="node-panel">
+            <Panel class="node-panel" :position="PanelPosition.TopRight">
                 <button @click="executeWorkflow" class="Panel-button" >{{ $t('ap5') }}</button>
                 <button title="save graph" @click="onSave" class="Panel-button" >{{ $t('ap6') }}</button>
                 <input type="file" accept=".json" @change="onRestore" ref="fileInput" style="display: none;" />
@@ -104,29 +104,22 @@
             }"
           >
             <p v-if="isDragOver">Drop here</p>
-          </DropzoneBackground>
+            </DropzoneBackground>
+            
           </VueFlow>
-        <aside>
-            <div class="nodes">
-            <div class="vue-flow__node_start-node" :draggable="true" @dragstart="onDragStart($event, 'start-node')">StartNode</div>
-            <div class="vue-flow__node_dataset-select" :draggable="true" @dragstart="onDragStart($event, 'dataset-select')">getUmapDataFromSC</div>
-            <div class="vue-flow__node_webr-node" :draggable="true" @dragstart="onDragStart($event, 'webr-node')">WebR Code</div>
-            <div class="vue-flow__node_delay-node" :draggable="true" @dragstart="onDragStart($event, 'delay-node')">Delay5s</div>
-            <div class="vue-flow__node_tips-node" :draggable="true" @dragstart="onDragStart($event, 'tips-node')">TipsNode</div>
-            </div>
-        </aside>
+          <SidePanel></SidePanel>
         </div>
       </section>
     </main>
-    <back-to-top />
+    <back-to-top></back-to-top>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted,inject,watch,onUnmounted} from 'vue';
+import { ref, onMounted,inject,onUnmounted} from 'vue';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
-import { VueFlow, Panel, useVueFlow } from '@vue-flow/core';
+import { VueFlow, Panel, useVueFlow ,PanelPosition} from '@vue-flow/core';
 import { MiniMap } from '@vue-flow/minimap';
 import { Controls } from '@vue-flow/controls'
 import { useI18n } from 'vue-i18n';
@@ -137,14 +130,15 @@ import DatasetSelectNode from './node/DatasetSelectNode.vue';
 import webRPlotNode from './node/webRPlotNode.vue'; 
 import delayNode from './node/delayNode.vue'; 
 import tipsNode from './node/tipsNode.vue'; 
-import DropzoneBackground from './workflow/DropzoneBackground.vue'
-//import useDragAndDrop from './workflow/useDnD'
+import DropzoneBackground from './workflow/DropzoneBackground.vue';
+import SidePanel from './workflow/SidePanel.vue'
+import useDragAndDrop from './workflow/useDnD'
 
 const isLoading = ref(true);
 
 
 const { updateEdge, addEdges ,getConnectedEdges } = useVueFlow();
-const { screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow()
+const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
 
 // 创建 WebR 实例
 const newWebR = new WebR();
@@ -322,100 +316,6 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleSaveKeyPress);
 });
 
-//----------
-//创建节点
-//----------
-const state = {
-  /**
-   * The type of the node being dragged.
-   */
-  draggedType: ref(null),
-  isDragOver: ref(false),
-  isDragging: ref(false),
-}
-const { draggedType, isDragOver, isDragging } = state
-
-
-  
-  watch(isDragging, (dragging) => {
-    document.body.style.userSelect = dragging ? 'none' : ''
-  })
-
-  function onDragStart(event, type) {
-    if (event.dataTransfer) {
-      event.dataTransfer.setData('application/vueflow', type)
-      event.dataTransfer.effectAllowed = 'move'
-    }
-
-    draggedType.value = type
-    isDragging.value = true
-
-    document.addEventListener('drop', onDragEnd)
-  }
-
-  /**
-   * Handles the drag over event.
-   *
-   * @param {DragEvent} event
-   */
-  function onDragOver(event) {
-    event.preventDefault()
-
-    if (draggedType.value) {
-      isDragOver.value = true
-
-      if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = 'move'
-      }
-    }
-  }
-
-  function onDragLeave() {
-    isDragOver.value = false
-  }
-
-  function onDragEnd() {
-    isDragging.value = false
-    isDragOver.value = false
-    draggedType.value = null
-    document.removeEventListener('drop', onDragEnd)
-  }
-
-  /**
-   * Handles the drop event.
-   *
-   * @param {DragEvent} event
-   */
-  function onDrop(event) {
-    const position = screenToFlowCoordinate({
-      x: event.clientX,
-      y: event.clientY,
-    })
-
-    const nodeId = uuidv4();
-
-    const newNode = {
-      id: nodeId,
-      type: draggedType.value,
-      position,
-      data: { label: nodeId },
-    }
-    /**
-     * Align node position after drop, so it's centered to the mouse
-     *
-     * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-     */
-    const { off } = onNodesInitialized(() => {
-      updateNode(nodeId, (node) => ({
-        position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
-      }))
-
-      off()
-    })
-  nodes.value.push(newNode);
-    //addNodes(newNode);
-  }
-
 
 //----------
 //执行工作流
@@ -522,7 +422,7 @@ const updateNodeData = (nodeId, newData) => {
 }
 .my-flow {
   width: 100%;
-  height: 500px; /* 根据需要调整高度 */
+  height: calc(100vh - 120px); 
   background-color: #f0f0f0;
 }
 .node-panel {
@@ -655,22 +555,6 @@ aside .nodes>* {
 
 aside .nodes>*:hover {
   transform: translateY(-5px); /* 鼠标悬停时上移 */
-}
-.vue-flow__node_tips-node{
-    color: #42b983; 
-}
-
-.vue-flow__node_delay-node{
-    color: #42b983; 
-}
-.vue-flow__node_webr-node{
-    color: #42b983; 
-}
-.vue-flow__node_dataset-select{
-    color: #42b983; 
-}
-.vue-flow__node_start-node{
-    color: #42b983; 
 }
 .save-success {
   position: fixed;
