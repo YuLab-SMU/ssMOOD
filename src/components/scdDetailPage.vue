@@ -144,7 +144,9 @@
           ref="scroller"
           :items="filteredGenes"
           :item-size="6"
-          :buffer="1000"
+          :buffer="4000"
+          :page-mode="true"
+          :key="resetKey"
         >
           <template v-slot="{ item }">
             <div
@@ -553,6 +555,7 @@ onMounted(async() => {
 
 // 侦听器：监听 searchQuery 的变化
 //import { nextTick } from 'vue';
+const resetKey = ref(0)
 const filteredGenes = computed(() => {
   if (!searchQuery.value) {
     return genes.value;
@@ -560,7 +563,9 @@ const filteredGenes = computed(() => {
   // 将搜索查询转换为小写并进行过滤
   return genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
-
+watch([filteredGenes, searchQuery], () => {
+  resetKey.value++ // 触发虚拟滚动组件重新渲染
+}, { flush: 'post' }) // 在DOM更新后执行
 
 // 选择项时触发的方法
 const selectItem = (item) => {
