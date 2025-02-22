@@ -635,11 +635,17 @@ const heatmapData = Array.from({ length: 11 }, () =>
 // 填充热图数据数组
 mergedArray.forEach(item => {
   const categoryIndex = categories.indexOf(item.c);
-  if (categoryIndex !== -1) {  // 确保分类存在
-    // 将表达量映射到 0-10 的索引，确保大于 5 的值都记为 5
-    const expressionIndex = Math.min(Math.floor(Math.min(item.nc, 5) / 0.5), 10);
-    heatmapData[expressionIndex][categoryIndex]++;
-  }
+    if (categoryIndex !== -1 && categoryIndex < numCategories) {
+        // 限制 nc 在 0-5 范围内
+        const cappedNC = Math.min(Math.max(item.nc, 0), 5);
+        const expressionIndex = Math.floor(cappedNC / 0.5);
+        
+        if (expressionIndex >= 0 && expressionIndex < 11) {
+          heatmapData[expressionIndex][categoryIndex]++;
+        } else {
+          console.warn(`Invalid expressionIndex: ${expressionIndex}`, item);
+        }
+      }
 });
 
     //---------------------------------------
