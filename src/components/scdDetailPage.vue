@@ -144,7 +144,7 @@
           ref="scroller"
           :items="filteredGenes"
           :item-size="6"
-          :buffer="4000"
+          :buffer="5000"
           :page-mode="true"
           :key="resetKey"
         >
@@ -495,7 +495,10 @@ onMounted(async() => {
         const layout = {
           title: 'Num of Cluster',
           xaxis: {
-            title: ''
+            title: '',
+            tickangle: -90, // 将标签旋转45度
+            tickmode: 'linear', // 确保标签均匀分布
+            tickfont: { size: 9 } // 调整字体大小
           },
           yaxis: {
             title: '',
@@ -528,6 +531,7 @@ const genes = ref([]);
 //const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
+const markerSize2 = ref(4); // 默认点大小
 //加载基因
 onMounted(async() => {
   const params = new URLSearchParams({
@@ -716,7 +720,6 @@ mergedArray.forEach(item => {
 
 };
 
-const markerSize2 = ref(4); // 默认点大小
 // 更新 UMAP 图2 的点大小
 const updateUmap2 = () => {
   Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);

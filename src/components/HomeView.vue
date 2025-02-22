@@ -214,7 +214,10 @@ onMounted(async() => {
         const layout = {
           title: 'Num of datasets',
           xaxis: {
-            title: ''
+            title: '',
+            tickangle: -90, // 将标签旋转45度
+            tickmode: 'linear', // 确保标签均匀分布
+            tickfont: { size: 9 } // 调整字体大小
           },
           yaxis: {
             title: '',
