@@ -1,6 +1,6 @@
 /* 全局生效的文本选择样式 */
 ::selection {
-  background: rgba(093, 116, 162, 0.8); /* 粉红背景 */
+  background: rgba(093, 116, 162, 0.8); 
   color: white;         /* 深灰文字 */
 }
 ::-moz-selection { /* Firefox兼容 */
