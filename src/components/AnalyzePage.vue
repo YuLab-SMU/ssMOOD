@@ -52,8 +52,7 @@
     <div class="panel left-panel">
       <div class="preview-area">
         <div class="image-preview">
-          <img v-if="previewImage" :src="previewImage" alt="生成预览" />
-          <div v-else class="image-placeholder">图片预览区域</div>
+                <div ref="myCanvas" id="myCanvas" style="width: 100%; height: 500px;"></div>
         </div>
         <vue-web-terminal
           class="terminal"
@@ -105,7 +104,11 @@
         <span class="icon">💾</span>
         <span class="text">保存</span>
       </button>
-
+      
+      <button class="toolbar-btn" @click="handleExe">
+        <span class="icon">▶</span>
+        <span class="text">执行</span>
+      </button>
       <div class="divider"></div>
 
       <button class="toolbar-btn" @click="toggleFullscreen">
@@ -156,6 +159,7 @@ import { VueWebTerminal } from 'vue-web-terminal'
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'
+import config from '@/config';
 
 // 终端相关
 const terminalLogs = ref([])
@@ -163,6 +167,16 @@ const handleCommand = (cmd) => {
   terminalLogs.value.push({ type: 'log', content: `执行命令: ${cmd}` })
 }
 
+
+
+const handleExe = () => {
+try {
+    // 创建一个新的 Function 作用域并执行生成的代码
+    new Function(codeEditor.getValue())();
+  } catch (error) {
+    console.error("执行代码时出错:", error);
+  }
+}
 // 代码编辑器相关
 const editor = ref(null)
 let codeEditor = null
@@ -200,14 +214,16 @@ const sendMessage = async () => {
 
   try {
     const response = await fetchOpenAI(prompt) // 替换为你的API调用
+    console.log(response)
     const generatedCode = response.code
     
     chatMessages.value.push({
       role: 'assistant',
       content: `生成的代码：\n\`\`\`javascript\n${generatedCode}\n\`\`\``
     })
-    
-    codeEditor.setValue(generatedCode)
+    const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
+    codeEditor.setValue(cleanedCode)
+    handleExe();
   } catch (error) {
     terminalLogs.value.push({ type: 'error', content: `API错误: ${error.message}` })
   } finally {
@@ -215,16 +231,69 @@ const sendMessage = async () => {
   }
 }
 
-// 模拟API调用
-const fetchOpenAI = async (prompt) => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        code: `// 根据需求生成的代码\nfunction ${prompt.toLowerCase().replace(/ /g, '_')}() {\n  // 实现代码\n}`
-      })
-    }, 1000)
-  })
-}
+
+
+//-------------------------------------
+//openai接口
+//-------------------------------------
+import axios from 'axios';
+/*
+// 获取聊天记录，如果没有则初始化为空数组
+const getChatHistory = () => {
+  const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+  return chatHistory;
+};
+
+
+const saveChatHistory = (chatHistory) => {
+  localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+};
+*/
+
+const systemMessage = `你是一个专业的JavaScript程序员，请始终以代码块形式返回代码，每次用户提出要求后都需要给出完整的代码，不要只给出更改的部分，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，html元素已有`;
+
+// 使用 Vue 的 ref 来存储聊天记录
+const chatHistory = ref([{ role: 'system', content: systemMessage }]);
+
+// 发送请求到 OpenAI，并获取代码
+const fetchOpenAI = async (userMessage) => {
+  // 将用户消息添加到聊天记录
+  chatHistory.value.push({ role: 'user', content: userMessage });
+
+  try {
+    // 发送请求到后端 (PHP)
+    const response = await axios.post(config.apiUrl + 'openai_proxy.php', {
+      messages: chatHistory.value // 发送聊天记录
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // 处理并返回 OpenAI 响应
+    const { choices } = response.data;
+    const code = choices && choices[0] ? choices[0].message.content : '';
+
+    // 将 OpenAI 的响应（助手的回复）加入聊天记录
+    chatHistory.value.push({ role: 'assistant', content: code });
+
+    // 保证聊天记录最多保存10条
+    if (chatHistory.value.length > 10) {
+      chatHistory.value.shift(); // 删除最早的记录
+    }
+
+    // 返回生成的代码和完整的 OpenAI 响应
+    return {
+      code, // 返回生成的代码
+      rawResponse: response.data, // 返回完整的 OpenAI API 响应
+      chatHistory // 返回当前聊天记录
+    };
+
+  } catch (error) {
+    console.error('API调用失败:', error);
+    throw new Error(`生成失败: ${error.message}`);
+  }
+};
 
 
 

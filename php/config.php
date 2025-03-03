@@ -9,3 +9,14 @@ $servername = "localhost";
 $username = "scast";
 $password = "20030609";
 $dbname = "ssmood";
+
+
+// Kimi
+//$openaiApiKey = 'sk-iSRrrIFDThVBPSj8HiwjZ5zaxYOyBL3YI1ofEb5OoPT6lCqI'; 
+//$url = 'https://api.moonshot.cn/v1/chat/completions';
+//$model = 'moonshot-v1-8k';
+
+//DeepSeek-Chat
+$openaiApiKey = 'sk-07015df3288d4a88a09b4b8400b297cf'; 
+$url = 'https://api.deepseek.com/v1/chat/completions';
+$model = 'deepseek-chat';
