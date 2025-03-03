@@ -64,7 +64,7 @@
 
     <!-- 中间代码编辑区 -->
     <div class="panel editor-panel">
-      <div ref="editor" class="code-editor"></div>
+      <div ref="editor" class="code-editor" @mouseup="handleSelection"></div>
     </div>
 
     <!-- 右侧聊天区 -->
@@ -120,6 +120,34 @@
   
   
   
+  <!-- iOS风格模态窗 -->
+      <div 
+      v-if="showModal"
+      ref="modalRef"
+      class="context-modal"
+      :style="modalPosition"
+    >
+      <div class="modal-header">
+        <h3>AI 辅助编程</h3>
+        <button class="close-btn" @click="closeModal">×</button>
+      </div>
+      
+      <div class="modal-content">
+        <div class="selected-code">
+          <pre>{{ selectedCode }}</pre>
+        </div>
+        
+        <div class="input-group">
+          <textarea
+            v-model="userInput2"
+            placeholder="请输入你的问题或指令"
+            class="ios-input"
+          ></textarea>
+          <button class="ios-button" @click="handleSubmit">发送</button>
+        </div>
+      </div>
+  </div>
+  
       </section>
     </main>
   </div>
@@ -160,6 +188,7 @@ import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'
 import config from '@/config';
+import axios from 'axios';
 
 // 终端相关
 const terminalLogs = ref([])
@@ -181,6 +210,19 @@ try {
 const editor = ref(null)
 let codeEditor = null
 const codeContent = ref('// 生成的代码将出现在这里\n')
+const modalPosition = ref({
+  top: '0px',
+  left: '0px'
+})
+let lastSelection = null
+const modalRef = ref(null)
+const showModal = ref(false)
+const selectedCode = ref('')
+const userInput2 = ref('')
+// 更新模态窗位置
+
+let selectionTimeout = null; // 用于存储定时器
+const selectionDelay = 300; // 延迟300ms，判断是否完成选择
 
 onMounted(() => {
   codeEditor = ace.edit(editor.value, {
@@ -193,9 +235,154 @@ onMounted(() => {
   codeEditor.session.on('change', () => {
     codeContent.value = codeEditor.getValue()
   })
+  
+codeEditor.selection.on('changeSelection', () => {
+  const selection = codeEditor.getSelection();
+  const range = selection.getRange();
+  
+  // 如果没有选择内容，直接隐藏模态窗
+  if (selection.$isEmpty) {
+    showModal.value = false;
+    return;
+  }
+
+  // 如果之前有定时器，先清除掉
+  if (selectionTimeout) {
+    clearTimeout(selectionTimeout);
+  }
+
+  // 延迟执行，等用户选择结束后再执行
+  selectionTimeout = setTimeout(() => {
+    const selectionText = codeEditor.getSelectedText();
+    if (selectionText.length > 0) {
+      selectedCode.value = selectionText; // 获取选中的文本
+      showModal.value = true; // 显示模态窗
+      lastSelection = range;
+      updateModalPosition(); // 更新模态窗位置
+    }
+  }, selectionDelay);
+});
+  
 })
 
-// 聊天相关
+
+const updateModalPosition = () => {
+  if (!lastSelection || !codeEditor) return;
+
+  // 获取选中结束位置的屏幕坐标
+  const endPos = lastSelection.end;
+  const screenPos = codeEditor.renderer.textToScreenCoordinates(endPos.row, endPos.column);
+
+  // 转换为容器相对位置
+  const containerRect = editor.value.getBoundingClientRect();
+  const modalWidth = 280; // 模态窗固定宽度
+
+  // 计算理想位置：将模态窗放在选中区域的右边
+  let left = screenPos.pageX - containerRect.left; // 距离选中文本右侧15px
+  let top = screenPos.pageY - containerRect.top;
+
+  // 边界检测：确保模态窗不会超出编辑器的右边界
+  const maxLeft = containerRect.width - modalWidth - 20;
+  if (left > maxLeft) left = maxLeft;
+
+  const maxTop = containerRect.height - 200; // 假设模态窗高度200px
+  if (top > maxTop) top = maxTop;
+
+  // 应用位置
+  modalPosition.value = {
+    top: `${top}px`,
+    left: `${left}px`
+  };
+
+  // 延迟显示确保位置计算完成
+  setTimeout(() => showModal.value = true, 50);
+};
+
+
+// 窗口变化时重新定位
+window.addEventListener('resize', updateModalPosition)
+
+//-------------------------------------
+//局部代码编辑
+//-------------------------------------
+
+const handleSubmit = async () => {
+  if (!userInput2.value.trim()) return;
+
+  // 处理提交逻辑
+  console.log('选中的代码:', selectedCode.value);
+  console.log('用户输入:', userInput2.value);
+  
+  // 获取AI生成的代码
+  const response = await partCodefetchOpenAI('需要修改的代码：' + selectedCode.value + "，用户要求：" + userInput2.value);
+  const generatedCode = response.code;
+  const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
+
+  // 获取选中的范围
+  const selection = codeEditor.getSelection();
+  const range = selection.getRange();  // 获取当前选中的范围
+
+  // 使用选中的范围进行替换
+  if (!selection.isEmpty()) {
+    const session = codeEditor.session; // 定义 session
+    session.replace(range, cleanedCode); // 替换选中的内容
+  }
+
+  // 执行其他逻辑（如果有）
+  handleExe();
+  
+  closeModal();  // 关闭模态窗
+  userInput2.value = '';  // 清空用户输入
+};
+
+
+const closeModal = () => {
+  showModal.value = false
+  codeEditor.clearSelection() // 清除编辑器选中状态
+}
+
+
+
+// 发送请求到 OpenAI，并获取代码
+const partCodefetchOpenAI = async (userMessage) => {
+    
+    
+    const systemMessage = `你是一个专业的JavaScript程序员，请始终以代码块形式返回代码，用户给出一段代码，按要求修改，仅返回修改后的部分，按原代码格式返回，如果原代码有空格等符号也要返回，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，不返回html元素`;
+    
+    // 使用 Vue 的 ref 来存储聊天记录
+    const chatHistory = ref([{ role: 'system', content: systemMessage }]);
+  // 将用户消息添加到聊天记录
+  chatHistory.value.push({ role: 'user', content: userMessage });
+
+  try {
+    // 发送请求到后端 (PHP)
+    const response = await axios.post(config.apiUrl + 'openai_proxy.php', {
+      messages: chatHistory.value // 发送聊天记录
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // 处理并返回 OpenAI 响应
+    const { choices } = response.data;
+    const code = choices && choices[0] ? choices[0].message.content : '';
+    // 返回生成的代码和完整的 OpenAI 响应
+    return {
+      code, // 返回生成的代码
+      rawResponse: response.data, // 返回完整的 OpenAI API 响应
+    };
+
+  } catch (error) {
+    console.error('API调用失败:', error);
+    throw new Error(`生成失败: ${error.message}`);
+  }
+};
+
+//-------------------------------------
+//聊天相关
+//-------------------------------------
+
 const chatMessages = ref([])
 const userInput = ref('')
 const isLoading2 = ref(false)
@@ -208,7 +395,7 @@ const sendMessage = async () => {
     content: userInput.value 
   })
   
-  const prompt = userInput.value
+  const prompt = codeEditor.getValue()+"用户需求："+userInput.value
   userInput.value = ''
   isLoading2.value = true
 
@@ -236,21 +423,9 @@ const sendMessage = async () => {
 //-------------------------------------
 //openai接口
 //-------------------------------------
-import axios from 'axios';
-/*
-// 获取聊天记录，如果没有则初始化为空数组
-const getChatHistory = () => {
-  const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
-  return chatHistory;
-};
 
 
-const saveChatHistory = (chatHistory) => {
-  localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-};
-*/
-
-const systemMessage = `你是一个专业的JavaScript程序员，请始终以代码块形式返回代码，每次用户提出要求后都需要给出完整的代码，不要只给出更改的部分，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，html元素已有`;
+const systemMessage = `你是一个专业的JavaScript绘图程序员，请始终以代码块形式返回代码，每次用户提出要求后都需要给出完整的代码，不要只给出更改的部分，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，不返回html元素`;
 
 // 使用 Vue 的 ref 来存储聊天记录
 const chatHistory = ref([{ role: 'system', content: systemMessage }]);
@@ -403,6 +578,8 @@ onUnmounted(() => {
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
 })
+
+
 
 
 
@@ -595,4 +772,140 @@ onUnmounted(() => {
   }
 }
 
+
+
+
+
+/* 模态窗遮罩层 */
+.context-modal {
+  position: absolute;
+  width: 320px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  transform-origin: left top;
+  animation: slideIn 0.25s ease-out;
+}
+
+/* 模态窗容器 */
+.modal-container {
+  max-width: 320px;
+  backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+/* 模态窗头部 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+/* 内容区域 */
+.modal-content {
+  padding: 16px;
+}
+
+.selected-code {
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  max-height: 150px;
+  overflow: auto;
+  color:black;
+}
+
+.selected-code pre {
+  margin: 0;
+  font-family: 'Menlo', monospace;
+  font-size: 13px;
+  color: #333;
+}
+
+/* 输入区域 */
+.input-group {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.ios-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  min-height: 80px;
+  font-family: -apple-system, sans-serif;
+  font-size: 16px;
+  resize: none;
+}
+
+.ios-input:focus {
+  outline: none;
+  border-color: #007AFF;
+}
+
+.ios-button {
+  background: #007AFF;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ios-button:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* 动画效果 */
+.modal-container {
+  animation: modalEnter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes modalEnter {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 兼容性处理 */
+@supports not (backdrop-filter: blur(20px)) {
+  .modal-container {
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
 </style>
