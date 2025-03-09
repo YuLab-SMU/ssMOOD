@@ -14,27 +14,26 @@ body, h1, p {
     padding: 0;
 }
 
+/* Basic styling */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* 确保页面至少占满整个视口高度 */
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    overflow: auto; 
 }
 
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: rgb(93, 116, 162); /* 背景色 */
-  color: white;
-  z-index: 1000;
-  height: 60px; /* 设置导航栏的高度 */
-  display: flex;
-  align-items: center; /* 垂直居中对齐 */
-  padding: 0 20px; /* 右侧和左侧的内边距 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgb(093, 116, 162); /* 背景色 */
+    color: white;
+    z-index: 1000;
+    height: 60px; /* 设置导航栏的高度 */
+    /*overflow: hidden;  隐藏超出区域 */
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    padding: 0 20px; /* 右侧和左侧的内边距 */
 }
 
 /* 假设你的导航栏在一个特定的容器内，比如一个 ID 为 `navbar` 的 div */
@@ -90,19 +89,18 @@ header {
 }
 
 
-
+main {
+    padding-top: -60px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+}
 
 /* 也可以直接为<li>元素添加悬停效果 */
  nav > ul > li:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-main {
-  margin-top: 60px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
-}
+
 
 .page-section {
-  padding: 20px;
   flex: 1; /* 占据剩余的空间 */
 }
 
@@ -148,7 +146,7 @@ main {
 }
  /* ----------------------------------------------------------- */
  /* 竖屏响应*/
-@media (orientation: portrait) {
+ @media (orientation: portrait) or (max-width: 800px) {
     main {
         padding-top: 120px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
     }

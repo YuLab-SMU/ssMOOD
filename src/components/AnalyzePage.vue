@@ -46,77 +46,75 @@
     <div class="overlay-text">{{ $t('ap3') }}</div>
 
   </div>
-  
  <div class="container">
     <!-- 左侧展示区 -->
     <div class="panel left-panel">
       <div class="preview-area">
         <div class="image-preview">
-                <div ref="myCanvas" id="myCanvas" style="width: 100%; height: 500px;"></div>
+                <div ref="myCanvas" id="myCanvas" style="width: 100%; height: 100%;"></div>
         </div>
-        <vue-web-terminal
-          class="terminal"
-          :logs="terminalLogs"
-          @executeCommand="handleCommand"
-        />
+        <div class="ssMOODShell">
+        <ssMOODShell></ssMOODShell>
+        </div>
       </div>
+      
     </div>
 
     <!-- 中间代码编辑区 -->
     <div class="panel editor-panel">
       <div ref="editor" class="code-editor" @mouseup="handleSelection"></div>
+            <div 
+            class="floating-toolbar"
+            :style="toolbarStyle"
+            @mousedown="startDrag"
+            ref="toolbarRef"
+          >
+            <div class="toolbar-content">
+              <button class="toolbar-btn" @click="handleNew">
+                <span class="icon">🆕</span>
+                <span class="text">新建</span>
+              </button>
+              
+              <button class="toolbar-btn" @click="handleSave">
+                <span class="icon">💾</span>
+                <span class="text">保存</span>
+              </button>
+              <div class="divider"></div>
+              <button class="toolbar-btn" @click="handleExe">
+                <span class="icon">▶</span>
+                <span class="text">执行</span>
+              </button>
+            </div>
+          </div>
+
+        
+
     </div>
 
     <!-- 右侧聊天区 -->
     <div class="panel chat-panel">
       <div class="chat-container">
         <div class="chat-messages">
+            <h3 class="chat-title">Ai对话框</h3>
           <div v-for="(msg, index) in chatMessages" :key="index" 
                class="message" :class="msg.role">
             <div class="message-content">{{ msg.content }}</div>
           </div>
         </div>
+        <div class="chat-input-container">
         <div class="chat-input">
           <input v-model="userInput" 
                  @keyup.enter="sendMessage"
                  placeholder="输入你的需求..." />
           <button @click="sendMessage">发送</button>
         </div>
+        </div>
       </div>
     </div>
   </div>
   
   
-  
-     <div 
-    class="floating-toolbar"
-    :style="toolbarStyle"
-    @mousedown="startDrag"
-    ref="toolbarRef"
-  >
-    <div class="toolbar-content">
-      <button class="toolbar-btn" @click="handleNew">
-        <span class="icon">🆕</span>
-        <span class="text">新建</span>
-      </button>
-      
-      <button class="toolbar-btn" @click="handleSave">
-        <span class="icon">💾</span>
-        <span class="text">保存</span>
-      </button>
-      
-      <button class="toolbar-btn" @click="handleExe">
-        <span class="icon">▶</span>
-        <span class="text">执行</span>
-      </button>
-      <div class="divider"></div>
 
-      <button class="toolbar-btn" @click="toggleFullscreen">
-        <span class="icon">{{ isFullscreen ? '📱' : '🖥️' }}</span>
-        <span class="text">{{ isFullscreen ? '退出全屏' : '全屏' }}</span>
-      </button>
-    </div>
-  </div>
   
   
   
@@ -154,8 +152,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-
+import { ref,onMounted } from 'vue'
+//import {  computed, onUnmounted } from 'vue'
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
@@ -183,26 +181,32 @@ const isLoading = ref(true);
 isLoading.value = false;
 
 
-import { VueWebTerminal } from 'vue-web-terminal'
+import ssMOODShell from './ssMOODShell.vue'
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'
 import config from '@/config';
 import axios from 'axios';
+import { TerminalApi } from 'vue-web-terminal';
 
 // 终端相关
 const terminalLogs = ref([])
-const handleCommand = (cmd) => {
-  terminalLogs.value.push({ type: 'log', content: `执行命令: ${cmd}` })
-}
-
-
 
 const handleExe = () => {
 try {
     // 创建一个新的 Function 作用域并执行生成的代码
     new Function(codeEditor.getValue())();
+    TerminalApi.pushMessage('ssMOOD', {
+        class: 'system',
+        tag: 'success',
+        content: '执行成功'
+    })
   } catch (error) {
+    TerminalApi.pushMessage('ssMOOD', {
+        class: 'system',
+        tag: 'fail',
+        content: '执行代码时出错：'+error
+    })
     console.error("执行代码时出错:", error);
   }
 }
@@ -227,7 +231,7 @@ const selectionDelay = 300; // 延迟300ms，判断是否完成选择
 onMounted(() => {
   codeEditor = ace.edit(editor.value, {
     mode: 'ace/mode/javascript',
-    theme: 'ace/theme/monokai',
+    theme: 'ace/theme/clouds',
     fontSize: 14,
     value: codeContent.value
   })
@@ -409,7 +413,8 @@ const sendMessage = async () => {
       content: `生成的代码：\n\`\`\`javascript\n${generatedCode}\n\`\`\``
     })
     const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
-    codeEditor.setValue(cleanedCode)
+    codeEditor.setValue(cleanedCode);
+    codeEditor.clearSelection();
     handleExe();
   } catch (error) {
     terminalLogs.value.push({ type: 'error', content: `API错误: ${error.message}` })
@@ -477,7 +482,7 @@ const fetchOpenAI = async (userMessage) => {
 //-------------------------------------
 //工具栏
 //-------------------------------------
-const isFullscreen = ref(false)
+//const isFullscreen = ref(false)
 
 const handleNew = () => {
   console.log('新建操作')
@@ -489,6 +494,7 @@ const handleSave = () => {
   // 触发保存逻辑
 }
 
+/*
 const toggleFullscreen = () => {
   isFullscreen.value = !isFullscreen.value
   if (!document.fullscreenElement) {
@@ -499,10 +505,11 @@ const toggleFullscreen = () => {
     }
   }
 }
-
+*/
 //-------------------------------------
 //工具栏拖动
 //-------------------------------------
+/*
 const toolbarRef = ref(null)
 const isDragging = ref(false)
 const dragStartX = ref(0)
@@ -580,25 +587,50 @@ onUnmounted(() => {
 })
 
 
-
+*/
 
 
 </script>
 
 <style scoped>
 @import 'css/MainStyles.css';
-
+.page-section {
+  padding: 0px;
+  flex: 1; /* 占据剩余的空间 */
+}
 .container {
   display: flex;
-  height: 85vh;
+  height: calc(100vh - 60px);
+  width: 100%;
   overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    #f5f7fa 0%,     /* 柔和的云朵白 */
+    #e3e9ff 25%,    /* 浅薰衣草灰 */
+    #d8e4ff 50%,    /* 极淡的婴儿蓝 */
+    #eceffd 75%,    /* 细腻的月光银 */
+    #f5f7fa 100%    /* 与起始颜色呼应形成无缝循环 */
+  );
+  background-size: 100% 100%; /* 更紧凑的背景尺寸提升细腻度 */
+  animation: gradient 5s ease infinite; /* 更缓和的动画节奏 */
 }
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 
 .panel {
   flex: 1;
   min-width: 0;
   padding: 10px;
-  border-right: 1px solid #ddd;
 }
 
 .left-panel {
@@ -610,12 +642,19 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  height:100%;
+  gap:20px;
 }
 
 .image-preview {
   flex: 2;
   border: 1px solid #eee;
   padding: 10px;
+  border-radius: 15px; /* 圆角边框 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
+  backdrop-filter: blur(10px); /* 毛玻璃效果 */
+  background: rgba(245, 245, 245, 0.4); /* 半透明背景 */
 }
 
 .terminal {
@@ -624,58 +663,178 @@ onUnmounted(() => {
   border: 1px solid #333;
 }
 
-.code-editor {
+.ssMOODShell{
+  height: 30%;
   width: 100%;
-  height: 100%;
+}
+
+
+.editor-panel{
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  flex-direction: column;
+  gap:10px;
+}
+/* 代码编辑器样式 */
+.code-editor {
+
+  width: 95%; /* 占满父容器的宽度 */
+  height: 85%; /* 占满父容器的高度 */
+  border-radius: 15px; /* 圆角边框 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
+  padding: 10px; /* 可选的内边距 */
+  font-family: monospace; /* 编辑器字体 */
+  font-size: 14px; /* 字体大小 */
+  white-space: pre-wrap; /* 保留换行符和空格 */
+  overflow: hidden; /* 如果内容超出高度，允许滚动 */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
+  padding: 10px;
 }
 
 .chat-container {
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap:10px;
+}
+
+.chat-title {
+  font-size: 1.5rem; /* 标题字体大小 */
+  font-weight: bold; /* 加粗字体 */
+  margin-bottom: 10px; /* 与下方内容的间距 */
+  text-align: center; /* 居中对齐 */
+  color: #333; /* 标题颜色 */
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  background: #f5f5f5;
+  background: rgba(245, 245, 245, 0.4); /* 半透明背景 */
+  backdrop-filter: blur(10px); /* 毛玻璃效果 */
+  border-radius: 16px; /* 圆角效果 */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  box-sizing: border-box;
+  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
+}
+/* 滚动条美化（iOS 风格） */
+.chat-messages::-webkit-scrollbar {
+  width: 8px; /* 滚动条宽度 */
 }
 
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent; /* 轨道背景透明 */
+  border-radius: 10px; /* 与容器的圆角边框一致 */
+  margin: 10px 0;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2); /* 滚动条颜色 */
+  border-radius: 10px; /* 滚动条圆角与容器一致 */
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* 滚动条悬停时的颜色 */
+}
 .message {
   margin: 10px 0;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 16px; /* 增大圆角以符合 iOS 风格 */
+  max-width: 60%; /* 限制消息宽度 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加轻微阴影 */
+  font-size: 14px; /* 使用较小的字体大小 */
+  line-height: 1.4; /* 调整行高 */
+  position: relative;
+  display: block;
+  width: fit-content;
 }
 
 .message.user {
-  background: #e3f2fd;
-  margin-left: 20%;
+  background: #e3f2fd; /* 用户消息背景色 */
+  margin-left: auto; /* 使用 flexbox 右对齐 */
+  margin-right: 20px; /* 右边距 */
+  color: #333; /* 文字颜色 */
+  text-align: left;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .message.assistant {
-  background: #fff;
-  margin-right: 20%;
+  background: #fff; /* 助手消息背景色 */
+  margin-left: 20px; /* 左边距 */
+  margin-right: auto; /* 使用 flexbox 左对齐 */
+  color: #666; /* 文字颜色 */
+  text-align: left;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
-.chat-input {
-  padding: 10px;
+/* ############################## */
+/* 用户输入 */
+/* ############################## */
+.chat-input-container {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+}
+.chat-input {
+  display: inline-flex;
+  width: fit-content; /* 确保宽度根据内容动态调整 */
+  padding: 10px;
+  background: rgba(245, 245, 245, 0.5); /* 半透明背景 */
+  backdrop-filter: blur(10px); /* 毛玻璃模糊效果 */
+  border-radius: 20px; /* 更圆润的边角 */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* 轻微的阴影 */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* 淡雅的边框 */
+  gap:5px;
+  
 }
 
 .chat-input input {
-  flex: 1;
-  padding: 8px;
+  padding: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* 淡雅的输入框边框 */
+  border-radius: 10px; /* 圆润的输入框边角 */
+  background-color: rgba(255, 255, 255, 0.2); /* 输入框背景 */
+  color: #333; /* 输入文字颜色 */
+  font-size: 14px; /* 字体大小 */
+  outline: none; /* 去掉焦点时的边框 */
+  transition: width 0.5s ease; /* 平滑过渡效果 */
+  width: 8vw; /* 初始宽度更小 */
+  max-width: 30vw; /* 限制最大宽度 */
 }
 
-.image-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  background: #f0f0f0;
-  color: #666;
+.chat-input input:focus {
+  width: 20vw; /* 聚焦时变宽 */
+  padding: 10px 20px; /* 可选：调整内边距 */
+}
+
+.chat-input input::placeholder {
+  color: #aaa; /* 输入框占位符颜色 */
+}
+
+.chat-input button {
+  padding: 10px 20px; /* 调整按钮大小 */
+  border: none;
+  background: linear-gradient(135deg, #e3f2fd, #d1e8ff);
+  color: black;
+  border-radius: 20px; /* 适中的圆角设计 */
+  cursor: pointer;
+  font-size: 14px; /* 字体大小 */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* 背景颜色和点击效果的过渡 */
+  font-weight: 500; /* 字体稍显粗体，更清晰 */
+  box-shadow: none; /* 移除阴影 */
+}
+
+.chat-input button:hover {
+  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* 悬停时渐变反转 */
+  box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3); /* 更显眼的阴影 */
+  transform: translateY(-1px); /* 悬停时的轻微上浮效果 */
+}
+
+.chat-input button:active {
+  transform: translateY(1px); /* 按钮点击时轻微下沉效果 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* 细致的阴影 */
+  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* 点击时保持反转渐变 */
 }
 
 
@@ -686,17 +845,16 @@ onUnmounted(() => {
 }
 
 .floating-toolbar {
-  position: fixed;
-  top: 0px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
   background: rgba(093, 116, 162, 0.3);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: 14px;
   padding: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  width: fit-content; /* 确保宽度根据内容动态调整 */
 }
 
 .toolbar-content {

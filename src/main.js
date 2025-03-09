@@ -7,6 +7,7 @@ import zhCn from './locales/zh-cn.json';
 import zhTw from './locales/zh-tw.json';
 import es from './locales/es.json';
 import mitt from 'mitt';
+import { createTerminal } from 'vue-web-terminal';
 
 // 创建国际化实例
 const i18n = createI18n({
@@ -24,7 +25,7 @@ const app = createApp(App);
 app.use(router);
 app.use(i18n);
 
-
+app.use(createTerminal());
 app.provide('eventBus', eventBus);
 // 挂载应用
 app.mount('#app');

@@ -11,7 +11,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
     <!-- 在 public/index.html 中引入 Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
+    <style>
+        html, body {
+            overflow-y: auto; /* 隐藏垂直滚动条 */
+            height: 100%; /* 确保页面高度占满整个视口 */
+            position: fixed; /* 固定页面，防止移动端滑动 */
+            width: 100%; /* 确保页面宽度占满整个视口 */
+            margin: 0; /* 移除默认的外边距 */
+            padding: 0; /* 移除默认的内边距 */
+        }
+    </style>
   </head>
   <body>
     <noscript>
