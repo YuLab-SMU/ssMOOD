@@ -23,11 +23,11 @@ if ($result->num_rows > 0) {
 }
 
 // 查询类别数量
-$sql = "SELECT COUNT(DISTINCT cluster_label) as category_count FROM cells";
+$sql = "SELECT COUNT(*) as count FROM datasets";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $results['clusterNum'] = $row['category_count'];
+    $results['clusterNum'] = $row['count'];
 } else {
     $results['clusterNum'] = 0;
 }

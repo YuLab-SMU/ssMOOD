@@ -181,7 +181,7 @@ const isLoading = ref(true);
 isLoading.value = false;
 
 
-import ssMOODShell from './ssMOODShell.vue'
+import ssMOODShell from './analyze/ssMOODShell.vue'
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'

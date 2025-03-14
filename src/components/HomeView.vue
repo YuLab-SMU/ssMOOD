@@ -50,40 +50,64 @@
         <main>
             <section class="page-section">
                 <div class="main-con">
+                <div class="Top-container" @scroll="handleScroll">
+                  <div v-if="isVisible" class="back-to-top" @click="scrollToTop">▲</div>
+                <div class="container container1">
                 <div class="test">
-                    <img src="@/assets/Test.png" alt="Test Image">
+                    <img src="@/assets/ssmood3.png" alt="Test Image">
                 </div>
                 <div class="image-text-container">
                     <div class="image-text-item">
                         <img src="@/assets/image1.png" alt="Image 1">
-                        <p>{{ $t('hv1') }}
-                            <br>{{ cellNum }}</p>
+                        
+                        <p>{{ $t('hv3') }}
+                        <br>{{ clusterNum }}</p>
                     </div>
-                    <div class="image-text-item">
-                        <img src="@/assets/image2.png" alt="Image 2">
-                        <p>{{ $t('hv2') }}
-                            <br>{{ geneNum }}</p>
-                    </div>
+
                     <div class="image-text-item">
                         <img src="@/assets/image3.png" alt="Image 3">
-                        <p>{{ $t('hv3') }}
-                            <br>{{ clusterNum }}</p>
+                            <p>{{ $t('hv1') }}
+                            <br>{{ cellNum }}</p>
                     </div>
                     <div class="image-text-item">
                         <img src="@/assets/image4.png" alt="Image 4">
                         <p>{{ $t('hv4') }}
                             <br>{{ spatialNum }}</p>
                     </div>
+                                        <div class="image-text-item">
+                        <img src="@/assets/image2.png" alt="Image 2">
+                        <p>{{ $t('hv2') }}
+                            <br>{{ geneNum }}</p>
+                    </div>
                 </div>
-                <div class="Top-container">
+            </div>
                 <div class="container">
                     <div class="text">
                          <h2>{{ $t('hv5') }}</h2>
                         <p>{{ $t('hv6') }}</p>
                     </div>
                     <div class="image">
+                        <div class="chart-switch">
+                              <div
+                                class="chart-item"
+                                :class="{ 'active': currentChart === 0 }"
+                                @click="switchChart(0)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>单细胞</span>
+                              </div>
+                              <div
+                                class="chart-item"
+                                :class="{ 'active': currentChart === 1 }"
+                                @click="switchChart(1)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>空转</span>
+                              </div>
+                        </div>
                         <div id="myClusterChart" style="width: 900px; height: 400px;"></div>
                     </div>
+                    
                 </div>
                 <div class="container" data-special="true">
                     <div class="image">
@@ -126,9 +150,11 @@
                             <canvas id="plot-canvas" width="400px" height="400px"></canvas>
                         </div>
                 </div>
-                <BackToTop />
+                
                 </div>
+                
             </div>
+            
             </section>
         </main>
     </div>
@@ -139,12 +165,12 @@
 <script setup>
 import Plotly from 'plotly.js-dist-min';
 import pako from 'pako';
-import { ref, onMounted} from 'vue';
+import { ref, onMounted,onUnmounted} from 'vue';
 import { useRouter } from 'vue-router';
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
-import BackToTop from './general/BackToTop.vue';
+//import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import config from '@/config';
 const showSubMenu = ref(false);
@@ -168,69 +194,175 @@ onMounted(async() => {
 
 
 //-------------------
+//处理定位滚动逻辑
+//-------------------
+import { debounce } from 'lodash';
+
+const handleScroll = debounce((event) => {
+  const topContainer = event.target;
+  const containers = Array.from(topContainer.querySelectorAll('.container'));
+  const currentScrollPosition = topContainer.scrollTop;
+
+  let closestContainer = containers[0];
+  let minDistance = Math.abs(currentScrollPosition - closestContainer.offsetTop);
+
+  containers.forEach((container) => {
+    const distance = Math.abs(currentScrollPosition - container.offsetTop);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestContainer = container;
+    }
+  });
+
+  closestContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // 添加动画类
+  containers.forEach((container) => {
+    container.classList.remove('fade-in');
+  });
+  closestContainer.classList.add('fade-in');
+}, 200); // 调整时间以优化体验
+
+//-------------------
+//返回顶部逻辑
+//-------------------
+const isVisible = ref(false);
+
+const scrollToTop = () => {
+  const topContainer = document.querySelector('.Top-container');
+  const firstContainer = topContainer.querySelector('.container');
+  
+  if (firstContainer) {
+    topContainer.scrollTo({
+      top: firstContainer.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+};
+
+
+
+const handleTopScroll = () => {
+  const topContainer = document.querySelector('.Top-container');
+  if (topContainer) {
+    isVisible.value = topContainer.scrollTop > 300; // 显示按钮的触发高度
+  }
+};
+
+onMounted(() => {
+  const topContainer = document.querySelector('.Top-container');
+  topContainer?.addEventListener('scroll', handleTopScroll);
+});
+
+onUnmounted(() => {
+  const topContainer = document.querySelector('.Top-container');
+  topContainer?.removeEventListener('scroll', handleTopScroll);
+});
+//-------------------
 //获取数据库基础信息
 //-------------------
 
+const currentChart = ref(0); // 当前显示的图表索引
 const cellNum = ref(0);
 const geneNum = ref(0);
 const clusterNum = ref(0);
 const spatialNum = ref(0);
 
-onMounted(async() => {
-    try {
-        const response = await fetch(config.apiUrl+'hv_dbInfo.php'); // 示例 API
-        const data = await response.json();
-        cellNum.value = data.cellNum;
-        geneNum.value = data.geneNum;
-        clusterNum.value = data.clusterNum;
-        spatialNum.value = data.spatialNum;
-    } catch (error) {
-        console.error('Error loading data:', error);
-    }
-    
-    // 绘制各数据集分布
-    fetch(config.apiUrl+'hv_chart1.php')
-      .then(response => response.json())
-      .then(dataFromPhp => {
-        // 提取标签和细胞数量
-        const labels = Object.keys(dataFromPhp);
-        const cellCounts = Object.values(dataFromPhp);
-    
-        // 创建条形图数据
-        const trace = {
-          x: labels,
-          y: cellCounts,
-          type: 'bar',
-          marker: {
-            color: 'rgba(93, 116, 162 ,0.6)',
-            line: {
-              color: 'rgba(93, 116, 162 ,1)',
-              width: 1
-            }
-          }
-        };
-    
-        // 创建布局
-        const layout = {
-          title: 'Num of datasets',
-          xaxis: {
-            title: '',
-            tickangle: -90, // 将标签旋转45度
-            tickmode: 'linear', // 确保标签均匀分布
-            tickfont: { size: 9 } // 调整字体大小
-          },
-          yaxis: {
-            title: '',
-            showgrid: true,
-            zeroline: true
-          }
-        };
-    
-        // 绘制图表
-        Plotly.newPlot('myClusterChart', [trace], layout);
-      })
-      .catch(error => console.error('Error fetching data from chart1.php:', error));
+// 缓存图表数据
+const chartDataCache = ref({
+  scData: null, // 单细胞数据
+  stData: null  // 空间转录组数据
 });
+
+// 获取数据集信息
+const getDatasetInfo = async (apiName, type) => {
+  try {
+    const response = await fetch(config.apiUrl + apiName);
+    const dataFromPhp = await response.json();
+
+    // 缓存数据
+    chartDataCache.value[type] = dataFromPhp;
+
+    // 绘制图表
+    renderChart(type);
+  } catch (error) {
+    console.error(`Error fetching data from ${apiName}:`, error);
+  }
+};
+
+// 绘制图表
+const renderChart = (type) => {
+  const data = chartDataCache.value[type];
+  if (!data) return; // 如果没有数据，直接返回
+
+  // 提取标签和细胞数量
+  const labels = Object.keys(data);
+  const cellCounts = Object.values(data);
+
+  // 创建条形图数据
+  const trace = {
+    x: labels,
+    y: cellCounts,
+    type: 'bar',
+    marker: {
+      color: 'rgba(93, 116, 162, 0.6)',
+      line: {
+        color: 'rgba(93, 116, 162, 1)',
+        width: 1
+      }
+    }
+  };
+
+  // 创建布局
+  const layout = {
+    title: type === 'scData' ? 'Single-Cell Datasets' : 'Spatial Transcriptomics Datasets',
+    xaxis: {
+      title: '',
+      tickangle: -45, // 将标签旋转45度
+      tickmode: 'linear', // 确保标签均匀分布
+      tickfont: { size: 9 } // 调整字体大小
+    },
+    yaxis: {
+      title: '',
+      showgrid: true,
+      zeroline: true
+    }
+  };
+
+  // 绘制图表
+  Plotly.newPlot('myClusterChart', [trace], layout);
+};
+
+// 初始化数据
+onMounted(async () => {
+  try {
+    const response = await fetch(config.apiUrl + 'hv_dbInfo.php'); // 示例 API
+    const data = await response.json();
+    cellNum.value = data.cellNum;
+    geneNum.value = data.geneNum;
+    clusterNum.value = data.clusterNum;
+    spatialNum.value = data.spatialNum;
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+
+  // 初始化图表数据
+  await getDatasetInfo("hv_datasets_sc.php", "scData");
+  await getDatasetInfo("hv_datasets_st.php", "stData");
+  renderChart('scData');
+});
+
+// 切换图表
+const switchChart = (index) => {
+  currentChart.value = index;
+  if (index === 0) {
+    renderChart('scData');
+  } else {
+    renderChart('stData');
+  }
+};
+
+
 //-------------------
 //获取物种比例
 //-------------------
@@ -441,22 +573,158 @@ const gotoAnalyzePage = () => {
 
 <style scoped>
 @import 'css/MainStyles.css';
+.main{
+    overflow-y: hidden;
+}
+.page-section{
+  padding: 0px;
+  flex: 1; /* 占据剩余的空间 */
+}
+.Top-container {
+  overflow-y: scroll;
+  height: 92vh;
+  scroll-snap-type: y mandatory; /* 启用滚动捕获 */
+}
+.container {
+    scroll-snap-align: start; /* 捕获到容器的起始位置 */
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 92vh;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+}
+
+.container1 {
+  display: flex;
+  flex-direction: column; /* 子元素垂直排列 */
+  justify-content: center; /* 水平居中（如果子元素是行内元素） */
+  align-items: center; /* 垂直居中 */
+}
+
+.container[data-special="true"] {
+    background-color: rgba(84, 164, 255, 0.1);
+}
+.container .image {
+    margin-right: 20px;
+    /* 图片与文字之间的间距 */
+}
+.container .text {
+    max-width: 400px;
+    /* 限制文字宽度为300px */
+    /* 或使用 width 代替 max-width 来设定固定宽度 */
+    word-wrap: break-word;
+    /* 自动换行 */
+}
+.container.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgb(093, 116, 162);
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  z-index:1000;
+}
+
+.back-to-top:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
 
 .test {
     display: flex;
     justify-content: center; /* 水平居中 */
-    align-items: flex-start; /* 靠上对齐 */
-    /*height: 100vh;  使容器高度为视口高度，以便垂直居中 */
+    align-items: flex-start; /* 从容器顶部开始对齐 */
+    margin: 0; /* 容器没有额外间距 */
+    position: relative; /* 设置相对定位 */
 }
 
 .test img {
-    width: 100%; /* 图片宽度不超过容器宽度 */
+    width: 80%; /* 图片宽度不超过容器宽度 */
     height: auto; /* 保持图片的纵横比 */
+    position: relative; /* 设置相对定位 */
+    top: 20px; /* 图片距离顶部 20px */
+}
+
+.chart-switch {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.chart-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.chart-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 8px; /* 点和文字之间的间距 */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.chart-item.active .chart-dot {
+  background-color: rgb(093, 116, 162);
+  animation: jump 0.5s forwards;
+}
+
+@keyframes jump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.chart-item span {
+  font-size: 14px;
+  color: #333;
+}
+
+.chart-item.active span {
+  color: rgb(093, 116, 162);
+}
+
+@keyframes jump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .image-text-container {
     display: flex;
     flex-wrap: wrap; /* 在较小的屏幕上换行 */
     justify-content: space-between; /* 水平分布图片和文字 */
+    gap:5vw;
 }
 
 .image-text-item {
@@ -476,26 +744,9 @@ const gotoAnalyzePage = () => {
 .image-text-item p {
     margin: 0; /* 文字的外边距为零，防止额外间距 */
 }
-.container {
-            display: flex;
-            justify-content: center; /* 水平居中 */
-            align-items: center; /* 垂直居中 */
-            height: 80vh; /* 使外部容器高度为全屏高度 */
-}
-.container[data-special="true"] {
-    background-color: rgba(84, 164, 255, 0.1);
-}
-.container .image {
-    margin-right: 20px;
-    /* 图片与文字之间的间距 */
-}
-.container .text {
-    max-width: 400px;
-    /* 限制文字宽度为300px */
-    /* 或使用 width 代替 max-width 来设定固定宽度 */
-    word-wrap: break-word;
-    /* 自动换行 */
-}
+
+
+
 #umap-plot {
     width: 900px;
     height: 600px;
@@ -519,6 +770,8 @@ const gotoAnalyzePage = () => {
 .execute-button:hover {
   background-color: rgba(093, 116, 162, 0.8); /* 鼠标悬停时的背景颜色 */
 }
+
+
 
  /* ----------------------------------------------------------- */
   /* 竖屏响应*/

@@ -31,7 +31,7 @@ header {
   background: rgb(93, 116, 162); /* 背景色 */
   color: white;
   z-index: 1000;
-  height: 60px; /* 设置导航栏的高度 */
+  height: 8vh; /* 设置导航栏的高度 */
   display: flex;
   align-items: center; /* 垂直居中对齐 */
   padding: 0 20px; /* 右侧和左侧的内边距 */
@@ -98,7 +98,7 @@ header {
 }
 
 main {
-  margin-top: 60px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+  margin-top: 8vh; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
 }
 
 .page-section {

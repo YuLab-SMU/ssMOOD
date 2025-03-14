@@ -10,7 +10,7 @@ if ($conn->connect_error) {
     die("连接失败: " . $conn->connect_error);
 }
 
-$sql = "SELECT dataset_id, cells FROM datasets";
+$sql = "SELECT dataset_id, cells FROM datasets WHERE scorst = 'st'";
 $result = $conn->query($sql);
 
 $data = [];
