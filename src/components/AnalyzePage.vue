@@ -103,9 +103,13 @@
         </div>
         <div class="chat-input-container">
         <div class="chat-input">
+          <button @click="datasetsManage" v-if = "isInputExpand">数据集管理</button>
           <input v-model="userInput" 
-                 @keyup.enter="sendMessage"
-                 placeholder="输入你的需求..." />
+                @keyup.enter="sendMessage"
+                placeholder="输入你的需求..." 
+                @focus="onFocus"
+                @blur="onBlur"
+                 />
           <button @click="sendMessage">发送</button>
         </div>
         </div>
@@ -115,7 +119,80 @@
   
   
 
-  
+      <!-- 数据集管理模态窗 -->
+    <div v-if="showModal0" class="modal">
+      <div class="modal-content">
+        <h2>数据集管理</h2>
+
+        <!-- 添加数据集 -->
+        <div class="add-dataset">
+            <p>单细胞</p>
+          <select v-model="selectedId1">
+              <option disabled value="">请选择数据集</option>
+              <option v-for="dataset in SC_datasets" :key="dataset.id" :value="dataset.name">
+                {{ dataset.name }}
+              </option>
+          </select>
+          <select v-model="selectedType1">
+            <option value="umap">umap</option>
+            <option value="差异">差异</option>
+          </select>
+          <button @click="addDataset(1)">➕ </button>
+        </div>
+        
+        <!-- 添加数据集 -->
+        <div class="add-dataset">
+        <p>单细胞基因表达量</p>
+          <select v-model="selectedId2">
+              <option disabled value="">请选择数据集</option>
+              <option v-for="dataset in SC_datasets" :key="dataset.id" :value="dataset.name">
+                {{ dataset.name }}
+              </option>
+          </select>
+          <select v-model="selectedGene_SC">
+            <option value="类型A">umap</option>
+            <option value="类型C">差异</option>
+          </select>
+          <button @click="addDataset(2)">➕ </button>
+        </div>
+                <!-- 添加数据集 -->
+        <div class="add-dataset">
+            <p>空转</p>
+          <select v-model="selectedId3">
+            <option value="分类1">分类1</option>
+            <option value="分类2">分类2</option>
+          </select>
+          <select v-model="selectedType2">
+            <option value="类型A">umap</option>
+            <option value="类型C">差异</option>
+          </select>
+          <button @click="addDataset(3)">➕ </button>
+        </div>
+                <!-- 添加数据集 -->
+        <div class="add-dataset">
+            <p>空转基因表达量</p>
+          <select v-model="selectedId4">
+            <option value="分类1">分类1</option>
+            <option value="分类2">分类2</option>
+          </select>
+          <select v-model="selectedGene_ST">
+            <option value="类型A">umap</option>
+            <option value="类型C">差异</option>
+          </select>
+          <button @click="addDataset(4)">➕ </button>
+        </div>
+
+        <!-- 数据集列表 -->
+        <ul class="dataset-list">
+          <li v-for="(dataset, index) in datasets" :key="index">
+            {{ dataset.id }} - {{ dataset.type }}
+            <button @click="removeDataset(index)">❌</button>
+          </li>
+        </ul>
+
+        <button @click="showModal0 = false">关闭</button>
+      </div>
+    </div>
   
   
   <!-- iOS风格模态窗 -->
@@ -188,28 +265,58 @@ import 'ace-builds/src-noconflict/theme-monokai'
 import config from '@/config';
 import axios from 'axios';
 import { TerminalApi } from 'vue-web-terminal';
-
+import pako from 'pako';
 // 终端相关
 const terminalLogs = ref([])
 
-const handleExe = () => {
-try {
-    // 创建一个新的 Function 作用域并执行生成的代码
-    new Function(codeEditor.getValue())();
+const handleExe = async () => {
+  try {
+    const dynamicVariable = {}; // 用于存储加载的数据
+
+    // 将每个数据集的加载逻辑包装为 Promise
+    const fetchPromises = datasets.value.map(async (dataset) => {
+      if (dataset.way == 1) {
+        const params = new URLSearchParams({
+          id: dataset.id
+        });
+
+        const response = await fetch(config.apiUrl + `scd_getumapdata.php?${params}`);
+        const arrayBuffer = await response.arrayBuffer();
+
+        const compressed = new Uint8Array(arrayBuffer);
+        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const jsonString = new TextDecoder('utf-8').decode(decompressed);
+        const data = JSON.parse(jsonString); // 解析JSON字符串
+
+        // 将数据存储到 dynamicVariable 中
+        dynamicVariable[dataset.id + '_' + dataset.type] = data;
+      }
+    });
+
+    // 等待所有 Promise 完成
+    await Promise.all(fetchPromises);
+
+    // 执行用户输入的代码
+    const code = codeEditor.getValue(); // 获取用户输入的代码
+    const func = new Function('dynamicVariable', code); // 将 dynamicVariable 作为参数传递
+    func(dynamicVariable); // 执行函数并传递 dynamicVariable
+
+    // 提示执行成功
     TerminalApi.pushMessage('ssMOOD', {
-        class: 'system',
-        tag: 'success',
-        content: '执行成功'
-    })
+      class: 'system',
+      tag: 'success',
+      content: '执行成功'
+    });
   } catch (error) {
+    // 提示执行失败
     TerminalApi.pushMessage('ssMOOD', {
-        class: 'system',
-        tag: 'fail',
-        content: '执行代码时出错：'+error
-    })
+      class: 'system',
+      tag: 'fail',
+      content: '执行代码时出错：' + error
+    });
     console.error("执行代码时出错:", error);
   }
-}
+};
 // 代码编辑器相关
 const editor = ref(null)
 let codeEditor = null
@@ -382,14 +489,127 @@ const partCodefetchOpenAI = async (userMessage) => {
     throw new Error(`生成失败: ${error.message}`);
   }
 };
+//-------------------------------------
+//数据集管理
+//-------------------------------------
+
+const SC_datasets = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_sc.php'); // 假设这是你的后端接口
+    SC_datasets.value = response.data.datasets;
+  } catch (error) {
+    console.error('Error fetching datasets:', error);
+  }
+});
+
+
+const showModal0 = ref(false);
+
+
+const selectedId1 = ref('');
+const selectedId2 = ref('');
+const selectedId3 = ref('');
+const selectedId4 = ref('');
+const selectedType1 = ref('');
+const selectedType2 = ref('');
+
+
+const selectedGene_SC = ref('');
+const selectedGene_ST = ref('');
+
+const datasets = ref([]);
+
+const datasetsManage = () => {
+  showModal0.value = true;
+};
+
+const addDataset = (way) => {
+  if (way==1)    
+  {
+    if (selectedId1.value && selectedType1.value) {
+    datasets.value.push({
+      type: selectedType1.value,
+      id: selectedId1.value,
+      way:way
+    });
+    selectedType1.value = '';
+    selectedId1.value = '';
+  }
+  }
+  else if (way==2){
+    if (selectedId2.value && selectedGene_SC.value) {
+    datasets.value.push({
+      type: selectedGene_SC.value,
+      id: selectedId2.value,
+      way:way
+    });
+    selectedGene_SC.value = '';
+    selectedId2.value = '';
+  }
+  }
+    else if (way==3)    
+  {
+    if (selectedId3.value && selectedType2.value) {
+    datasets.value.push({
+      type: selectedType2.value,
+      id: selectedId3.value,
+      way:way
+    });
+    selectedType2.value = '';
+    selectedId3.value = '';
+  }
+  }
+ else if (way==4){
+    if (selectedId4.value && selectedGene_ST.value) {
+    datasets.value.push({
+      type: selectedGene_ST.value,
+      id: selectedId4.value,
+      way:way
+    });
+    selectedGene_ST.value = '';
+    selectedId4.value = '';
+  }
+  }
+
+};
+
+const removeDataset = (index) => {
+  datasets.value.splice(index, 1);
+};
+
 
 //-------------------------------------
 //聊天相关
 //-------------------------------------
+const isInputExpand = ref(true); // 默认显示数据集管理按钮
+
+const timer = ref(null); // 用于存储延时操作的定时器
+
+// 输入框聚焦时触发
+const onFocus = () => {
+  // 清除可能存在的延时操作
+  if (timer.value) {
+    clearTimeout(timer.value);
+    timer.value = null;
+  }
+  isInputExpand.value = false;
+};
+
+// 输入框失去焦点时触发
+const onBlur = () => {
+  // 设置延时操作
+  timer.value = setTimeout(() => {
+    isInputExpand.value = true;
+    timer.value = null;
+  }, 300); // 延时 300 毫秒
+};
 
 const chatMessages = ref([])
 const userInput = ref('')
 const isLoading2 = ref(false)
+const prompt = ref('')
 
 const sendMessage = async () => {
   if (!userInput.value.trim() || isLoading2.value) return
@@ -399,28 +619,55 @@ const sendMessage = async () => {
     content: userInput.value 
   })
   
-  const prompt = codeEditor.getValue()+"用户需求："+userInput.value
-  userInput.value = ''
-  isLoading2.value = true
 
-  try {
-    const response = await fetchOpenAI(prompt) // 替换为你的API调用
-    console.log(response)
-    const generatedCode = response.code
+   if (datasets.value && datasets.value.length > 0) {
+      prompt.value = codeEditor.getValue()+"用户需求："+userInput.value
+      datasets.value.forEach((dataset) => {
+        console.log(`数据集ID: ${dataset.id}, 类型: ${dataset.type}, 方法: ${dataset.way}`);
+        if(dataset.way==1){
+            prompt.value=`用户在 dynamicVariable[${dataset.id}_${dataset.type}] 变量中，已存在以下格式的 JSON 数组：{
+  "umap_data": [
+    {
+      "i": "cell1", // 细胞 ID
+      "u1": 1.23,   // UMAP 维度 1
+      "u2": 4.56,   // UMAP 维度 2
+      "c": "cluster1" // 分类标签
+    }
+  ],
+  "cluster_labels": [
+    "cluster1",
+    "cluster2"
+  ]
+}。这些内容已定义，无需重新定义。`+prompt.value
+        }
+       });
+      
+      userInput.value = ''
+      isLoading2.value = true
     
-    chatMessages.value.push({
-      role: 'assistant',
-      content: `生成的代码：\n\`\`\`javascript\n${generatedCode}\n\`\`\``
-    })
-    const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
-    codeEditor.setValue(cleanedCode);
-    codeEditor.clearSelection();
-    handleExe();
-  } catch (error) {
-    terminalLogs.value.push({ type: 'error', content: `API错误: ${error.message}` })
-  } finally {
-    isLoading2.value = false
-  }
+      try {
+        const response = await fetchOpenAI(prompt.value) // 替换为你的API调用
+        prompt.value=""
+        console.log(response)
+        const generatedCode = response.code
+        
+        chatMessages.value.push({
+          role: 'assistant',
+          content: `生成的代码：\n\`\`\`javascript\n${generatedCode}\n\`\`\``
+        })
+        const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
+        codeEditor.setValue(cleanedCode);
+        codeEditor.clearSelection();
+        handleExe();
+      } catch (error) {
+        terminalLogs.value.push({ type: 'error', content: `API错误: ${error.message}` })
+      } finally {
+        isLoading2.value = false
+      }
+    }
+    else{
+        console.error("没有选择数据集");
+    }
 }
 
 
@@ -600,7 +847,7 @@ onUnmounted(() => {
 }
 .container {
   display: flex;
-  height: calc(100vh - 60px);
+  height: 92vh;
   width: 100%;
   overflow: hidden;
   background: linear-gradient(
@@ -823,6 +1070,7 @@ onUnmounted(() => {
   transition: background-color 0.3s ease, transform 0.3s ease; /* 背景颜色和点击效果的过渡 */
   font-weight: 500; /* 字体稍显粗体，更清晰 */
   box-shadow: none; /* 移除阴影 */
+  transition: width 0.3s ease; /* 平滑过渡效果 */
 }
 
 .chat-input button:hover {
@@ -1065,5 +1313,48 @@ onUnmounted(() => {
   .modal-container {
     background: rgba(255, 255, 255, 0.95);
   }
+}
+
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.add-dataset {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dataset-list {
+  list-style: none;
+  padding: 0;
+}
+
+.dataset-list li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 </style>
