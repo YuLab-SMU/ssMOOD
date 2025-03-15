@@ -128,6 +128,40 @@
                         <p>{{ $t('hv10') }}</p>
                     </div>
                     <div class="image">
+                        <div class="chart-switch">
+                              <div
+                                class="chart-item"
+                                :class="{ 'active': currentUmapChart === 0 }"
+                                @click="switchUmapChart(0)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>单细胞(鼠)</span>
+                              </div>
+                              <div
+                                class="chart-item"
+                                :class="{ 'active': currentUmapChart === 1 }"
+                                @click="switchUmapChart(1)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>空转(鼠)</span>
+                              </div>
+                            <div
+                                class="chart-item"
+                                :class="{ 'active': currentUmapChart === 2 }"
+                                @click="switchUmapChart(2)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>单细胞(人)</span>
+                              </div>
+                                                            <div
+                                class="chart-item"
+                                :class="{ 'active': currentUmapChart === 3 }"
+                                @click="switchUmapChart(3)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>空转(人)</span>
+                              </div>
+                        </div>
                         <div id="umap-plot"></div>
                     </div>
                 </div>
@@ -484,80 +518,116 @@ onMounted(async() => {
 //获取单细胞和空转的umap
 //------------------------
 
-onMounted(async() => {
- fetch(config.apiUrl+'hv_umap.php')
-          .then(response => response.arrayBuffer()) // 获取ArrayBuffer响应
-          .then(arrayBuffer => {
-            const compressed = new Uint8Array(arrayBuffer);
-            const decompressed = pako.ungzip(compressed); // 使用pako解压
-            const jsonString = new TextDecoder('utf-8').decode(decompressed);
-            const data = JSON.parse(jsonString); // 解析JSON字符串
-        
-            const umapData = data.umap;
-            const clusterLabels = data.cluster;
-            
-            const labelMap = new Map();
-            clusterLabels.forEach((label, index) => {
-                labelMap.set(label, index);
-            });
-        
-            // 对clusterLabels进行排序
-            clusterLabels.sort((a, b) => {
-              const partsA = a.match(/\d+/)[0];
-              const partsB = b.match(/\d+/)[0];
-              return parseInt(partsA, 10) - parseInt(partsB, 10);
-            });
-        
-            const umap1 = umapData.map(d => parseFloat(d.u1));
-            const umap2 = umapData.map(d => parseFloat(d.u2));
-            const cellIds = umapData.map(d => d.i);
-            const clusterLabelsData = umapData.map(d => d.c);
-        
-            const colors = Array.from(labelMap.keys()).reduce((acc, label, index) => {
-                const hue = (index * 360 / labelMap.size);
-                const lightness = 70 + (index % 2 === 0 ? 5 : -5);
-                acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
-                return acc;
-            }, {});
-        
-            const traces = clusterLabels.map((label) => {
-              const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
-              const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
-              const text = cellIds.filter((_, i) => clusterLabelsData[i] === label);
-        
-              return {
-                x: x,
-                y: y,
-                mode: 'markers',
-                type: 'scattergl',
-                name: label,
-                text: text,
-                marker: {
-                  size: 2,
-                  color: colors[label]
-                }
-              };
-            });
-        
-            const layout = {
-              title: '',
-              xaxis: { title: 'UMAP1' },
-              yaxis: { title: 'UMAP2' },
-              paper_bgcolor: 'rgba(0,0,0,0)',
-              plot_bgcolor: 'rgba(0,0,0,0)',
-              legend: {
-                orientation: 'h',
-                xanchor: 'center',
-                yanchor: 'bottom',
-                x: 1.5,
-                y: 0.3
-              }
-            };
-        
-            Plotly.newPlot('umap-plot', traces, layout);
-          })
-          .catch(error => console.error('Error fetching and decompressing UMAP data:', error));
+const currentUmapChart = ref(0); // 默认显示第0张表
+const umapData = ref({}); // 存储4张表的数据
+const title_x= ["UMAP1","coordinate_X","UMAP1","coordinate_X"];
+const title_y= ["UMAP2","coordinate_Y","UMAP2","coordinate_Y"];
+
+// 切换UMAP图表
+const switchUmapChart = (index) => {
+  currentUmapChart.value = index;
+  renderUmapChart(index);
+};
+
+
+// 渲染UMAP图表
+const renderUmapChart = (index) => {
+  const data = umapData.value[index];
+  if (!data) return;
+
+  const oneUmapData = data.umap;
+  const clusterLabels = data.cluster;
+
+  // 对clusterLabels进行排序
+  const sortedClusterLabels = [...clusterLabels].sort((a, b) => {
+    const partsA = a.match(/\d+/)[0];
+    const partsB = b.match(/\d+/)[0];
+    return parseInt(partsA, 10) - parseInt(partsB, 10);
+  });
+
+  // 使用标签的哈希值生成颜色，确保相同标签颜色一致
+  const colors = sortedClusterLabels.reduce((acc, label) => {
+    // 使用简单的哈希函数生成颜色
+    let hash = 0;
+    for (let i = 0; i < label.length; i++) {
+      hash = ((hash << 5) - hash) + label.charCodeAt(i);
+      hash = hash & hash; // 转换为32位整数
+    }
+    const hue = Math.abs(hash % 360);
+    const lightness = 70 + (hash % 2 === 0 ? 5 : -5);
+    acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
+    return acc;
+  }, {});
+
+  const umap1 = oneUmapData.map(d => parseFloat(d.u1));
+  const umap2 = oneUmapData.map(d => parseFloat(d.u2));
+  const cellIds = oneUmapData.map(d => d.i);
+  const clusterLabelsData = oneUmapData.map(d => d.c);
+
+  const traces = sortedClusterLabels.map((label) => {
+    const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
+    const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
+    const text = cellIds.filter((_, i) => clusterLabelsData[i] === label);
+
+    return {
+      x: x,
+      y: y,
+      mode: 'markers',
+      type: 'scattergl',
+      name: label,
+      text: text,
+      marker: {
+        size: 2,
+        color: colors[label]
+      }
+    };
+  });
+
+  const layout = {
+    title: '',
+    xaxis: {
+      title: title_x[index]
+    },
+    yaxis: {
+      title: title_y[index]
+    },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    legend: {
+      orientation: 'h',
+      xanchor: 'center',
+      yanchor: 'bottom',
+      x: 1.5,
+      y: 0.3
+    }
+  };
+
+  Plotly.newPlot('umap-plot', traces, layout);
+};
+
+// 加载数据
+onMounted(async () => {
+  try {
+    const response = await fetch(config.apiUrl + 'hv_umap.php');
+    const arrayBuffer = await response.arrayBuffer();
+    const compressed = new Uint8Array(arrayBuffer);
+    const decompressed = pako.ungzip(compressed);
+    const jsonString = new TextDecoder('utf-8').decode(decompressed);
+    const data = JSON.parse(jsonString);
+
+    umapData.value = {
+      0: data[0], // 单细胞(鼠)
+      1: data[1], // 空转(鼠)
+      2: data[2], // 单细胞(人)
+      3: data[3]  // 空转(人)
+    };
+    
+    renderUmapChart(0); // 默认渲染第0张表
+  } catch (error) {
+    console.error('Error fetching and decompressing UMAP data:', error);
+  }
 });
+
 //------
 
 
@@ -584,6 +654,27 @@ const gotoAnalyzePage = () => {
   overflow-y: scroll;
   height: 92vh;
   scroll-snap-type: y mandatory; /* 启用滚动捕获 */
+}
+/* 滚动条整体宽度 */
+.Top-container::-webkit-scrollbar {
+  width: 10px; /* 宽度 */
+}
+
+/* 滚动条的轨道背景 */
+.Top-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 轨道背景颜色 */
+  border-radius: 10px; /* 轨道圆角 */
+}
+
+/* 滚动条的滑块（可拖动部分） */
+.Top-container::-webkit-scrollbar-thumb {
+  background: rgba(093, 116, 162, 0.8); /* 滑块颜色 */
+  border-radius: 10px; /* 滑块圆角 */
+}
+
+/* 滑块悬停时的样式 */
+.Top-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 悬停时的颜色 */
 }
 .container {
     scroll-snap-align: start; /* 捕获到容器的起始位置 */

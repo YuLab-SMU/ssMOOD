@@ -3,7 +3,6 @@ ini_set('memory_limit', '512M');
 // 数据库连接信息
 include 'config.php';
 
-
 // 数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -14,40 +13,51 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 查询UMAP数据和对应的cluster_label，随机选择1000条数据
-$sql = "SELECT c.cell_id, c.umap1, c.umap2, c.cluster_label2
-            FROM cells c
-            ORDER BY RAND()";
+// 定义 4 张表的查询条件，统一字段命名为 umap1 和 umap2
+$queries = [
+    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0001_3D_DRN'",
+    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0001_3D_DRN_1'",
+    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0002_3D_HIP'",
+    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0002_3D_DRN_2'"
+];
 
-$result = $conn->query($sql);
+// 初始化数组存储 4 张表的数据
+$umap_datasets = [];
 
-// 创建数组来存储UMAP数据和分类信息
-$umap_data = array();
+foreach ($queries as $index => $sql) {
+    $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    // 将数据存入数组
-    while ($row = $result->fetch_assoc()) {
-        $umap_data[] = array(
-            'i' => $row['cell_id'],
-            'u1' => $row['umap1'],
-            'u2' => $row['umap2'],
-            'c' => $row['cluster_label2'],
-        );
-        // 收集不重复的cluster_label
-        if (!in_array($row['cluster_label2'], $cluster_labels)) {
-            $cluster_labels[] = $row['cluster_label2'];
+    if ($result->num_rows > 0) {
+        $umap_data = [];
+        $cluster_labels = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $umap_data[] = [
+                'i' => $row['cell_id'],
+                'u1' => $row['umap1'],
+                'u2' => $row['umap2'],
+                'c' => $row['cluster_label2']
+            ];
+
+            if (!in_array($row['cluster_label2'], $cluster_labels)) {
+                $cluster_labels[] = $row['cluster_label2'];
+            }
         }
+
+        // 将当前表的数据和分类信息存入数组
+        $umap_datasets[$index] = [
+            'umap' => $umap_data,
+            'cluster' => $cluster_labels
+        ];
+    } else {
+        echo "0 results for dataset $index";
     }
-} else {
-    echo "0 results";
-    $conn->close();
-    exit;
 }
 
 $conn->close();
 
-// 将数据和分类信息转换为JSON格式
-$response = json_encode(['umap' => $umap_data, 'cluster' => $cluster_labels]);
+// 将所有数据转换为 JSON 格式
+$response = json_encode($umap_datasets);
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 
 // 返回 JSON 数据
