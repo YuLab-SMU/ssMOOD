@@ -120,15 +120,29 @@
   
 
       <!-- 数据集管理模态窗 -->
-    <div v-if="showModal0" class="modal">
-      <div class="modal-content">
-        <h2>数据集管理</h2>
-
+    <div v-if="showModal0" class="dataset-modal">
+      <div class="dataset-modal-content">
+        <div class="dataset-modal-header">
+            <h2>数据集管理</h2>
+            <button @click="showModal0 = false">❌ </button>
+        </div>
+        <div class="add-dataset-content">
+        <h3>添加数据集</h3>
         <!-- 添加数据集 -->
+        <div class="add-dataset-div">
         <div class="add-dataset">
-            <p>单细胞</p>
+            <select v-model="selectedDataType">
+                <option disabled value="">数据集类型</option>
+                <option value="1">单细胞基础数据</option>
+                <option value="2">单细胞基因表达量</option>
+                <option value="3">空转基础数据</option>
+                <option value="4">空转基因表达量</option>
+            </select>
+        </div>
+        <!-- 添加数据集 -->
+        <div class="add-dataset" v-if="showDatasetSelect === 1">
           <select v-model="selectedId1">
-              <option disabled value="">请选择数据集</option>
+              <option disabled value="">数据集ID</option>
               <option v-for="dataset in SC_datasets" :key="dataset.id" :value="dataset.name">
                 {{ dataset.name }}
               </option>
@@ -141,10 +155,9 @@
         </div>
         
         <!-- 添加数据集 -->
-        <div class="add-dataset">
-        <p>单细胞基因表达量</p>
+        <div class="add-dataset" v-if="showDatasetSelect === 2">
           <select v-model="selectedId2">
-              <option disabled value="">请选择数据集</option>
+              <option disabled value="">数据集ID</option>
               <option v-for="dataset in SC_datasets" :key="dataset.id" :value="dataset.name">
                 {{ dataset.name }}
               </option>
@@ -156,21 +169,21 @@
           <button @click="addDataset(2)">➕ </button>
         </div>
                 <!-- 添加数据集 -->
-        <div class="add-dataset">
-            <p>空转</p>
+        <div class="add-dataset" v-if="showDatasetSelect === 3">
           <select v-model="selectedId3">
-            <option value="分类1">分类1</option>
-            <option value="分类2">分类2</option>
+              <option disabled value="">数据集ID</option>
+              <option v-for="dataset in ST_datasets" :key="dataset.id" :value="dataset.name">
+                {{ dataset.name }}
+              </option>
           </select>
           <select v-model="selectedType2">
-            <option value="类型A">umap</option>
-            <option value="类型C">差异</option>
+            <option value="空间位置">空间位置</option>
+            <option value="差异">差异</option>
           </select>
           <button @click="addDataset(3)">➕ </button>
         </div>
                 <!-- 添加数据集 -->
-        <div class="add-dataset">
-            <p>空转基因表达量</p>
+        <div class="add-dataset" v-if="showDatasetSelect === 4">
           <select v-model="selectedId4">
             <option value="分类1">分类1</option>
             <option value="分类2">分类2</option>
@@ -181,16 +194,18 @@
           </select>
           <button @click="addDataset(4)">➕ </button>
         </div>
-
+        </div>
+        </div>
+        
         <!-- 数据集列表 -->
         <ul class="dataset-list">
           <li v-for="(dataset, index) in datasets" :key="index">
             {{ dataset.id }} - {{ dataset.type }}
-            <button @click="removeDataset(index)">❌</button>
+            <button @click="removeDataset(index)">&#x1F5D1;</button>
           </li>
         </ul>
 
-        <button @click="showModal0 = false">关闭</button>
+        
       </div>
     </div>
   
@@ -229,7 +244,7 @@
 </template>
 
 <script setup>
-import { ref,onMounted } from 'vue'
+import { ref,onMounted,watch } from 'vue'
 //import {  computed, onUnmounted } from 'vue'
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
@@ -281,6 +296,21 @@ const handleExe = async () => {
         });
 
         const response = await fetch(config.apiUrl + `scd_getumapdata.php?${params}`);
+        const arrayBuffer = await response.arrayBuffer();
+
+        const compressed = new Uint8Array(arrayBuffer);
+        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const jsonString = new TextDecoder('utf-8').decode(decompressed);
+        const data = JSON.parse(jsonString); // 解析JSON字符串
+
+        // 将数据存储到 dynamicVariable 中
+        dynamicVariable[dataset.id + '_' + dataset.type] = data;
+      }else if (dataset.way == 3) {
+        const params = new URLSearchParams({
+          id: dataset.id
+        });
+
+        const response = await fetch(config.apiUrl + `std_getCoordinate.php?${params}`);
         const arrayBuffer = await response.arrayBuffer();
 
         const compressed = new Uint8Array(arrayBuffer);
@@ -503,8 +533,32 @@ onMounted(async () => {
     console.error('Error fetching datasets:', error);
   }
 });
+const ST_datasets = ref([]);
 
+onMounted(async () => {
+  try {
+    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_st.php'); // 假设这是你的后端接口
+    ST_datasets.value = response.data.datasets;
+  } catch (error) {
+    console.error('Error fetching datasets:', error);
+  }
+});
 
+const selectedDataType = ref("");
+const showDatasetSelect = ref();
+watch(selectedDataType, (newVal) => {
+    if(newVal==="1"){
+        showDatasetSelect.value = 1;
+    }else if(newVal==="2"){
+        showDatasetSelect.value = 2;
+    }else if(newVal==="3"){
+        showDatasetSelect.value = 3;
+    }else if(newVal==="4"){
+        showDatasetSelect.value = 4;
+    }
+      
+});
+    
 const showModal0 = ref(false);
 
 
@@ -639,7 +693,22 @@ const sendMessage = async () => {
     "cluster2"
   ]
 }。这些内容已定义，无需重新定义。`+prompt.value
-        }
+    }else if(dataset.way==3){
+         prompt.value=`用户在 dynamicVariable[${dataset.id}_${dataset.type}] 变量中，已存在以下格式的空转坐标 JSON 数组：{
+  "coordinate_data": [
+    {
+      "i": "cell1", // 细胞 ID
+      "x": 1.23,   // x_coordinate
+      "y": 4.56,   // y_coordinate
+      "c": "cluster1" // 分类标签
+    }
+  ],
+  "cluster_labels": [
+    "cluster1",
+    "cluster2"
+  ]
+}。这些内容已定义，无需重新定义。`+prompt.value
+    }
        });
       
       userInput.value = ''
@@ -915,7 +984,9 @@ onUnmounted(() => {
   width: 100%;
 }
 
-
+/* ############################## */
+/* 代码编辑器样式 */
+/* ############################## */
 .editor-panel{
   display: flex;
   align-items: center; /* 垂直居中 */
@@ -923,7 +994,8 @@ onUnmounted(() => {
   flex-direction: column;
   gap:10px;
 }
-/* 代码编辑器样式 */
+
+
 .code-editor {
 
   width: 95%; /* 占满父容器的宽度 */
@@ -938,7 +1010,9 @@ onUnmounted(() => {
   border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
   padding: 10px;
 }
-
+/* ############################## */
+/* 聊天信息容器 */
+/* ############################## */
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -1087,7 +1161,9 @@ onUnmounted(() => {
 
 
 
-
+/* ############################## */
+/* 浮动工具栏 */
+/* ############################## */
 .floating-toolbar:dragging {
   z-index: 9999;
 }
@@ -1179,7 +1255,9 @@ onUnmounted(() => {
 }
 
 
-
+/* ############################## */
+/* ai模态窗 */
+/* ############################## */
 
 
 /* 模态窗遮罩层 */
@@ -1315,9 +1393,11 @@ onUnmounted(() => {
   }
 }
 
+/* ############################## */
+/* 数据集管理模态窗 */
+/* ############################## */
 
-
-.modal {
+.dataset-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -1330,12 +1410,67 @@ onUnmounted(() => {
   z-index: 1002;
 }
 
-.modal-content {
-  background: #fff;
+.dataset-modal-content {
+  display: flex; /* 使用 Flexbox 布局 */
+  justify-content: center;
+  align-items: center; /* 垂直居中 */
+  flex-direction: column;
+  background: rgb(255, 255, 255);
   padding: 20px;
   border-radius: 12px;
-  width: 400px;
+  width: 50vw;
   max-width: 90%;
+
+}
+.dataset-modal-header {
+    display: flex; /* 使用 Flexbox 布局 */
+    justify-content: center;
+    align-items: center; /* 垂直居中 */
+    padding: 10px; /* 添加内边距 */
+    width: 100%;
+}
+
+.dataset-modal-header h2 {
+    position: fixed;
+    margin: 0; /* 移除默认的外边距 */
+    font-size: 1.5rem; /* 标题字体大小 */
+    text-align: center; /* 标题居中 */
+    flex: 1; /* 让标题占据剩余空间 */
+    
+}
+
+.dataset-modal-header button {
+    margin: 0; /* 移除默认的外边距 */
+    padding: 5px 10px; /* 添加按钮内边距 */
+    margin-left: auto;
+    font-size: 1rem; /* 按钮字体大小 */
+    cursor: pointer; /* 鼠标悬停时显示指针 */
+    border: 0px; /* 按钮边框 */
+    background-color: #fff; /* 按钮背景颜色 */
+}
+.add-dataset-content {
+    border: 1px solid #ccc; /* 添加灰色边框 */
+    padding: 10px; /* 添加内边距 */
+    margin-bottom: 10px; /* 添加外边距 */
+    border-radius: 5px; /* 添加圆角边框 */
+    background-color: #f9f9f9; /* 添加背景颜色 */
+    width: 80%;
+    justify-content: center;
+    display: flex; /* 使用 Flexbox 布局 */
+    flex-direction: column;
+}
+
+
+.add-dataset-content h3{
+     display: flex; /* 使用 Flexbox 布局 */
+    margin: 0; /* 移除默认的外边距 */
+    justify-content: center;
+}
+.add-dataset-div{
+    display: flex; /* 使用 Flexbox 布局 */
+    flex-direction: row;
+    gap: 10px;
+    
 }
 
 .add-dataset {
@@ -1344,7 +1479,28 @@ onUnmounted(() => {
   margin-bottom: 20px;
 }
 
+
+.add-dataset select {
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: #333;
+    outline: none;
+    box-sizing: border-box;
+     border-radius: 15px; /* 添加圆角边框 */
+}
+
+.add-dataset button {
+    margin: 0; /* 移除默认的外边距 */
+    padding: 5px 10px; /* 添加按钮内边距 */
+    margin-left: auto;
+    font-size: 1rem; /* 按钮字体大小 */
+    cursor: pointer; /* 鼠标悬停时显示指针 */
+    border: 0px; /* 按钮边框 */
+    background-color: #f9f9f9; /* 添加背景颜色 */
+}
+
 .dataset-list {
+    display: flex;
   list-style: none;
   padding: 0;
 }
@@ -1356,5 +1512,14 @@ onUnmounted(() => {
   padding: 5px;
   border: 1px solid #ddd;
   border-radius: 6px;
+}
+.dataset-list button{
+    margin: 0; /* 移除默认的外边距 */
+    padding: 5px 10px; /* 添加按钮内边距 */
+    margin-left: auto;
+    font-size: 1rem; /* 按钮字体大小 */
+    cursor: pointer; /* 鼠标悬停时显示指针 */
+    border: 0px; /* 按钮边框 */
+    background-color: #fff; /* 按钮背景颜色 */
 }
 </style>
