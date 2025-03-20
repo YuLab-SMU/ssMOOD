@@ -99,11 +99,35 @@ header {
 
 main {
   margin-top: 8vh; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+  height: 92vh;
+  overflow-y: auto; 
 }
 
 .page-section {
   padding: 20px;
   flex: 1; /* 占据剩余的空间 */
+  overflow-y: auto; 
+}
+/* 滚动条整体宽度 */
+main::-webkit-scrollbar {
+  width: 10px; /* 宽度 */
+}
+
+/* 滚动条的轨道背景 */
+main::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 轨道背景颜色 */
+  border-radius: 10px; /* 轨道圆角 */
+}
+
+/* 滚动条的滑块（可拖动部分） */
+main::-webkit-scrollbar-thumb {
+  background: rgba(093, 116, 162, 0.8); /* 滑块颜色 */
+  border-radius: 10px; /* 滑块圆角 */
+}
+
+/* 滑块悬停时的样式 */
+main::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 悬停时的颜色 */
 }
 
 .NowPage{

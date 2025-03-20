@@ -34,7 +34,7 @@
                 <LanguageSwitcher @languageChanged="onLanguageChanged" />
             </nav>
         </header>
-        <main>
+        <main ref="pageSection">
             <section class="page-section">
                 <div class="main-container">
 <!--##################################################-->      
@@ -50,7 +50,7 @@
 
             <p><span class="bold-black">{{ $t('scd3') }}</span>: {{ dataset.dataset_id }}</p>
             <p><span class="bold-black">{{ $t('scd4') }}</span>: {{ dataset.species }}</p>
-            <p><span class="bold-black">{{ $t('scd5') }}</span>: {{ dataset.region }}</p>
+            <p><span class="bold-black">{{ $t('scd5') }}</span>: {{ dataset.area }}</p>
             <p><span class="bold-black">{{ $t('scd6') }}</span>: {{ dataset.conditions }}</p>
             <p><span class="bold-black">{{ $t('scd7') }}</span>: {{ dataset.sex }}</p>
             <p><span class="bold-black">{{ $t('scd8') }}</span>: {{ dataset.age }}</p>
@@ -282,6 +282,8 @@ onMounted(async() => {
   const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
   locale.value = selectedLanguage; // 设置语言
 });
+
+
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 
@@ -294,7 +296,7 @@ const route = useRoute();
 const dataset = ref({
   dataset_id: '',
   species: '',
-  region: '',
+  area: '',
   condition: '',
   sex: '',
   age: '',
@@ -325,7 +327,7 @@ onMounted(() => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json(); // 直接使用 json() 方法，不需要转换为 text()
+      return response.json();
     })
     .then(data => {
       if (data && data.length > 0 && data[0].information) {

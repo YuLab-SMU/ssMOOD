@@ -14,7 +14,7 @@ import { ref, onMounted, onUnmounted, defineProps } from 'vue';
 const props = defineProps({
   targetSelector: {
     type: String,
-    default: 'body', // 默认目标为 `body`，可指定 `.Top-container`、`.scrollable-div` 等
+    default: 'main', // 默认目标为 `body`，可指定 `.Top-container`、`.scrollable-div` 等
   },
   scrollThreshold: {
     type: Number,

@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 }
 
 // SQL 查询
-$sql = "SELECT dataset_id, species, age, sex, conditions, region, cells, detail, scorst FROM datasets WHERE scorst = 'st'";
+$sql = "SELECT dataset_id, species, age, sex, conditions, area, cells, way, scorst FROM datasets WHERE scorst = 'st'";
 
 // 执行查询
 $result = $conn->query($sql);

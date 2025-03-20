@@ -49,7 +49,7 @@
 
             <p><span class="bold-black">{{ $t('std3') }}</span>: {{ dataset.dataset_id }}</p>
             <p><span class="bold-black">{{ $t('std4') }}</span>: {{ dataset.species }}</p>
-            <p><span class="bold-black">{{ $t('std5') }}</span>: {{ dataset.region }}</p>
+            <p><span class="bold-black">{{ $t('std5') }}</span>: {{ dataset.area}}</p>
             <p><span class="bold-black">{{ $t('std6') }}</span>: {{ dataset.conditions }}</p>
             <p><span class="bold-black">{{ $t('std7') }}</span>: {{ dataset.sex }}</p>
             <p><span class="bold-black">{{ $t('std8') }}</span>: {{ dataset.age }}</p>
@@ -271,6 +271,7 @@ onMounted(async() => {
   const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
   locale.value = selectedLanguage; // 设置语言
 });
+
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 const route = useRoute();
@@ -281,7 +282,7 @@ const route = useRoute();
 const dataset = ref({
   dataset_id: '',
   species: '',
-  region: '',
+  area: '',
   condition: '',
   sex: '',
   age: '',

@@ -45,21 +45,25 @@
                         <label for="species">{{ $t('bsc3') }}</label>
                         <select id="species" v-model="filters.species">
                             <option value="all">All</option>
+                            <option value="mouse">Mouse</option>
+                            <option value="human">Human</option>
                         </select>
                         <label for="area">{{ $t('bsc4') }}</label>
                         <select id="area" v-model="filters.area">
                             <option value="all">All</option>
-                            <option value="DRN">DRN</option>
-                            <option value="HIP">HIP</option>
-                            <option value="Stri">Stri</option>
-                            <option value="VTA">VTA</option>
-                            <option value="mPFC">mPFC</option>
+                            <option value="DRN" v-if="filters.species === 'mouse'||filters.species === 'all'">DRN</option>
+                            <option value="HIP" v-if="filters.species === 'mouse'||filters.species === 'all'">HIP</option>
+                            <option value="Stri" v-if="filters.species === 'mouse'||filters.species === 'all'">Stri</option>
+                            <option value="VTA" v-if="filters.species === 'mouse'||filters.species === 'all'">VTA</option>
+                            <option value="mPFC" v-if="filters.species === 'mouse'||filters.species === 'all'">mPFC</option>
+                            <option value="BA12" v-if="filters.species === 'human'||filters.species === 'all'">BA12</option>
+                            <option value="BA46" v-if="filters.species === 'human'||filters.species === 'all'">BA46</option>
                         </select>
                         <label for="sex">{{ $t('bsc5') }}</label>
                         <select id="sex" v-model="filters.sex">
                             <option value="all">All</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
                         </select>
                     </div>
                     <table>
@@ -84,7 +88,7 @@
                                 <td>{{ dataset.area }}</td>
                                 <td>{{ dataset.age }}</td>
                                 <td>{{ dataset.cells }}</td>
-                                <td>{{ dataset.detail }}
+                                <td>{{ dataset.way }}
                                 </td>
                             </tr>
                         </tbody>
@@ -158,7 +162,6 @@ const goToDatasetDetails = (datasetId) => {
 
 <style scoped>
 @import 'css/MainStyles.css';
-
 .has-submenu {
     background: rgba(255, 255, 255, 0.3);
 }
