@@ -538,13 +538,23 @@ const renderUmapChart = (index) => {
   const oneUmapData = data.umap;
   const clusterLabels = data.cluster;
 
-  // 对clusterLabels进行排序
   const sortedClusterLabels = [...clusterLabels].sort((a, b) => {
-    const partsA = a.match(/\d+/)[0];
-    const partsB = b.match(/\d+/)[0];
-    return parseInt(partsA, 10) - parseInt(partsB, 10);
-  });
-
+        const partsA = a.match(/\d+/);
+        const partsB = b.match(/\d+/);
+        if (partsA && partsB) {
+            // 如果两个字符串都包含数字，则按数字排序
+            return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
+        } else if (partsA) {
+            // 如果只有 a 包含数字，则 a 排在 b 前面
+            return -1;
+        } else if (partsB) {
+            // 如果只有 b 包含数字，则 b 排在 a 前面
+            return 1;
+        } else {
+            // 如果两个字符串都不包含数字，则按字母顺序排序
+            return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+        }
+    });
   // 使用标签的哈希值生成颜色，确保相同标签颜色一致
   const colors = sortedClusterLabels.reduce((acc, label) => {
     // 使用简单的哈希函数生成颜色

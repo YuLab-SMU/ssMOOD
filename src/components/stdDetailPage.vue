@@ -58,7 +58,7 @@
         <div class="information-right">
             <h1>{{ $t('std9') }}</h1>
             <p><span class="bold-black">{{ $t('std10') }}</span>: {{ dataset.information.Publication.Title }}</p>
-            <p><span class="bold-black">{{ $t('std11') }}</span>: {{ dataset.information.Publication.Methodology }}</p>
+            <p><span class="bold-black">{{ $t('std11') }}</span>: {{ dataset.information.Publication.DatePublished }}</p>
             <p><span class="bold-black">{{ $t('std12') }}</span>: {{ dataset.information.Publication.Protocol }}</p>
             <p><span class="bold-black">{{ $t('std13') }}</span>: {{ dataset.information.Publication.DataSource }}</p>
 
@@ -108,6 +108,31 @@
           @blur="handleBlur"
           type="text"
         />
+    <!-- 新增高度控制容器 -->
+        <div 
+          v-show="showScroller"
+          class="scroller-wrapper"
+          :style="{ height: wrapperHeight + 'px' }"
+        >
+          <recycle-scroller
+            class="scroller"
+            :items="filteredGenes"
+            :item-size="12"
+            :buffer="50"
+            page-mode="true"
+            :key="resetKey"
+          >
+            <template v-slot="{ item }">
+              <div 
+                class="gene-item"
+                :class="{ 'is-active': item === searchQuery }"
+                @mousedown="selectItem(item)"
+              >
+                {{ item }}
+              </div>
+            </template>
+          </recycle-scroller>
+        </div>
         <v-btn text @click="searchgene" class="search-btn">
           {{ $t('std21') }}
         </v-btn>
@@ -127,27 +152,6 @@
         
         
       </div>
-        <!-- 基因列表滚动显示 -->
-  <recycle-scroller
-    v-if="showScroller"
-    class="scroller"
-    ref="scroller"
-    :items="filteredGenes"
-    :item-size="6"
-    :buffer="2000"
-    :page-mode="true"
-    :key="resetKey"
-  >
-    <template v-slot="{ item }">
-      <div
-        class="gene-item"
-        :class="{ 'is-active': item === searchQuery }"
-        @mousedown="selectItem(item)"
-      >
-        {{ item }}
-      </div>
-    </template>
-  </recycle-scroller>
   <div id="coord_chart_gene"></div>
   <div id="expressionHeatmap" style="width: 1200px; height: 400px;"></div>
 </div>
@@ -201,16 +205,16 @@
               :placeholder="$t('scd31')"
               type="text"
             />
-                <button @click="download" class="search-btn">{{ $t('std21') }}</button>
+                <button @click="download" class="search-btn">{{ $t('std28') }}</button>
                 <div class="table-container">
                 <table>
                   <thead>
                       <tr>
-                        <th @click="sortTable(0)">{{ $t('std21') }}</th>
-                        <th @click="sortTable(1)">{{ $t('std21') }}</th>
-                        <th @click="sortTable(2)">{{ $t('std21') }}</th>
-                        <th @click="sortTable(3)">{{ $t('std21') }}</th>
-                        <th @click="sortTable(4)">{{ $t('std21') }}</th>
+                        <th @click="sortTable(0)">{{ $t('std29') }}</th>
+                        <th @click="sortTable(1)">{{ $t('std30') }}</th>
+                        <th @click="sortTable(2)">{{ $t('std31') }}</th>
+                        <th @click="sortTable(3)">{{ $t('std32') }}</th>
+                        <th @click="sortTable(4)">{{ $t('std33') }}</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -359,11 +363,23 @@ onMounted(() => {
         labelMap.set(label, index);
       });
 
-      clusterLabels.sort((a, b) => {
-        const partsA = a.match(/\d+/)[0];
-        const partsB = b.match(/\d+/)[0];
-        return parseInt(partsA, 10) - parseInt(partsB, 10);
-      });
+        clusterLabels.sort((a, b) => {
+          const partsA = a.match(/\d+/);
+          const partsB = b.match(/\d+/);
+          if (partsA && partsB) {
+            // 如果两个字符串都包含数字，则按数字排序
+            return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
+          } else if (partsA) {
+            // 如果只有 a 包含数字，则 a 排在 b 前面
+            return -1;
+          } else if (partsB) {
+            // 如果只有 b 包含数字，则 b 排在 a 前面
+            return 1;
+          } else {
+            // 如果两个字符串都不包含数字，则按字母顺序排序
+            return a.localeCompare(b);
+          }
+        });
 
       const umap1 = coordinate_data.value.map(d => parseFloat(d.x));
       const umap2 = coordinate_data.value.map(d => parseFloat(d.y));
@@ -499,6 +515,14 @@ onMounted(async() => {
 //------------------------------------------------------
 //基因搜索框
 //------------------------------------------------------
+
+// 计算 wrapper 的高度
+const wrapperHeight = computed(() => {
+  const itemCount = filteredGenes.value.length;
+  const maxHeight = 400; // 36px/item * 11 items ≈ 400px
+  return Math.min(itemCount * 36, maxHeight);
+});
+
 const genes = ref([]);
 //const filteredGenes = ref([]);
 const searchQuery = ref('');

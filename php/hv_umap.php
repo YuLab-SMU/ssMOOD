@@ -17,8 +17,8 @@ if ($conn->connect_error) {
 $queries = [
     "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0001_3D_DRN'",
     "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0001_3D_DRN_1'",
-    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0002_3D_HIP'",
-    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0002_3D_DRN_2'"
+    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0026_C_BA12'",
+    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0055_C_BA46'"
 ];
 
 // 初始化数组存储 4 张表的数据
@@ -63,4 +63,5 @@ $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 // 返回 JSON 数据
 header('Content-Type: application/json');
 echo $compressed;
+//echo $response;
 ?>

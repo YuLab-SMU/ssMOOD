@@ -122,6 +122,35 @@
             <button @click="searchgene" class="search-btn">
               {{ $t('scd21button') }}
             </button>
+            
+        
+    <!-- 新增高度控制容器 -->
+        <div 
+          v-show="showScroller"
+          class="scroller-wrapper"
+          :style="{ height: wrapperHeight + 'px' }"
+        >
+          <recycle-scroller
+            class="scroller"
+            :items="filteredGenes"
+            :item-size="12"
+            :buffer="5000"
+            page-mode="true"
+            :key="resetKey"
+            :prerender="0"
+            :emit-update="false"
+          >
+            <template v-slot="{ item }">
+              <div 
+                class="gene-item"
+                :class="{ 'is-active': item === searchQuery }"
+                @mousedown="selectItem(item)"
+              >
+                {{ item }}
+              </div>
+            </template>
+          </recycle-scroller>
+        </div>
           <div class="marker-size-controller">
             <div class="label">{{ $t('scd22') }}:</div>
             <!-- 减少按钮 -->
@@ -137,27 +166,6 @@
           </div>
         </div>
 
-        <!-- 基因列表滚动显示 -->
-        <recycle-scroller
-          v-if="showScroller"
-          class="scroller"
-          ref="scroller"
-          :items="filteredGenes"
-          :item-size="6"
-          :buffer="5000"
-          :page-mode="true"
-          :key="resetKey"
-        >
-          <template v-slot="{ item }">
-            <div
-              class="gene-item"
-              :class="{ 'is-active': item === searchQuery }"
-              @mousedown="selectItem(item)"
-            >
-              {{ item }}
-            </div>
-          </template>
-        </recycle-scroller>
 
         <div id="umap-chart-gene"></div>
         <div id="expressionHeatmap" style="width: 1200px; height: 400px;"></div>
@@ -368,12 +376,24 @@ onMounted(() => {
             });
 
         clusterLabels.sort((a, b) => {
-          const partsA = a.match(/\d+/)[0];
-          const partsB = b.match(/\d+/)[0];
-          return parseInt(partsA, 10) - parseInt(partsB, 10);
+          const partsA = a.match(/\d+/);
+          const partsB = b.match(/\d+/);
+          if (partsA && partsB) {
+            // 如果两个字符串都包含数字，则按数字排序
+            return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
+          } else if (partsA) {
+            // 如果只有 a 包含数字，则 a 排在 b 前面
+            return -1;
+          } else if (partsB) {
+            // 如果只有 b 包含数字，则 b 排在 a 前面
+            return 1;
+          } else {
+            // 如果两个字符串都不包含数字，则按字母顺序排序
+            return a.localeCompare(b);
+          }
         });
 
-            //console.log(clusterLabels);
+          console.log(clusterLabels);
           const umap1 = umapData.value.map(d => parseFloat(d.u1));
           const umap2 = umapData.value.map(d => parseFloat(d.u2));
           const cellIds = umapData.value.map(d => d.i);
@@ -517,7 +537,12 @@ onMounted(async() => {
 //------------------------------------------------------
 //基因搜索框
 //------------------------------------------------------
-
+// 计算 wrapper 的高度
+const wrapperHeight = computed(() => {
+  const itemCount = filteredGenes.value.length;
+  const maxHeight = 400; // 36px/item * 11 items ≈ 400px
+  return Math.min(itemCount * 36, maxHeight);
+});
 /*
 import { throttle } from 'lodash';
 

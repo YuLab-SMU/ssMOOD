@@ -55,4 +55,5 @@ $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 // 返回 JSON 数据
 header('Content-Type: application/json');
 echo $compressed;
+//echo $response;
 ?>
