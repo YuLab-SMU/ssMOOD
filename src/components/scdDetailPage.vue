@@ -122,44 +122,29 @@
             <button @click="searchgene" class="search-btn">
               {{ $t('scd21button') }}
             </button>
-            <div style="height: 300px;">
-       <vue-virtual-scroll-grid
-    :length="1000"
-    :pageProvider="fetchPage"
-    :pageSize="40"
-    :item-height="30"
-  >
-    <template v-slot:default="{ item, style, index }">
-      <div :style="style">{{ item }} {{ index }}</div>
-    </template>
-    <template v-slot:placeholder="{ index, style }">
-      <div :style="style">Placeholder {{ index }}</div>
-    </template>
-   </vue-virtual-scroll-grid>
-  </div>
     <!-- 新增高度控制容器 -->
         <div 
           v-show="showScroller"
           class="scroller-wrapper"
-          :style="{ height: wrapperHeight + 'px' }"
+          ref="scrollContainer"
         >
           <recycle-scroller
             class="scroller"
-            :items="filteredGenes"
-            :item-size="12"
-            :buffer="200"
-            page-mode="true"
+            :items="virtualItem"
+            :max-items="20000"
+            key-field="id"
+            :item-size="15"
+            :buffer="500"
             :key="resetKey"
-            :prerender="0"
-            :emit-update="false"
           >
             <template v-slot="{ item }">
               <div 
                 class="gene-item"
+                :key="item.id"
                 :class="{ 'is-active': item === searchQuery }"
-                @mousedown="selectItem(item)"
+                @mousedown="selectItem(item.content)"
               >
-                {{ item }}
+                {{ item.content }}
               </div>
             </template>
           </recycle-scroller>
@@ -281,8 +266,8 @@ import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
 import { ref, onMounted, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
-import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
-//import debounce from 'lodash.debounce';
+//import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
+import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
@@ -407,7 +392,7 @@ onMounted(() => {
           }
         });
 
-          console.log(clusterLabels);
+          //console.log(clusterLabels);
           const umap1 = umapData.value.map(d => parseFloat(d.u1));
           const umap2 = umapData.value.map(d => parseFloat(d.u2));
           const cellIds = umapData.value.map(d => d.i);
@@ -553,22 +538,16 @@ onMounted(async() => {
 //------------------------------------------------------
 
 
-const fetchPage = async (pageNumber, pageSize) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const start = pageNumber * pageSize;
-      const data = Array.from({ length: pageSize }, (_, i) => `Item ${start + i}`);
-      resolve(data);
-    }, 1000);
-  });
-};
+
+//const isGeneLoad = ref(false);
 // 计算 wrapper 的高度
+
+/*
 const wrapperHeight = computed(() => {
   const itemCount = filteredGenes.value.length;
   const maxHeight = 400; // 36px/item * 11 items ≈ 400px
   return Math.min(itemCount * 36, maxHeight);
 });
-/*
 import { throttle } from 'lodash';
 
 const onScroll = throttle(() => {
@@ -584,6 +563,54 @@ const genes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
 const markerSize2 = ref(4); // 默认点大小
+
+// 分页状态管理
+const geneCurrentPage = ref(0)
+const genePageSize = 100;
+//const noMore = ref(false)
+//const virtualItems = ref([])
+
+/*
+watch(geneCurrentPage, () => {
+  virtualItems.value = filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
+  console.log(virtualItems.value);
+}, { flush: 'post', immediate: true }) // 在DOM更新后执行
+
+
+watch(virtualItems, () => {
+  resetKey.value++ // 触发虚拟滚动组件重新渲染
+}, { flush: 'post' }) // 在DOM更新后执行
+
+*/
+/*
+const filteredGenes = computed(() => {
+  if (!searchQuery.value) {
+    return genes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
+  }
+  const data = genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  // 将搜索查询转换为小写并进行过滤
+  return data.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
+});
+const filteredGenes = computed(() => {
+  if (!searchQuery.value) {
+    return genes.value;
+  }
+  const data = genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  // 将搜索查询转换为小写并进行过滤
+  return data;
+});
+*/
+
+
+const virtualItem = ref([]);
+const filteredGenes = computed(() => {
+  let data = genes.value;
+  if (searchQuery.value) {
+    data = data.filter(gene => gene.content.includes(searchQuery.value.toLowerCase()));
+  }
+  return data
+});
+
 //加载基因
 onMounted(async() => {
   const params = new URLSearchParams({
@@ -598,8 +625,12 @@ onMounted(async() => {
     if (!data || !Array.isArray(data.genes)) {
       throw new Error('Invalid data structure received');
     }
-    genes.value = data.genes.map(gene => gene.toLowerCase());
+    genes.value = data.genes.map((gene, index) => ({
+    id: index + 1, // 使用数组索引作为 id
+    content: gene.toLowerCase()
+  }));
     filteredGenes.value = [...genes.value];
+    virtualItem.value = genes.value.slice(0,genePageSize );
   } catch (error) {
     console.error('Failed to load genes:', error);
     // 可以在这里处理错误，例如显示错误消息或设置错误状态
@@ -612,16 +643,18 @@ onMounted(async() => {
 // 侦听器：监听 searchQuery 的变化
 //import { nextTick } from 'vue';
 const resetKey = ref(0)
-const filteredGenes = computed(() => {
-  if (!searchQuery.value) {
-    return genes.value;
-  }
-  // 将搜索查询转换为小写并进行过滤
-  return genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()));
-});
+
+
 watch([filteredGenes, searchQuery], () => {
   resetKey.value++ // 触发虚拟滚动组件重新渲染
 }, { flush: 'post' }) // 在DOM更新后执行
+
+
+watch(searchQuery, () => {
+  virtualItem.value = filteredGenes.value.slice(0,genePageSize);
+  geneCurrentPage.value = 0;
+}, { flush: 'post' }) // 在DOM更新后执行
+
 
 // 选择项时触发的方法
 const selectItem = (item) => {
@@ -637,7 +670,101 @@ const handleBlur = () => {
     }
   }, 100);
 };
+//---------------测试代码
+/*
+import { onClickOutside } from '@vueuse/core';
+import {defineEmits,watchEffect} from 'vue';
 
+const totalItems = ref(0)
+// 使用computed缓存数据长度
+
+watchEffect(() => {
+  totalItems.value = filteredGenes.value.length;
+});
+
+
+const virtualItem = ref([]);
+const dropdownHeight =300;
+
+const isOpen = ref(false);
+const selectedItem = ref(null);
+const dropdown = ref(null);
+
+const toggleDropdown = () => {
+  isOpen.value = !isOpen.value;
+  if (isOpen.value) {
+    fetchPage(0); // 初始加载第一页数据
+  }
+};
+
+const selectItem_test = (item) => {
+  selectedItem.value = item;
+  isOpen.value = false;
+  emit('change', item);
+};
+
+// 直接返回数据切片，无需维护visibleItems
+const fetchPage = async (page) => {
+  const start = page * 40
+  virtualItem.value = filteredGenes.value.slice(start, start + 40)
+  return virtualItem.value
+}
+
+
+const emit = defineEmits(['change']);
+
+onMounted(() => {
+  onClickOutside(dropdown, () => {
+    isOpen.value = false;
+  });
+});
+
+const handleScroll = debounce(() => {
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
+  const scrollBottom = scrollHeight - (scrollTop + clientHeight);
+  const threshold = 100; // 提前100px触发加载
+
+  // 滚动到底部
+  if (scrollBottom < threshold && geneCurrentPage.value < 50 ) {
+    geneCurrentPage.value++;
+  }
+
+  // 滚动到顶部
+  if (scrollTop < threshold && geneCurrentPage.value > 0) {
+    geneCurrentPage.value--;
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+  }
+}, 100);
+
+*/
+import {onUnmounted} from 'vue'
+const scrollContainer = ref(null);
+
+onMounted(() => {
+  scrollContainer.value.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  scrollContainer.value.removeEventListener('scroll', handleScroll);
+});
+
+watch(geneCurrentPage, () => {
+  virtualItem.value = virtualItem.value.concat(filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize ));
+}) // 在DOM更新后执行
+
+const handleScroll = debounce(() => {
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
+  const scrollBottom = scrollHeight - (scrollTop + clientHeight);
+  const threshold = 100; // 提前100px触发加载
+
+  // 滚动到底部
+  if (scrollBottom < threshold && geneCurrentPage.value < 50 ) {
+    geneCurrentPage.value++;
+  }
+}, 100);
+
+
+//---------------测试代码
 
 const getColor = (value) => {
     if (value > 2) {
@@ -833,7 +960,7 @@ watch(cellType, async (newcellType) => {
   fetch(config.apiUrl+`scd_getDEG_ByCluster.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
+      //console.log(data);
       DEGdata.value = data.data; 
     })
     .catch((error) => {
@@ -934,4 +1061,7 @@ button {
 }
 
  /* ----------------------------------------------------------- */
+.scroller-wrapper{
+    height: 400px;
+}
 </style>
