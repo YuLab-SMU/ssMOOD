@@ -122,8 +122,21 @@
             <button @click="searchgene" class="search-btn">
               {{ $t('scd21button') }}
             </button>
-            
-        
+            <div style="height: 300px;">
+       <vue-virtual-scroll-grid
+    :length="1000"
+    :pageProvider="fetchPage"
+    :pageSize="40"
+    :item-height="30"
+  >
+    <template v-slot:default="{ item, style, index }">
+      <div :style="style">{{ item }} {{ index }}</div>
+    </template>
+    <template v-slot:placeholder="{ index, style }">
+      <div :style="style">Placeholder {{ index }}</div>
+    </template>
+   </vue-virtual-scroll-grid>
+  </div>
     <!-- 新增高度控制容器 -->
         <div 
           v-show="showScroller"
@@ -134,7 +147,7 @@
             class="scroller"
             :items="filteredGenes"
             :item-size="12"
-            :buffer="5000"
+            :buffer="200"
             page-mode="true"
             :key="resetKey"
             :prerender="0"
@@ -268,6 +281,7 @@ import { RecycleScroller } from 'vue3-virtual-scroller';
 import pako from 'pako';
 import { ref, onMounted, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
+import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
 //import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import { useI18n } from 'vue-i18n';
@@ -537,6 +551,17 @@ onMounted(async() => {
 //------------------------------------------------------
 //基因搜索框
 //------------------------------------------------------
+
+
+const fetchPage = async (pageNumber, pageSize) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const start = pageNumber * pageSize;
+      const data = Array.from({ length: pageSize }, (_, i) => `Item ${start + i}`);
+      resolve(data);
+    }, 1000);
+  });
+};
 // 计算 wrapper 的高度
 const wrapperHeight = computed(() => {
   const itemCount = filteredGenes.value.length;
