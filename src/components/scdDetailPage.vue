@@ -787,14 +787,18 @@ const searchgene = async() => {
   });
 
   try {
-    const response = await fetch(config.apiUrl+`scd_geneExpression.php?${params}`);
+    const response = await fetch(config.apiUrl+`scd_getGeneExpression_bin.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
+    const compressed = new Uint8Array(await response.arrayBuffer());
+    const decompressed = pako.ungzip(compressed); // 使用pako解压
+    
+    const data = new TextDecoder('utf-8').decode(decompressed);
+     const jsonData = JSON.parse(data);
 
     // 合并数据
-    const ncMap = data.data.reduce((acc, item) => {
+    const ncMap = jsonData.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
       return acc;
     }, {});
