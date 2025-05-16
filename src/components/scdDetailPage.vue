@@ -262,6 +262,7 @@
                   <button @click="prevPage" :disabled="currentPage === 1" class="page">{{ $t('scd38') }}</button>
                   <span>{{ $t('scd39') }} {{ currentPage }} {{ $t('scd40') }} {{ totalPages }}</span>
                   <button @click="nextPage" :disabled="currentPage === totalPages" class="page">{{ $t('scd41') }}</button>
+                  <span>{{ $t('scd39-1') }} {{ filteredData.length  }}{{ $t('scd39-2') }}</span>
                 </div>
                   <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
                 </div>
@@ -287,6 +288,7 @@
                         <th @click="sortTable(1)">{{ $t('scd45') }}</th>
                         <th @click="sortTable(2)">{{ $t('scd46') }}</th>
                         <th @click="sortTable(3)">{{ $t('scd47') }}</th>
+                        <th>{{ $t('scd48') }}</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -295,9 +297,35 @@
                       <td>{{ item.p.toExponential(3) }}</td> <!-- 保留6位小数 -->
                       <td>{{ item.o.toFixed(3) }}</td> <!-- 保留3位小数 -->
                       <td>{{ item.c.toFixed(3) }}</td> <!-- 保留3位小数 -->
+                        <td>
+                            <button @click="openKeggModal(item.g)" class="geneModelButton" >{{ $t('scd49') }}</button>
+                        </td>
                     </tr>
                   </tbody>
                 </table>
+                
+                <!-- 模态窗 -->
+                <div v-if="isKeggModalOpen" class="keggModal">
+                    <div class="keggModal-content"> <span class="close" @click="closeKeggModal">&times;</span>
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>{{ $t('scd50') }}</th>
+                              <th>{{ $t('scd51') }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="gene in selectedKeggGene" :key="gene">
+                              <td>{{ gene }}</td>
+                              <td>
+                                <button @click="openLink(gene, 'link1')" class="geneModelButton">UNIPROT🔗</button>
+                                <button @click="openLink(gene, 'link2')" class="geneModelButton">GENECARDS🔗</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="pagination">
                     <div class="left-section">
                   <button @click="KEGGprevPage" :disabled="KEGGcurrentPage === 1" class="page">{{ $t('scd38') }}</button>
@@ -306,6 +334,9 @@
                   </div>
                    <button @click="KEGGdownload" class="downloadButton">{{ $t('scd32') }}</button>
                 </div>
+                
+                
+                
               </div>
                 
             </div>
@@ -359,9 +390,9 @@ onMounted(async() => {
 const route = useRoute();
 
 
-//------------------------------------------------------
+//###################################//
 //加载数据集详细信息
-//------------------------------------------------------
+//###################################//
 const dataset = ref({
   dataset_id: '',
   species: '',
@@ -411,9 +442,9 @@ onMounted(() => {
 
 
 
-//------------------------------------------------------
+//###################################//
 //加载Umap图
-//------------------------------------------------------
+//###################################//
 const umapData = ref([]);
 onMounted(() => {
     const params = new URLSearchParams({
@@ -545,9 +576,9 @@ const increaseSize1 = () => {
   }
 };
 
-//------------------------------------------------------
+//###################################//
 //分类表
-//------------------------------------------------------
+//###################################//
 onMounted(async() => {
         const params = new URLSearchParams({
           id: route.params.id
@@ -595,9 +626,12 @@ onMounted(async() => {
       })
       .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
 });
-//------------------------------------------------------
+
+
+
+//###################################//
 //基因搜索框
-//------------------------------------------------------
+//###################################//
 
 
 
@@ -799,16 +833,18 @@ const handleScroll = debounce(() => {
 }, 100);
 
 */
-import {onUnmounted} from 'vue'
+//import {onUnmounted} from 'vue'
 const scrollContainer = ref(null);
 
 onMounted(() => {
   scrollContainer.value.addEventListener('scroll', handleScroll);
 });
 
+/*
 onUnmounted(() => {
   scrollContainer.value.removeEventListener('scroll', handleScroll);
 });
+*/
 
 watch(geneCurrentPage, () => {
   virtualItem.value = virtualItem.value.concat(filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize ));
@@ -988,9 +1024,13 @@ const increaseSize2 = () => {
     updateUmap2();
   }
 };
-//------------------------------------------------------
+
+
+
+
+//###################################//
 //差异表达分析
-//------------------------------------------------------
+//###################################//
 
 const group = ref('cellTypeSpecificGenes');
 const cellTypes = ref([]);
@@ -1006,7 +1046,17 @@ const itemsPerPage = ref(10);
 const filterDEGGenes = ref('');
 
 
+//----------------------------------
+//基因富集分析部分的变量
+const KEGGdata = ref([]);
+const isenrichmentExpanded1 = ref(false);
 
+//----------------------------------
+
+
+//------------------------------------------------------//
+//默认加载第一个细胞类型的差异数据
+//------------------------------------------------------//
 onMounted(() => {
     const params = new URLSearchParams({
     id: route.params.id,
@@ -1022,9 +1072,10 @@ onMounted(() => {
     });
 });
 
-
+//------------------------------------------------------//
+//检测用户更换细胞类型
+//------------------------------------------------------//
 watch(cellType, async (newcellType) => {
-  DEGdata.value = [];
   //获取差异数据
   const params = new URLSearchParams({
     id: route.params.id,
@@ -1035,12 +1086,13 @@ watch(cellType, async (newcellType) => {
     .then((data) => {
       //console.log(data);
       DEGdata.value = data.data; 
-      currentPage.value = 1;
+      currentPage.value = 1;//回到第一页
     })
     .catch((error) => {
       console.error("Failed to load DEGs:", error);
     });
 });
+
 
 
 //------------------------------------------------------
@@ -1067,6 +1119,14 @@ const filteredData = computed(() => {
            lowerCaseItemI.includes(lowerCaseFilter)&&
            directionFilter;
   });
+});
+
+//------------------------------------------------------
+//数据发生变化，需要基因富集分析数据，折叠基因富集分析面板
+//------------------------------------------------------
+watch(filteredData, () => {
+  KEGGdata.value = [];
+  isenrichmentExpanded1.value = false;
 });
 
 const totalPages = computed(() => {
@@ -1107,23 +1167,23 @@ const download = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "data.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-"+route.params.id+"-differential_expression.csv"; // 指定下载的文件名
   link.click();
 };
 
 //------------------------------------------------------
-//排序
+//差异数据排序
 //------------------------------------------------------
 
 
-//------------------------------------------------------
+//###################################//
 //KEGG分析
-//------------------------------------------------------
+//###################################//
 
 
-const isenrichmentExpanded1 = ref(false);
+//const isenrichmentExpanded1 = ref(false);定义在差异部分
 
-const KEGGdata = ref([]);
+//const KEGGdata = ref([]);定义在差异部分
 const KEGGcurrentPage = ref(1);
 const KEGGitemsPerPage = ref(10);
 
@@ -1133,6 +1193,10 @@ const KeggGenes = computed(() => {
       return filteredData.value.map(item => item.i);
 });
 
+
+//------------------------------------------------------//
+//向服务器请求kegg数据
+//------------------------------------------------------//
 const getKEGG = () => {
   // 将 KeggGenes.value 转换为 JSON 字符串
   const genesJson = JSON.stringify(KeggGenes.value);
@@ -1154,14 +1218,22 @@ const getKEGG = () => {
     return response.json(); // 解析 JSON 响应
   })
   .then((data) => {
-    KEGGdata.value = data; // 将获取的数据存储到 KEGGdata
-    console.log(KEGGdata.value);
+      // kegg面板展开时才将获取的数据存储到 KEGGdata
+      if(isenrichmentExpanded1.value == true){
+          KEGGdata.value = data; 
+      }
+    
+    //console.log(KEGGdata.value);
   })
   .catch((error) => {
     console.error("Failed to load DEGs:", error);
   });
 };
 
+
+//------------------------------------------------------//
+//展开或关闭kegg面板
+//------------------------------------------------------//
 const enrichment_expand_button1 =() => {
     isenrichmentExpanded1.value = !isenrichmentExpanded1.value
     
@@ -1173,6 +1245,9 @@ const enrichment_expand_button1 =() => {
 }
 
 
+//------------------------------------------------------//
+//按名字过滤通路
+//------------------------------------------------------//
 const KEGGfilteredData = computed(() => {
   return KEGGdata.value.filter(item => {
     KEGGcurrentPage.value = 1;
@@ -1210,7 +1285,9 @@ const KEGGnextPage = () => {
   }
 };
 
-
+//------------------------------------------------------//
+//保存kegg数据为CSV
+//------------------------------------------------------//
 const KEGGheaders = ['Term', 'Adjusted p-value', 'Odds Ratio','Combined Score','Genes'];
 const KEGGdownload = () => {
   // 创建一个二维数组，每个元素都是表格的一行
@@ -1225,8 +1302,38 @@ const KEGGdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "kegg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-"+route.params.id+"-kegg.csv"; // 指定下载的文件名
   link.click();
+};
+
+
+//------------------------------------------------------//
+//基因列表模态窗
+//------------------------------------------------------//
+
+// 模态窗状态
+const isKeggModalOpen = ref(false);
+const selectedKeggGene = ref([]);
+
+// 打开模态窗
+const openKeggModal = (gene) => {
+  selectedKeggGene.value = gene.split(';');
+  isKeggModalOpen.value = true;
+};
+
+// 关闭模态窗
+const closeKeggModal = () => {
+  isKeggModalOpen.value = false;
+};
+
+const openLink = (gene, linkType) => {
+  let url;
+  if (linkType === 'link1') {
+    url = `https://www.uniprot.org/uniprotkb/?query=${gene}`; // 示例链接1
+  } else if (linkType === 'link2') {
+    url = `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${gene}`; // 示例链接2
+  }
+  window.open(url, '_blank'); // 在新标签页中打开链接
 };
 </script>
 

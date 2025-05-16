@@ -294,7 +294,7 @@
 
 .kegg-analysis {
   width: calc(80vw + 60px);
-  height: 65vh;
+  height: 80vh;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -500,7 +500,53 @@ input[type="radio"] {
   outline: none; /* 去掉聚焦时的轮廓 */
    float: right;
 }
+.geneModelButton{
+  padding: 4px 8px; /* 内边距 */
+  border: none; /* 无边框 */
+  border-radius: 4px; /* 圆角 */
+  background-color: rgb(93, 116, 162); /* 背景颜色 */
+  color: white; /* 文字颜色 */
+  font-size: 14px; /* 字体大小 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
+  outline: none; /* 去掉聚焦时的轮廓 */
+}
 
+.keggModal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.keggModal-content {
+  background-color: #fefefe;
+  margin: 10vh auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 35vw;
+  height: auto;
+  overflow: auto;
+  border-radius: 10px; /* 圆角 */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 .de-direction, .de-direction-child{
   display: flex; /* 启用flexbox布局 */
   justify-content: flex-start; /* 子元素之间的间距 */
