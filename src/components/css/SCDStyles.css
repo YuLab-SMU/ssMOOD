@@ -7,10 +7,9 @@
 .information-container {
   display: flex;
   flex-direction: column; /* 子元素纵向排列 */
-  background-color: rgba(255, 255, 255, 0.8); /* 朦胧背景 */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   flex:1;
   
 }
@@ -20,17 +19,25 @@
   flex:1;
 }
 .title-bar {
-  background-color: rgb(93, 116, 162); /* 标题栏背景颜色 */
+  flex-direction: column;
+  display: flex;
+  width: 100%;
+  align-items: center; /* 子元素水平居中 */
+}
+
+.title-bar-header {
+  background-color: rgba(93, 116, 162,0.9); /* 标题栏背景颜色 */
   padding: 10px;
-  border-radius: 10px 10px 10px 10px; /* 圆角 */
+  border-radius: 25px 25px 25px 25px; /* 圆角 */
   color: #FFFFFF; /* 文字颜色 */
   text-align: center; /* 文字居中 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 盒子阴影 */
   margin-bottom: 20px; /* 与内容区域间隔 */
+  width: auto; 
 }
 
-.title-bar h1 {
-  margin: 0; /* 移除默认的外边距 */
+.title-bar-header h1 {
+  margin: 0 50px; /* 移除默认的外边距 */
   font-size: 24px; /* 标题字号 */
   font-weight: normal; /* 字体权重 */
   color: white; /* 文字颜色 */
@@ -47,6 +54,7 @@
 .information-left, .information-right {
   flex: 1;
   margin: 0 10px;
+  
 }
 .information-first, .information-second {
   margin: 0; /* 去除原本的左右间距 */
@@ -228,13 +236,73 @@
 
  /* ----------------------------------------------------------- */
  /* 差异表达分析 */
+ 
+.sc-deg-content {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中（如果需要） */
+  flex-direction: column; /* 子元素垂直排列 */
+}
+
+.information-deg-first,
+.information-deg-second {
+    
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  margin: 0; /* 去除原本的左右间距 */
+  margin-bottom: 10px;
+}
+.information-deg-second {
+    flex-direction: column;
+}
+
 .de-analysis {
-  max-width: 600px;
+  width: 40vw;
+  height: 65vh;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 20px;
   background-color: #f9f9f9;
+  overflow: auto;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+.kegg-expand-button {
+  height: 3vh;
+  width: calc(80vw + 60px);
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 20px; /* 仅保留上方的圆角 */
+  background-color: #ffffff;
+  cursor: pointer; /* 鼠标悬停时显示为手型 */
+  text-align: center; /* 文本居中 */
+  line-height: 1.5; /* 调整行高以垂直居中文本 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  user-select: none; /* 禁止文本选择 */
+  transition: background-color 0.3s, border-color 0.3s; /* 添加过渡效果 */
+  box-shadow: 0 -5px 5px 5px rgba(0, 0, 0, 0.1); /* 在上方添加阴影 */
+}
+.kegg-expand-button:hover {
+  background-color: #e0e0e0; /* 鼠标悬停时的背景色 */
+  border-color: #aaa; /* 鼠标悬停时的边框色 */
+}
+.enrichment-button-expanded{
+  border-radius: 20px 20px 0 0; /* 仅保留上方的圆角 */
+  border-bottom: none; /* 移除下边框 */
+}
+
+.kegg-analysis {
+  width: calc(80vw + 60px);
+  height: 65vh;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-top: none; /* 移除上边框 */
+  border-radius: 0 0 20px 20px;
+  background-color: #f9f9f9;
+  overflow: auto;
+  box-shadow: 0px 8px 5px 5px rgba(0, 0, 0, 0.1); /* 在下方添加阴影 */
 }
 
 .note {
@@ -243,10 +311,14 @@
   color: #666;
 }
 
+
 .group, .cell-type, .log2fc, .adjusted-pvalue, .de-direction {
   margin-bottom: 15px;
   
 }
+
+
+
 .custom-select {
   width: 60%;
   padding: 10px; /* 内边距 */
@@ -332,6 +404,68 @@
   background: rgb(93, 116, 162);
   transform: scale(1.2);
 }
+
+.DEdirection {
+  display: flex;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px; /* 调整单选按钮之间的间距 */
+}
+
+.radio-label {
+  position: relative;
+  padding-left: 30px; /* 留出空间放置圆圈 */
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.radio-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.radio-label::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgb(93, 116, 162); /* iOS 蓝色 */
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+input[type="radio"]:checked + .radio-label::after {
+  transform: translateY(-50%) scale(1);
+}
+
+input[type="radio"]:focus + .radio-label::before {
+  border-color: rgb(93, 116, 162); /* iOS 蓝色 */
+}
+/* 隐藏默认的单选按钮 */
+input[type="radio"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+
 .page{
   padding: 4px 8px; /* 内边距 */
   border: none; /* 无边框 */
@@ -344,6 +478,29 @@
   outline: none; /* 去掉聚焦时的轮廓 */
 }
 
+.pagination {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between; /* 分页按钮在左边，下载按钮在右边 */
+  align-items: center; /* 垂直居中 */
+}
+.left-section {
+  display: flex;
+  align-items: center;
+}
+.downloadButton {
+  padding: 4px 8px; /* 内边距 */
+  border: none; /* 无边框 */
+  border-radius: 4px; /* 圆角 */
+  background-color: rgb(93, 116, 162); /* 背景颜色 */
+  color: white; /* 文字颜色 */
+  font-size: 14px; /* 字体大小 */
+  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
+  outline: none; /* 去掉聚焦时的轮廓 */
+   float: right;
+}
+
 .de-direction, .de-direction-child{
   display: flex; /* 启用flexbox布局 */
   justify-content: flex-start; /* 子元素之间的间距 */
@@ -352,12 +509,9 @@
 }
 
 .modern-ui {
-  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
 }
 
@@ -429,6 +583,10 @@ label {
   font-size: 16px;
   color: #333;
 }
+
+
+
+
 
  /* ----------------------------------------------------------- */
   /* 竖屏*/

@@ -21,7 +21,7 @@ if (empty($datasetId)) {
 }
 
 $sql = "SELECT DISTINCT cluster_label
-        FROM spatial_differential_expression
+        FROM st_deg
         WHERE dataset_id = ?;";
 
 $stmt = $conn->prepare($sql);

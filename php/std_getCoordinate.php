@@ -68,4 +68,10 @@ if (!function_exists('zlib_encode')) {
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 header('Content-Type: application/json');
 echo $compressed;
+
+//内存统计
+$peakMemory = memory_get_peak_usage();
+// 将峰值内存使用情况写入日志文件
+$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - 峰值内存使用量：" . $peakMemory/1024 . " KB\n";
+file_put_contents($logFile, $logEntry, FILE_APPEND);
 ?>

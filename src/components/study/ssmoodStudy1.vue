@@ -1,141 +1,131 @@
 <template>
-  <div ref="mindMap" class="mind-map-container"></div>
+  <div class="navigation-container">
+    <div class="image-container">
+      <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
+      <!-- 按钮 1 -->
+      <button class="navigation-button button-1" @click="goToPage('study1.conditions.C')">
+        Control
+      </button>
+      <!-- 按钮 2 -->
+      <button class="navigation-button button-2" @click="goToPage('study1.conditions.3D')">
+        3Day
+      </button>
+      <!-- 按钮 3  7D -->
+      <button class="navigation-button button-3" @click="goToPage('study1.conditions.7D')">
+        7Day
+      </button>
+    <!-- 按钮 4 -->
+      <button class="navigation-button button-4" @click="goToPage('study1.conditions.S')">
+        Sus
+      </button>
+          <!-- 按钮 5 -->
+      <button class="navigation-button button-5" @click="goToPage('study1.conditions.R')">
+        Res
+      </button>
+      
+        <!-- 按钮 6 -->
+      <button class="navigation-button button-6" @click="goToPage('page3')">
+        mPFC
+      </button>
+        <!-- 按钮 7 -->
+      <button class="navigation-button button-7" @click="goToPage('page3')">
+        Stri
+      </button>
+        <!-- 按钮 8 -->
+      <button class="navigation-button button-8" @click="goToPage('page3')">
+        HIP
+      </button>
+        <!-- 按钮 9 -->
+      <button class="navigation-button button-9" @click="goToPage('page3')">
+        VTA
+      </button>
+        <!-- 按钮 10 -->
+      <button class="navigation-button button-10" @click="goToPage('page3')">
+        DRN
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import * as d3 from 'd3';
 import { useRouter } from 'vue-router';
 
-const mindMapData = {
-  nodes: [
-    { id: '1', label: 'study1', study: 'study1', disabled: true },
-    { id: '11', label: 'area', study: 'study1.area', disabled: true },
-    { id: '111', label: 'DRN', study: 'study1.area.DRN', disabled: false },
-    { id: '112', label: 'HIP', study: 'study1.area.HIP', disabled: false },
-    { id: '113', label: 'Stri', study: 'study1.area.Stri', disabled: false },
-    { id: '114', label: 'VTA', study: 'study1.area.VTA', disabled: false },
-    { id: '115', label: 'mPFC', study: 'study1.area.mPFC', disabled: false },
-    { id: '12', label: 'condition', study: 'study1.conditions', disabled: true },
-    { id: '121', label: 'contral(0Day)', study: 'study1.conditions.C', disabled: false },
-    { id: '122', label: '3Day', study: 'study1.conditions.3D', disabled: false },
-    { id: '123', label: '7Day', study: 'study1.conditions.7D', disabled: false },
-     { id: '124', label: '10Day', study: 'study1.conditions.10D', disabled: true },
-    { id: '125', label: 'R', study: 'study1.conditions.R', disabled: false },
-    { id: '126', label: 'S', study: 'study1.conditions.S', disabled: false },
-  ],
-  links: [
-    { source: '1', target: '11' },
-    { source: '11', target: '111' },
-    { source: '11', target: '112' },
-    { source: '11', target: '113' },
-    { source: '11', target: '114' },
-    { source: '11', target: '115' },
-    { source: '1', target: '12' },
-    { source: '12', target: '121' },
-    { source: '121', target: '122' },
-    { source: '122', target: '123' },
-    { source: '123', target: '124' },
-    { source: '124', target: '125' },
-    { source: '124', target: '126' },
-  ],
-};
-
 const router = useRouter();
-const mindMap = ref(null);
 
-onMounted(() => {
-  const svg = d3.select(mindMap.value).append('svg')
-    .attr('width', '100%')
-    .attr('height', 400);
-
-  // 设定力学模拟
-  const simulation = d3.forceSimulation(mindMapData.nodes)
-    .force('link', d3.forceLink(mindMapData.links).id(d => d.id).distance(100))  // 设置连线长度
-    .force('charge', d3.forceManyBody().strength(-400))  // 节点之间的斥力
-    .force('center', d3.forceCenter(400, 200)) // 设置整体的中心位置
-    .force('x', d3.forceX(d => d.id === '1' ? 100 : 500)) // 父节点（id === '1'）固定在最左侧，其他节点向右排列
-    .force('y', d3.forceY(200));  // 让所有节点都集中在纵向的中间
-
-  // 绘制连线
-  const link = svg.append('g')
-    .selectAll('.link')
-    .data(mindMapData.links)
-    .enter().append('line')
-    .attr('class', 'link')
-    .style('stroke', '#ccc')
-    .style('stroke-width', 2);
-
-  // 绘制节点
-  const node = svg.append('g')
-    .selectAll('.node')
-    .data(mindMapData.nodes)
-    .enter().append('circle')
-    .attr('class', 'node')
-    .attr('r', 20)
-    .style('fill', d => (d.disabled ? '#ccc' : '#3498db'))
-    .on('click', (event, node) => { // 确保事件接收到正确的数据
-      if (!node.disabled) {
-        console.log('Node clicked:', node);  // 打印节点数据
-        router.push({ name: 'scsDetail', params: { study: node.study } });
-      }
-    });
-
-  node.append('title')
-    .text(d => d.label);
-
-  // 绘制标签
-  const labels = svg.append('g')
-    .selectAll('.label')
-    .data(mindMapData.nodes)
-    .enter().append('text')
-    .attr('class', 'label')
-    .attr('dy', -25)
-    .attr('text-anchor', 'middle')
-    .text(d => d.label);
-
-  // 更新节点位置
-  simulation.on('tick', () => {
-    node.attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-
-    labels.attr('x', d => d.x)
-          .attr('y', d => d.y);
-
-    link.attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-  });
-});
+const goToPage = (study) => {
+  router.push({ name: 'scsDetail', params: { study: study } });
+};
 </script>
 
-<style>
-.mind-map-container {
-  width: 100%;
-  height: 400;
+<style scoped>
+.navigation-container {
+  position: relative;
+  width: 400px; /* 根据图片大小调整 */
+  height: auto; /* 根据图片大小调整 */
 }
-.mind-map-container svg {
+.image-container {
+  position: relative;
   width: 100%;
-  height: 400;
+  height: 100%;
 }
-
-.node {
+.navigation-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 确保图片覆盖整个容器 */
+}
+.navigation-button {
+  position: absolute;
+  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  transition: fill 0.3s ease;
 }
-
-.node:hover {
-  fill: #e74c3c;
+/* 鼠标悬浮时的效果 */
+.navigation-button:hover {
+  background-color: rgba(0, 0, 0, 0.6); /* 悬浮时背景颜色加深 */
+  transform: scale(1.1); /* 放大按钮 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加阴影 */
 }
-
-.link {
-  stroke: #ccc;
-  stroke-width: 2px;
+.button-1 {
+  top: 65px;
+  left: 60px;
 }
-
-.label {
-  font-size: 12px;
-  fill: #333;
+.button-2 {
+  top: 13px;
+  left: 115px;
+}
+.button-3 {
+  top: 65px;
+  left: 160px;
+}
+.button-4 {
+  top: 20px;
+  right: 5px;
+}
+.button-5 {
+  top: 65px;
+  right: 5px;
+}
+.button-6 {
+  bottom: 90px;
+  right: 200px;
+}
+.button-7 {
+  bottom: 90px;
+  right: 115px;
+}
+.button-8 {
+  bottom: 90px;
+  right: 15px;
+}
+.button-9 {
+  bottom: 35px;
+  right: 165px;
+}
+.button-10 {
+  bottom: 35px;
+  right: 52px;
 }
 </style>

@@ -21,7 +21,7 @@ if (empty($datasetId)) {
 }
 
 $sql = "SELECT gene_id, p_value, fold_change ,pct1,pct2,p_value_adj
-FROM spatial_differential_expression
+FROM st_deg
 WHERE dataset_id = ? and cluster_label = ?
 ORDER BY gene_id ASC;
 ";

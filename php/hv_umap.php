@@ -15,9 +15,9 @@ if ($conn->connect_error) {
 
 // 定义 4 张表的查询条件，统一字段命名为 umap1 和 umap2
 $queries = [
-    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0001_3D_DRN'",
-    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0001_3D_DRN_1'",
-    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0026_C_BA12'",
+    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0023_S_Stri'",
+    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0049_S_mPFC'",
+    "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0039_C_BA11'",
     "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0055_C_BA46'"
 ];
 
@@ -60,8 +60,11 @@ $conn->close();
 $response = json_encode($umap_datasets);
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 
-// 返回 JSON 数据
-header('Content-Type: application/json');
+    // 设置适当的 HTTP 头
+header('Content-Type: application/octet-stream');
+    // 清除缓冲区并关闭输出缓冲
+ob_clean();
+flush();
 echo $compressed;
 //echo $response;
 ?>

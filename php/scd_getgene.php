@@ -13,9 +13,10 @@ if ($conn->connect_error) {
 // 定义batch值
 $datasetId = $_GET['id'] ?? '';
 
-$sql = "SELECT gene_id
-FROM genes
-ORDER BY gene_id ASC;";
+$sql = "SELECT g.gene_id
+FROM genes g
+JOIN datasets d ON g.study_id = d.study
+WHERE d.dataset_id = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $datasetId);

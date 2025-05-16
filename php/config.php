@@ -9,7 +9,7 @@ $servername = "localhost";
 $username = "scast";
 $password = "20030609";
 $dbname = "ssmood";
-
+$logFile = "./logfile.log";
 
 // Kimi
 //$openaiApiKey = 'sk-iSRrrIFDThVBPSj8HiwjZ5zaxYOyBL3YI1ofEb5OoPT6lCqI'; 

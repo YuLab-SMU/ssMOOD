@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
     // 输出二进制数据
     echo $row['bin_data'];
 } else {
-    echo 'No data found for the given dataset_id and gene_id';
+    echo 'error';
 }
 
 // 关闭语句
@@ -59,4 +59,11 @@ $stmt->close();
 
 // 关闭连接
 $conn->close();
+
+
+//内存统计
+$peakMemory = memory_get_peak_usage();
+// 将峰值内存使用情况写入日志文件
+$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - 峰值内存使用量：" . $peakMemory/1024 . " KB\n";
+file_put_contents($logFile, $logEntry, FILE_APPEND);
 ?>

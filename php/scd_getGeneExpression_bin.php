@@ -22,7 +22,7 @@ if (empty($datasetId) || empty($gene)) {
 }
 
 // 准备 SQL 查询
-$sql = "SELECT bin_data FROM expression WHERE dataset_id = ? AND gene_id = ?";
+$sql = "SELECT bin_data FROM sc_expression WHERE dataset_id = ? AND gene_id = ?";
 
 // 准备语句
 $stmt = $conn->prepare($sql);
@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
     // 输出二进制数据
     echo $row['bin_data'];
 } else {
-    echo 'No data found for the given dataset_id and gene_id';
+    echo 'error';
 }
 
 // 关闭语句

@@ -41,8 +41,9 @@
 <!--详细信息容器-->
 <div class="information-container">
     <div class="title-bar">
+        <div class="title-bar-header">
          <h1>{{ $t('scd1') }}</h1>
-
+         </div>
     </div>
     <div class="information-content">
         <div class="information-left">
@@ -80,8 +81,11 @@
 <!--##################################################-->                    
 <!--细胞分类容器-->
   <div class="information-container">
+    
     <div class="title-bar">
-      <h1>{{ $t('scd20') }}</h1>
+        <div class="title-bar-header">
+         <h1>{{ $t('scd20') }}</h1>
+         </div>
     </div>
     <div class="sc-cluster-content">
       <!-- 左侧内容：UMAP图与标记大小控制 -->
@@ -174,10 +178,12 @@
 <!--差异表达分析容器-->
 <div class="information-container">
     <div class="title-bar">
+        <div class="title-bar-header">
          <h1>{{ $t('scd25') }}</h1>
-
+         </div>
     </div>
-    <div class="information-content">
+    <div class="sc-deg-content">
+        <div class="information-deg-first">
         <div class="information-left">
             <div class="de-analysis  modern-ui">
                 <div class="note">
@@ -206,6 +212,17 @@
                     <input type="range" min="0" max="1" step="0.0001" v-model="pvalue" class="custom-range"/> <span>{{ pvalue }}</span>
 
                 </div>
+                  <div class="DEdirection">
+                    <label>DE direction:</label>
+                    <div class="radio-group">
+                      <input type="radio" id="all" value="all" v-model="selectedDirection" />
+                      <label for="all" class="radio-label">All</label>
+                      <input type="radio" id="up" value="up" v-model="selectedDirection" />
+                      <label for="up" class="radio-label">UP</label>
+                      <input type="radio" id="down" value="down" v-model="selectedDirection"/>
+                      <label for="down" class="radio-label">Down</label>
+                    </div>
+                  </div>
             </div>
         </div>
         
@@ -218,7 +235,7 @@
               :placeholder="$t('scd31')"
               type="text"
             />
-                <button @click="download" class="search-btn">{{ $t('scd32') }}</button>
+                
                 <div class="table-container">
                 <table>
                   <thead>
@@ -241,14 +258,59 @@
                   </tbody>
                 </table>
                 <div class="pagination">
+                <div class="left-section">
                   <button @click="prevPage" :disabled="currentPage === 1" class="page">{{ $t('scd38') }}</button>
                   <span>{{ $t('scd39') }} {{ currentPage }} {{ $t('scd40') }} {{ totalPages }}</span>
                   <button @click="nextPage" :disabled="currentPage === totalPages" class="page">{{ $t('scd41') }}</button>
+                </div>
+                  <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
                 </div>
               </div>
                 
             </div>
         </div>
+        </div>
+        <div class="information-deg-second">
+        <div class="kegg-expand-button"  @click="enrichment_expand_button1" :class="{ 'enrichment-button-expanded': isenrichmentExpanded1 }">{{ $t('scd42') }} </div>
+        <div class="kegg-analysis modern-ui" v-if = "isenrichmentExpanded1" >
+            <input
+              class="search-gene-input"
+              v-model="filterKEGG"
+              :placeholder="$t('scd31')"
+              type="text"
+            />
+                <div class="table-container">
+                <table>
+                  <thead>
+                      <tr>
+                        <th @click="sortTable(0)">{{ $t('scd44') }}</th>
+                        <th @click="sortTable(1)">{{ $t('scd45') }}</th>
+                        <th @click="sortTable(2)">{{ $t('scd46') }}</th>
+                        <th @click="sortTable(3)">{{ $t('scd47') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item in KEGGpaginatedData" :key="item.t">
+                      <td>{{ item.t }}</td>
+                      <td>{{ item.p.toExponential(3) }}</td> <!-- 保留6位小数 -->
+                      <td>{{ item.o.toFixed(3) }}</td> <!-- 保留3位小数 -->
+                      <td>{{ item.c.toFixed(3) }}</td> <!-- 保留3位小数 -->
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination">
+                    <div class="left-section">
+                  <button @click="KEGGprevPage" :disabled="KEGGcurrentPage === 1" class="page">{{ $t('scd38') }}</button>
+                  <span>{{ $t('scd39') }} {{ KEGGcurrentPage }} {{ $t('scd40') }} {{ KEGGtotalPages }}</span>
+                  <button @click="KEGGnextPage" :disabled="KEGGcurrentPage === KEGGtotalPages" class="page">{{ $t('scd41') }}</button>
+                  </div>
+                   <button @click="KEGGdownload" class="downloadButton">{{ $t('scd32') }}</button>
+                </div>
+              </div>
+                
+            </div>
+            
+            </div>
     </div>
 </div>
         
@@ -670,7 +732,7 @@ const handleBlur = () => {
     }
   }, 100);
 };
-//---------------测试代码
+//---------------测试代码-------------start
 /*
 import { onClickOutside } from '@vueuse/core';
 import {defineEmits,watchEffect} from 'vue';
@@ -764,7 +826,7 @@ const handleScroll = debounce(() => {
 }, 100);
 
 
-//---------------测试代码
+//---------------测试代码-------------end
 
 const getColor = (value) => {
     if (value > 2) {
@@ -835,8 +897,11 @@ mergedArray.forEach(item => {
       }
 });
 
-    //---------------------------------------
-    // 按分类信息创建轨迹
+    //------------------------------------------------------
+    //按分类信息创建轨迹
+    //重要优化点！！！
+    //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅。
+    //------------------------------------------------------
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
       
@@ -932,12 +997,15 @@ const cellTypes = ref([]);
 const cellType = ref('');
 const log2fc = ref(-10);
 const pvalue = ref(1);
-//const direction = ref('all');
+const selectedDirection = ref('all');
+
 const DEGdata = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
 const filterDEGGenes = ref('');
+
+
 
 onMounted(() => {
     const params = new URLSearchParams({
@@ -956,6 +1024,7 @@ onMounted(() => {
 
 
 watch(cellType, async (newcellType) => {
+  DEGdata.value = [];
   //获取差异数据
   const params = new URLSearchParams({
     id: route.params.id,
@@ -966,6 +1035,7 @@ watch(cellType, async (newcellType) => {
     .then((data) => {
       //console.log(data);
       DEGdata.value = data.data; 
+      currentPage.value = 1;
     })
     .catch((error) => {
       console.error("Failed to load DEGs:", error);
@@ -978,14 +1048,24 @@ watch(cellType, async (newcellType) => {
 //------------------------------------------------------
 const filteredData = computed(() => {
   return DEGdata.value.filter(item => {
+    currentPage.value = 1;
     const logFoldChange = parseFloat(item.f);
     const adjustedPvalue = parseFloat(item.a);
     // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
     const lowerCaseFilter = filterDEGGenes.value.toLowerCase();
     const lowerCaseItemI = item.i.toLowerCase();
+    
+    let directionFilter = true;
+    if (selectedDirection.value === 'up' && logFoldChange < 0) {
+      directionFilter = false;
+    } else if (selectedDirection.value === 'down' && logFoldChange > 0) {
+      directionFilter = false;
+    }
+
     return Math.abs(logFoldChange) >= log2fc.value &&
            adjustedPvalue <= pvalue.value &&
-           lowerCaseItemI.includes(lowerCaseFilter);
+           lowerCaseItemI.includes(lowerCaseFilter)&&
+           directionFilter;
   });
 });
 
@@ -1035,6 +1115,119 @@ const download = () => {
 //排序
 //------------------------------------------------------
 
+
+//------------------------------------------------------
+//KEGG分析
+//------------------------------------------------------
+
+
+const isenrichmentExpanded1 = ref(false);
+
+const KEGGdata = ref([]);
+const KEGGcurrentPage = ref(1);
+const KEGGitemsPerPage = ref(10);
+
+const filterKEGG = ref('');
+
+const KeggGenes = computed(() => {
+      return filteredData.value.map(item => item.i);
+});
+
+const getKEGG = () => {
+  // 将 KeggGenes.value 转换为 JSON 字符串
+  const genesJson = JSON.stringify(KeggGenes.value);
+  
+  // 创建一个 FormData 对象来存储请求参数
+  const params = new FormData();
+  params.append('genes', genesJson);
+  params.append('gene_sets', "Mouse_GO_2024.gmt");
+  
+  // 发送 POST 请求
+  fetch(config.apiUrl + 'enrichment.php', {
+    method: 'POST', // 指定请求方法为 POST
+    body: params, // 添加请求体
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // 解析 JSON 响应
+  })
+  .then((data) => {
+    KEGGdata.value = data; // 将获取的数据存储到 KEGGdata
+    console.log(KEGGdata.value);
+  })
+  .catch((error) => {
+    console.error("Failed to load DEGs:", error);
+  });
+};
+
+const enrichment_expand_button1 =() => {
+    isenrichmentExpanded1.value = !isenrichmentExpanded1.value
+    
+    if(isenrichmentExpanded1.value == true){
+        getKEGG();
+    }else{
+        KEGGdata.value = [];
+    }
+}
+
+
+const KEGGfilteredData = computed(() => {
+  return KEGGdata.value.filter(item => {
+    KEGGcurrentPage.value = 1;
+    // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
+    const lowerCaseFilter = filterKEGG.value.toLowerCase();
+    const lowerCaseItemI = item.t.toLowerCase();
+    
+
+    return lowerCaseItemI.includes(lowerCaseFilter);
+  });
+});
+console.log(KEGGfilteredData.value);
+
+const KEGGtotalPages = computed(() => {
+  // 总页数基于筛选后的数据集计算
+  return Math.ceil(KEGGfilteredData.value.length / KEGGitemsPerPage.value);
+});
+
+const KEGGpaginatedData = computed(() => {
+  // 分页应用于筛选后的数据集
+  const start = (KEGGcurrentPage.value - 1) * KEGGitemsPerPage.value;
+  const end = start + KEGGitemsPerPage.value;
+  return KEGGfilteredData.value.slice(start, end);
+});
+
+const KEGGprevPage = () => {
+  if (KEGGcurrentPage.value > 1) {
+    KEGGcurrentPage.value--;
+  }
+};
+
+const KEGGnextPage = () => {
+  if (KEGGcurrentPage.value < KEGGtotalPages.value) {
+    KEGGcurrentPage.value++;
+  }
+};
+
+
+const KEGGheaders = ['Term', 'Adjusted p-value', 'Odds Ratio','Combined Score','Genes'];
+const KEGGdownload = () => {
+  // 创建一个二维数组，每个元素都是表格的一行
+  const dataForTable = KEGGfilteredData.value.map((item) => {
+    return Object.values(item);
+  });
+
+  // 创建 CSV 字符串
+  const csvContent = [KEGGheaders.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
+
+  // 创建一个下载链接
+  const link = document.createElement("a");
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+  link.target = "_blank";
+  link.download = "kegg.csv"; // 指定下载的文件名
+  link.click();
+};
 </script>
 
 <style scoped>
@@ -1057,9 +1250,8 @@ th,td {
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
-.pagination {
-  margin-top: 10px;
-}
+
+
 button {
   margin: 0 5px;
 }
