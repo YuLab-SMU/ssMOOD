@@ -1,2 +1,43 @@
-<template><div></div></template><script setup>import{onMounted}from"vue";import{Base64}from"js-base64";
-const a=()=>{const b=Base64.decode("54mI5p2D5omA5pyJ77yawqkgMjAyNSDmnY7ph5Hmmag=");console.log(`%c${b}`,'background:#333333;color:#bada55;font-size:16px;padding:5px;border-radius:5px;')};const c=()=>{const d="ssMOOD V4.5.0 Dev";const e="";console.log(`%c${d}`,'background:#333333;color:white;font-size:16px;padding:5px;border-radius:5px;');console.log(`%c${e}`,'background:#333333;color:grey;font-size:12px;padding:5px;border-radius:5px;');};onMounted(()=>{window.copyright=a;c();});</script>
+<template>
+  <div></div>
+</template>
+
+<script setup>
+import { onMounted } from 'vue';
+import config from '@/config';
+// 打印版权信息
+const logCopyright = () => {
+  const version = "ssMOOD "+process.env.BRANCH;//从项目设置自动获取
+  const email_zh = "欢迎使用ssMOOD，如果网站发生错误请使用邮件联系"+config.email+"。";
+  const email_en = "Welcome to ssMOOD. If you encounter any issues with the website, please contact us via email at "+config.email+".";
+  console.log(
+    `%c${version}`,
+    'background:#333333; color:white; font-size:30px; padding:5px; border-radius:5px;'
+  );
+  console.log(
+    `%c${email_zh}`,
+    'color:rgb(93, 116, 162); font-size:12px;'
+  );
+  console.log(
+    `%c${email_en}`,
+    'color:rgb(93, 116, 162); font-size:12px;'
+  );
+  console.log(
+    `%c${"Branch:"+process.env.BRANCH}`,
+    'color:rgb(93, 116, 162); font-size:12px;'
+  );
+  console.log(
+    `%c${"Hash:"+process.env.COMMITHASH}`,
+    'color:rgb(93, 116, 162); font-size:12px;'
+  );
+  console.log(
+    `%c${"Designed by Jinchen Li"}`,
+    'color:rgb(93, 116, 162); font-size:12px;'
+  );
+};
+
+// 在组件挂载时执行
+onMounted(() => {
+  logCopyright(); // 打印版权信息
+});
+</script>

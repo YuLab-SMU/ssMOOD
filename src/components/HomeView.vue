@@ -54,7 +54,7 @@
                   <div v-if="isVisible" class="back-to-top" @click="scrollToTop">▲</div>
                 <div class="container container1">
                 <div class="test">
-                    <img src="@/assets/ssmood3.png" alt="Test Image">
+                    <img src="@/assets/ssmood.jpg" alt="Test Image">
                 </div>
                 <div class="image-text-container">
                     <div class="image-text-item">
@@ -94,7 +94,7 @@
                                 @click="switchChart(0)"
                               >
                                 <div class="chart-dot"></div>
-                                <span>单细胞</span>
+                                <span>单细胞(鼠)</span>
                               </div>
                               <div
                                 class="chart-item"
@@ -102,7 +102,23 @@
                                 @click="switchChart(1)"
                               >
                                 <div class="chart-dot"></div>
-                                <span>空转</span>
+                                <span>空转(鼠)</span>
+                              </div>
+                              <div
+                                class="chart-item"
+                                :class="{ 'active': currentChart === 2 }"
+                                @click="switchChart(2)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>单细胞(人)</span>
+                              </div>
+                            <div
+                                class="chart-item"
+                                :class="{ 'active': currentChart === 3 }"
+                                @click="switchChart(3)"
+                              >
+                                <div class="chart-dot"></div>
+                                <span>空转(人)</span>
                               </div>
                         </div>
                         <div id="myClusterChart" style="width: 900px; height: 400px;"></div>
@@ -230,9 +246,9 @@ onMounted(async() => {
 //-------------------
 //处理定位滚动逻辑
 //-------------------
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 
-const handleScroll = debounce((event) => {
+const handleScroll = (event) => {
   const topContainer = event.target;
   const containers = Array.from(topContainer.querySelectorAll('.container'));
   const currentScrollPosition = topContainer.scrollTop;
@@ -248,15 +264,14 @@ const handleScroll = debounce((event) => {
     }
   });
 
-  closestContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
   // 添加动画类
   containers.forEach((container) => {
     container.classList.remove('fade-in');
   });
   closestContainer.classList.add('fade-in');
-}, 200); // 调整时间以优化体验
+};
 
+throttle(handleScroll, 300); // 限制每100ms内只执行一次
 //-------------------
 //返回顶部逻辑
 //-------------------
@@ -295,6 +310,21 @@ onUnmounted(() => {
 //-------------------
 //获取数据库基础信息
 //-------------------
+// 初始化数据
+onMounted(async () => {
+  try {
+    const response = await fetch(config.apiUrl + 'hv_dbInfo.php'); // 示例 API
+    const data = await response.json();
+    cellNum.value = data.cellNum;
+    geneNum.value = data.geneNum;
+    clusterNum.value = data.clusterNum;
+    spatialNum.value = data.spatialNum;
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+});
+
+
 
 const currentChart = ref(0); // 当前显示的图表索引
 const cellNum = ref(0);
@@ -303,30 +333,13 @@ const clusterNum = ref(0);
 const spatialNum = ref(0);
 
 // 缓存图表数据
-const chartDataCache = ref({
-  scData: null, // 单细胞数据
-  stData: null  // 空间转录组数据
-});
+const chartDataCache = ref([]);
 
-// 获取数据集信息
-const getDatasetInfo = async (apiName, type) => {
-  try {
-    const response = await fetch(config.apiUrl + apiName);
-    const dataFromPhp = await response.json();
-
-    // 缓存数据
-    chartDataCache.value[type] = dataFromPhp;
-
-    // 绘制图表
-    renderChart(type);
-  } catch (error) {
-    console.error(`Error fetching data from ${apiName}:`, error);
-  }
-};
+const renderChart_title = ['snRNA-seq Datasets(Mouse)','ST Datasets(Mouse)','snRNA-seq Datasets(Human)','ST Datasets(Human)']
 
 // 绘制图表
-const renderChart = (type) => {
-  const data = chartDataCache.value[type];
+const renderChart = (index) => {
+  const data = chartDataCache.value[index];
   if (!data) return; // 如果没有数据，直接返回
 
   // 提取标签和细胞数量
@@ -349,12 +362,12 @@ const renderChart = (type) => {
 
   // 创建布局
   const layout = {
-    title: type === 'scData' ? 'Single-Cell Datasets' : 'Spatial Transcriptomics Datasets',
+    title: renderChart_title[index],
     xaxis: {
       title: '',
       tickangle: -45, // 将标签旋转45度
       tickmode: 'linear', // 确保标签均匀分布
-      tickfont: { size: 9 } // 调整字体大小
+      tickfont: { size: 8 } // 调整字体大小
     },
     yaxis: {
       title: '',
@@ -367,34 +380,29 @@ const renderChart = (type) => {
   Plotly.newPlot('myClusterChart', [trace], layout);
 };
 
-// 初始化数据
-onMounted(async () => {
-  try {
-    const response = await fetch(config.apiUrl + 'hv_dbInfo.php'); // 示例 API
-    const data = await response.json();
-    cellNum.value = data.cellNum;
-    geneNum.value = data.geneNum;
-    clusterNum.value = data.clusterNum;
-    spatialNum.value = data.spatialNum;
-  } catch (error) {
-    console.error('Error loading data:', error);
-  }
-
-  // 初始化图表数据
-  await getDatasetInfo("hv_datasets_sc.php", "scData");
-  await getDatasetInfo("hv_datasets_st.php", "stData");
-  renderChart('scData');
-});
-
 // 切换图表
 const switchChart = (index) => {
-  currentChart.value = index;
-  if (index === 0) {
-    renderChart('scData');
-  } else {
-    renderChart('stData');
-  }
+    currentChart.value = index;
+    renderChart(index);
 };
+
+
+// 加载数据
+onMounted(async () => {
+  try {
+    const response = await fetch(config.apiUrl + 'hv_datasets.php');
+    const arrayBuffer = await response.arrayBuffer();
+    const compressed = new Uint8Array(arrayBuffer);
+    const decompressed = pako.ungzip(compressed);
+    const jsonString = new TextDecoder('utf-8').decode(decompressed);
+    const data = JSON.parse(jsonString);
+    chartDataCache.value = data;
+    renderChart(0); // 默认渲染第0张表
+  } catch (error) {
+    console.error('Error fetching and decompressing UMAP data:', error);
+  }
+});
+
 
 
 //-------------------
@@ -523,6 +531,8 @@ const umapData = ref({}); // 存储4张表的数据
 const title_x= ["UMAP1","coordinate_X","UMAP1","coordinate_X"];
 const title_y= ["UMAP2","coordinate_Y","UMAP2","coordinate_Y"];
 
+const pointSize = [5,2.5,5,3]
+
 // 切换UMAP图表
 const switchUmapChart = (index) => {
   currentUmapChart.value = index;
@@ -587,7 +597,7 @@ const renderUmapChart = (index) => {
       name: label,
       text: text,
       marker: {
-        size: 2,
+        size: pointSize[index],
         color: colors[label]
       }
     };
@@ -595,6 +605,7 @@ const renderUmapChart = (index) => {
 
   const layout = {
     title: '',
+    showlegend: false,
     xaxis: {
       title: title_x[index]
     },
@@ -603,13 +614,6 @@ const renderUmapChart = (index) => {
     },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    legend: {
-      orientation: 'h',
-      xanchor: 'center',
-      yanchor: 'bottom',
-      x: 1.5,
-      y: 0.3
-    }
   };
 
   Plotly.newPlot('umap-plot', traces, layout);
@@ -695,9 +699,21 @@ const gotoAnalyzePage = () => {
     width: 100%;
     opacity: 0;
     transform: translateY(50px);
-    transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .container1 {
   display: flex;
   flex-direction: column; /* 子元素垂直排列 */
@@ -849,7 +865,7 @@ const gotoAnalyzePage = () => {
 
 
 #umap-plot {
-    width: 900px;
+    width: 600px;
     height: 600px;
 }
 #volcanoChart {
