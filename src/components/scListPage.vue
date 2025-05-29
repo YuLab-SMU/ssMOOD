@@ -38,8 +38,10 @@
                 <div class="dataset-table">
                     <h3>{{ $t('bsc1') }}</h3>
                     <p>{{ $t('bsc2') }}</p>
-                    
+                    <div class="studys">
                     <ssmoodStudy1 />
+                    <ssmoodStudy2 />
+                    </div>
                     
                     <div class="filters">
                         <label for="species">{{ $t('bsc3') }}</label>
@@ -105,6 +107,7 @@ import { ref, onMounted, computed } from 'vue';
 import BackToTop from './general/BackToTop.vue';
 import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import ssmoodStudy1 from './study/ssmoodStudy1.vue';
+import ssmoodStudy2 from './study/ssmoodStudy2.vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import config from '@/config';

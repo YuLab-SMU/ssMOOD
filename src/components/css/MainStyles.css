@@ -170,6 +170,12 @@ main::-webkit-scrollbar-thumb:hover {
     display: block;
     transition: background 0.3s, color 0.3s;
 }
+.studys{
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中（如果需要） */
+  flex-direction: row; /* 子元素垂直排列 */
+}
  /* ----------------------------------------------------------- */
  /* 竖屏响应*/
 @media (orientation: portrait) {

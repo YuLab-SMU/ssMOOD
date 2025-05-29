@@ -31,9 +31,8 @@ if ($result->num_rows > 0) {
 } else {
     $results['clusterNum'] = 0;
 }
-
-// 查询基因数量
-$sql = "SELECT COUNT(*) as count FROM genes";
+// 查询唯一基因数量
+$sql = "SELECT COUNT(DISTINCT gene_id) as count FROM genes";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
@@ -43,7 +42,6 @@ if ($result->num_rows > 0) {
 }
 
 
-// 查询基因数量
 $sql = "SELECT COUNT(*) as count FROM spatial_cells";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
