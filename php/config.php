@@ -12,16 +12,16 @@ $dbname = "ssmood";
 $logFile = "./logfile.log";
 
 // Kimi
-//$openaiApiKey = 'sk-iSRrrIFDThVBPSj8HiwjZ5zaxYOyBL3YI1ofEb5OoPT6lCqI'; 
+//$openaiApiKey = 'sk-xxx'; 
 //$url = 'https://api.moonshot.cn/v1/chat/completions';
 //$model = 'moonshot-v1-8k';
 
 //DeepSeek-Chat
-//$openaiApiKey = 'sk-07015df3288d4a88a09b4b8400b297cf'; 
+//$openaiApiKey = 'sk-xxx'; 
 //$url = 'https://api.deepseek.com/v1/chat/completions';
 //$model = 'deepseek-chat';
 
 // 豆包
-$openaiApiKey = '9474e459-6856-4331-921c-536745de6e39'; 
+$openaiApiKey = 'xxx'; 
 $url = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 $model = 'doubao-1-5-pro-32k-250115';
