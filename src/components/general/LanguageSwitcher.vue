@@ -5,7 +5,6 @@
       <option value="zh1">简体中文</option>
       <option value="zh2">繁體中文</option>
       <option value="en">English</option>
-      <option value="es">español</option>
     </select>
   </div>
 </template>

@@ -1,86 +1,42 @@
 <template>
     <div>
-        <header>
-            <nav>
-                <div class="logo">
-                    <img src="@/assets/logo.png" alt="Logo">
-                </div>
-                <ul>
-                    <li class="NowPage">
-                        <router-link to="/">{{ $t('home') }}</router-link>
-                    </li>
-                    
-                    <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu">
-                        <a>{{ $t('browse') }}</a>
-                        
-                        <!-- 二级菜单 -->
-                        <ul v-if="showSubMenu" class="submenu">
-                            <li>
-                                <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
-                            </li>
-                            <li>
-                                <router-link to="/browse/spatialtranscriptome">{{ $t('browse-SpatialTranscriptome') }}</router-link>
-                            </li>
-                        </ul>
-                    </li>
-            
-                
-
-                    <li>
-                        <router-link to="/analyze">{{ $t('analyze') }}</router-link>
-                    </li>
-<!--
-                    <li>
-                        <router-link to="/search">{{ $t('search') }}</router-link>
-                    </li>
--->
-                    <li>
-                        <router-link to="/download">{{ $t('download') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/about">{{ $t('about') }}</router-link>
-                    </li>
-                    
-                    <li>
-                        </li>
-                </ul>
-                    <LanguageSwitcher @languageChanged="onLanguageChanged" />
-            </nav>
-        </header>
+        <NavigationBar></NavigationBar>
         <main>
             <section class="page-section">
                 <div class="main-con">
-                <div class="Top-container" @scroll="handleScroll">
+                <!-- <div class="Top-container" @scroll="handleScroll"> -->
+                <div class="Top-container">
                   <div v-if="isVisible" class="back-to-top" @click="scrollToTop">▲</div>
-                <div class="container container1">
-                <div class="test">
-                    <img src="@/assets/ssmood.jpg" alt="Test Image">
-                </div>
-                <div class="image-text-container">
-                    <div class="image-text-item">
-                        <img src="@/assets/image1.png" alt="Image 1">
-                        
-                        <p>{{ $t('hv3') }}
-                        <br>{{ clusterNum }}</p>
-                    </div>
-
-                    <div class="image-text-item">
-                        <img src="@/assets/image3.png" alt="Image 3">
-                            <p>{{ $t('hv1') }}
-                            <br>{{ cellNum }}</p>
-                    </div>
-                    <div class="image-text-item">
-                        <img src="@/assets/image4.png" alt="Image 4">
-                        <p>{{ $t('hv4') }}
-                            <br>{{ spatialNum }}</p>
-                    </div>
-                                        <div class="image-text-item">
-                        <img src="@/assets/image2.png" alt="Image 2">
-                        <p>{{ $t('hv2') }}
-                            <br>{{ geneNum }}</p>
-                    </div>
-                </div>
-            </div>
+<!-- 第一个容器 -->
+<el-row :gutter="20" class="">
+  <el-col :span="24">
+    <div class="test">
+      <img src="@/assets/ssmood.jpg" alt="Test Image">
+    </div>
+  </el-col>
+</el-row>
+<el-row :gutter="20" class="container container1">
+  <el-col :span="24">
+    <div class="image-text-container">
+      <div class="image-text-item">
+        <img src="@/assets/image1.png" alt="Image 1">
+        <p>{{ $t('hv3') }}<br>{{ clusterNum }}</p>
+      </div>
+      <div class="image-text-item">
+        <img src="@/assets/image3.png" alt="Image 3">
+        <p>{{ $t('hv1') }}<br>{{ cellNum }}</p>
+      </div>
+      <div class="image-text-item">
+        <img src="@/assets/image4.png" alt="Image 4">
+        <p>{{ $t('hv4') }}<br>{{ spatialNum }}</p>
+      </div>
+      <div class="image-text-item">
+        <img src="@/assets/image2.png" alt="Image 2">
+        <p>{{ $t('hv2') }}<br>{{ geneNum }}</p>
+      </div>
+    </div>
+  </el-col>
+</el-row>
                 <div class="container">
                     <div class="text">
                          <h2>{{ $t('hv5') }}</h2>
@@ -219,14 +175,16 @@ import { ref, onMounted,onUnmounted} from 'vue';
 import { useRouter } from 'vue-router';
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
-import { useI18n } from 'vue-i18n';
+//import { useI18n } from 'vue-i18n';
 //import BackToTop from './general/BackToTop.vue';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
+//import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-const showSubMenu = ref(false);
+//const showSubMenu = ref(false);
 //----------
 //语言切换
 //----------
+/*
 const { locale } = useI18n();
 
 // 处理语言切换
@@ -239,6 +197,7 @@ onMounted(async() => {
   const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
   locale.value = selectedLanguage; // 设置语言
 });
+*/
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 
@@ -668,8 +627,9 @@ const gotoAnalyzePage = () => {
 }
 .Top-container {
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 92vh;
-  scroll-snap-type: y mandatory; /* 启用滚动捕获 */
+  /* scroll-snap-type: y mandatory;  启用滚动捕获 */
 }
 /* 滚动条整体宽度 */
 .Top-container::-webkit-scrollbar {
@@ -699,7 +659,6 @@ const gotoAnalyzePage = () => {
     align-items: center; /* 垂直居中 */
     height: 92vh;
     width: 100%;
-    opacity: 0;
     transform: translateY(50px);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }

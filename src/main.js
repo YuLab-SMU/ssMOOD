@@ -8,6 +8,8 @@ import zhTw from './locales/zh-tw.json';
 import es from './locales/es.json';
 import mitt from 'mitt';
 import { createTerminal } from 'vue-web-terminal';
+import { ElRow, ElCol } from 'element-plus';
+import 'element-plus/dist/index.css'; // 引入整个样式文件
 
 // 创建国际化实例
 const i18n = createI18n({
@@ -27,5 +29,9 @@ app.use(i18n);
 
 app.use(createTerminal());
 app.provide('eventBus', eventBus);
+
+// 注册 el-row 和 el-col 组件
+app.component('el-row', ElRow);
+app.component('el-col', ElCol);
 // 挂载应用
 app.mount('#app');
