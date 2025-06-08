@@ -246,6 +246,7 @@ onMounted(async() => {
 //-------------------
 //处理定位滚动逻辑
 //-------------------
+/*
 import { throttle } from 'lodash';
 
 const handleScroll = (event) => {
@@ -272,6 +273,7 @@ const handleScroll = (event) => {
 };
 
 throttle(handleScroll, 300); // 限制每100ms内只执行一次
+*/
 //-------------------
 //返回顶部逻辑
 //-------------------
