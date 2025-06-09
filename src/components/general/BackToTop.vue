@@ -69,7 +69,7 @@ onUnmounted(() => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   opacity: 0.8;
   transition: all 0.3s ease;
-  z-index: 999; /* 确保按钮显示在其他元素上方 */
+  z-index: 1001; /* 确保按钮显示在其他元素上方 */
 }
 
 .back-to-top:hover {

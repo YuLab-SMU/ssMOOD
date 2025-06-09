@@ -1,39 +1,6 @@
 <template>
   <div class="main">
-    <header>
-      <nav>
-        <div class="logo">
-          <img src="@/assets/logo.png" alt="Logo">
-        </div>
-        <ul>
-          <li>
-            <router-link to="/">{{ $t('home') }}</router-link>
-          </li>
-          <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu">
-            <a>{{ $t('browse') }}</a>
-            <!-- 二级菜单 -->
-            <ul v-if="showSubMenu" class="submenu">
-              <li>
-                <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
-              </li>
-              <li>
-                <router-link to="/browse/spatialtranscriptome">{{ $t('browse-SpatialTranscriptome') }}</router-link>
-              </li>
-            </ul>
-          </li>
-          <li class="NowPage">
-            <router-link to="/analyze">{{ $t('analyze') }}</router-link>
-          </li>
-          <li>
-            <router-link to="/download">{{ $t('download') }}</router-link>
-          </li>
-          <li>
-            <router-link to="/about">{{ $t('about') }}</router-link>
-          </li>
-        </ul>
-        <LanguageSwitcher @languageChanged="onLanguageChanged" ></LanguageSwitcher>
-      </nav>
-    </header>
+    <NavigationBar></NavigationBar>
 
     <main>
       <section class="page-section">
@@ -248,24 +215,10 @@ import { ref,onMounted,watch } from 'vue'
 //import {  computed, onUnmounted } from 'vue'
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
-import { useI18n } from 'vue-i18n';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
-const showSubMenu = ref(false);
-//----------
-//语言切换
-//----------
-const { locale } = useI18n();
-
-// 处理语言切换
-const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
-};
-
-onMounted(async() => {
-  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
-});
+//import { useI18n } from 'vue-i18n';
+//import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import NavigationBar from './general/NavigationBar.vue';
+import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 
@@ -277,7 +230,6 @@ import ssMOODShell from './analyze/ssMOODShell.vue'
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'
-import config from '@/config';
 import axios from 'axios';
 import { TerminalApi } from 'vue-web-terminal';
 import pako from 'pako';

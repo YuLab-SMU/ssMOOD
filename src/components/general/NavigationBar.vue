@@ -27,13 +27,13 @@
             </li>
           </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" :class="{ 'active': $route.path === '/analyze' }">
           <router-link to="/analyze">{{ $t('analyze') }}</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" :class="{ 'active': $route.path === '/download' }">
           <router-link to="/download">{{ $t('download') }}</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" :class="{ 'active': $route.path === '/about' }">
           <router-link to="/about">{{ $t('about') }}</router-link>
         </li>
       </ul>

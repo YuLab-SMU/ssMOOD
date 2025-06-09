@@ -6,146 +6,174 @@
                 <div class="main-con">
                 <!-- <div class="Top-container" @scroll="handleScroll"> -->
                 <div class="Top-container">
-                  <div v-if="isVisible" class="back-to-top" @click="scrollToTop">▲</div>
+                  
                     <!-- 第一个容器 -->
-                    <el-row :gutter="20" class="">
+                    <el-row :gutter="20" >
                       <el-col :span="24">
                         <div class="test">
                           <img src="@/assets/ssmood.jpg" alt="Test Image">
                         </div>
                       </el-col>
                     </el-row>
-                    <el-row :gutter="20" class="container container1">
-                      <el-col :span="24">
-                        <div class="image-text-container">
-                          <div class="image-text-item">
-                            <img src="@/assets/image1.png" alt="Image 1">
-                            <p>{{ $t('hv3') }}<br>{{ clusterNum }}</p>
-                          </div>
-                          <div class="image-text-item">
-                            <img src="@/assets/image3.png" alt="Image 3">
-                            <p>{{ $t('hv1') }}<br>{{ cellNum }}</p>
-                          </div>
-                          <div class="image-text-item">
-                            <img src="@/assets/image4.png" alt="Image 4">
-                            <p>{{ $t('hv4') }}<br>{{ spatialNum }}</p>
-                          </div>
-                          <div class="image-text-item">
-                            <img src="@/assets/image2.png" alt="Image 2">
-                            <p>{{ $t('hv2') }}<br>{{ geneNum }}</p>
-                          </div>
-                        </div>
-                      </el-col>
-                    </el-row>
-                <div class="container">
-                    <div class="text">
-                         <h2>{{ $t('hv5') }}</h2>
+                  <el-row :gutter="10" class="container1">
+                       <el-col :xs="0" :sm="2" :md="2" :lg="2"></el-col>
+                    <el-col :xs="12" :sm="5" :md="5" :lg="5" v-for="(item, index) in items" :key="index">
+                      <div class="image-text-item">
+                        <img :src="item.image" :alt="item.alt">
+                        <p>{{ $t(item.textKey) }}<br>{{ item.value }}</p>
+                      </div>
+                      <el-col :xs="0" :sm="2" :md="2" :lg="2"></el-col>
+                    </el-col>
+                  </el-row>
+                  <!-- 第二个容器 -->
+                  <el-row :gutter="20" class="container" >
+                      <el-col :xs="0" :sm="0" :md="2" :lg="2">
+                          </el-col>
+                    <!-- 文本部分 -->
+                    <el-col :xs="20" :sm="20" :md="8" :lg="8">
+                      <div class="text">
+                        <h2>{{ $t('hv5') }}</h2>
                         <p>{{ $t('hv6') }}</p>
-                    </div>
-                    <div class="image">
+                      </div>
+                    </el-col>
+                    <!-- 图像和图表切换部分 -->
+                    <el-col :xs="20" :sm="20" :md="12" :lg="12">
+                      <div class="image">
                         <div class="chart-switch">
-                              <div
-                                class="chart-item"
-                                :class="{ 'active': currentChart === 0 }"
-                                @click="switchChart(0)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>单细胞(鼠)</span>
-                              </div>
-                              <div
-                                class="chart-item"
-                                :class="{ 'active': currentChart === 1 }"
-                                @click="switchChart(1)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>空转(鼠)</span>
-                              </div>
-                              <div
-                                class="chart-item"
-                                :class="{ 'active': currentChart === 2 }"
-                                @click="switchChart(2)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>单细胞(人)</span>
-                              </div>
-                            <div
-                                class="chart-item"
-                                :class="{ 'active': currentChart === 3 }"
-                                @click="switchChart(3)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>空转(人)</span>
-                              </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentChart === 0 }"
+                            @click="switchChart(0)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-1') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentChart === 1 }"
+                            @click="switchChart(1)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-2') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentChart === 2 }"
+                            @click="switchChart(2)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-3') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentChart === 3 }"
+                            @click="switchChart(3)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-4') }}</span>
+                          </div>
                         </div>
-                        <div id="myClusterChart" style="width: 900px; height: 400px;"></div>
-                    </div>
-                    
-                </div>
-                <div class="container" data-special="true">
-                    <div class="image">
-                        <div id="genderChart" style="width: 400px; height: 400px;"></div>
-                    </div>
-                    <div class="text">
-                        <div id="genderChart2" style="width: 400px; height: 400px;"></div>
-                    </div>
-                    <div class="text">
-                         <h2>{{ $t('hv7') }}</h2>
+                        <div id="myClusterChart" style="width: 100%; height: auto;"></div>
+                      </div>
+                    </el-col>
+                    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                  </el-row>
+                <!-- 第三个容器 -->
+                  <el-row :gutter="20" class="container" data-special="true"> 
+                  <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                    <!-- 第一列：图表1 -->
+                    <el-col :xs="24" :sm="12" :md="7" :lg="7">
+                      <div class="chart-wrapper">
+                        <div id="genderChart" style="width: auto; height: 100%;"></div>
+                      </div>
+                    </el-col>
+                
+                    <!-- 第二列：图表2 -->
+                    <el-col :xs="24" :sm="12" :md="7" :lg="7">
+                      <div class="chart-wrapper">
+                        <div id="genderChart2" style="width: auto; height: 100%;"></div>
+                      </div>
+                    </el-col>
+                
+                    <!-- 第三列：文本内容 -->
+                    <el-col :xs="20" :sm="20" :md="6" :lg="6">
+                      <div class="text-content">
+                        <h2>{{ $t('hv7') }}</h2>
                         <p>{{ $t('hv8') }}</p>
-                    </div>
-
-                </div>
-                <div class="container">
-                    <div class="text">
-                         <h2>{{ $t('hv9') }}</h2>
+                      </div>
+                    </el-col>
+                  </el-row>
+                 <!-- 第四个容器 -->
+                  <el-row :gutter="20" class="container">
+                    <!-- 文本部分 -->
+                    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+                      <div class="text">
+                        <h2>{{ $t('hv9') }}</h2>
                         <p>{{ $t('hv10') }}</p>
-                    </div>
-                    <div class="image">
+                      </div>
+                    </el-col>
+                    <!-- 图像和图表切换部分 -->
+                    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+                      <div class="image">
                         <div class="chart-switch">
-                              <div
-                                class="chart-item"
-                                :class="{ 'active': currentUmapChart === 0 }"
-                                @click="switchUmapChart(0)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>单细胞(鼠)</span>
-                              </div>
-                              <div
-                                class="chart-item"
-                                :class="{ 'active': currentUmapChart === 1 }"
-                                @click="switchUmapChart(1)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>空转(鼠)</span>
-                              </div>
-                            <div
-                                class="chart-item"
-                                :class="{ 'active': currentUmapChart === 2 }"
-                                @click="switchUmapChart(2)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>单细胞(人)</span>
-                              </div>
-                                                            <div
-                                class="chart-item"
-                                :class="{ 'active': currentUmapChart === 3 }"
-                                @click="switchUmapChart(3)"
-                              >
-                                <div class="chart-dot"></div>
-                                <span>空转(人)</span>
-                              </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentUmapChart === 0 }"
+                            @click="switchUmapChart(0)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-1') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentUmapChart === 1 }"
+                            @click="switchUmapChart(1)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-2') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentUmapChart === 2 }"
+                            @click="switchUmapChart(2)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-3') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentUmapChart === 3 }"
+                            @click="switchUmapChart(3)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-4') }}</span>
+                          </div>
                         </div>
-                        <div id="umap-plot"></div>
-                    </div>
-                </div>
-                <div class="container" data-special="true">
-                    <div class="image">
-                        <div id="volcanoChart"></div>
-                    </div>
-                    <div class="text">
-                         <h2>{{ $t('hv11') }}</h2>
-                        <p>{{ $t('hv12') }}</p>
-                    </div>
-                </div>
+                        <div id="umap-plot" style="aspect-ratio: 1 / 1;height: auto; width: 95%; "></div>
+                      </div>
+                    </el-col>
+                    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                  </el-row>
+                <!-- 第五个容器 -->
+  <el-row :gutter="20" class="container" data-special="true">
+    <!-- 图像部分 -->
+    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+      <div class="image">
+        <div id="volcanoChart"></div>
+      </div>
+    </el-col>
+    <!-- 文本部分 -->
+    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+      <div class="text">
+        <h2>{{ $t('hv11') }}</h2>
+        <p>{{ $t('hv12') }}</p>
+      </div>
+    </el-col>
+    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+  </el-row>
+                <!-- 第六个容器 -->
                 <div class="container">
                         <div class="text">
                              <h2>{{ $t('hv13') }}</h2>
@@ -158,11 +186,13 @@
                 </div>
                 
                 </div>
-                
+                <BackToTop :target-selector="'.Top-container'"></BackToTop>
             </div>
             
             </section>
+            
         </main>
+        
     </div>
     
    
@@ -171,33 +201,15 @@
 <script setup>
 import Plotly from 'plotly.js-dist-min';
 import pako from 'pako';
-import { ref, onMounted,onUnmounted} from 'vue';
+import { ref, onMounted} from 'vue';
 import { useRouter } from 'vue-router';
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 //import { useI18n } from 'vue-i18n';
-//import BackToTop from './general/BackToTop.vue';
+import BackToTop from './general/BackToTop.vue';
 //import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-//const showSubMenu = ref(false);
-//----------
-//语言切换
-//----------
-/*
-const { locale } = useI18n();
-
-// 处理语言切换
-const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
-};
-
-onMounted(async() => {
-  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
-});
-*/
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 
@@ -233,41 +245,7 @@ const handleScroll = (event) => {
 
 throttle(handleScroll, 300); // 限制每100ms内只执行一次
 */
-//-------------------
-//返回顶部逻辑
-//-------------------
-const isVisible = ref(false);
 
-const scrollToTop = () => {
-  const topContainer = document.querySelector('.Top-container');
-  const firstContainer = topContainer.querySelector('.container');
-  
-  if (firstContainer) {
-    topContainer.scrollTo({
-      top: firstContainer.offsetTop,
-      behavior: 'smooth'
-    });
-  }
-};
-
-
-
-const handleTopScroll = () => {
-  const topContainer = document.querySelector('.Top-container');
-  if (topContainer) {
-    isVisible.value = topContainer.scrollTop > 300; // 显示按钮的触发高度
-  }
-};
-
-onMounted(() => {
-  const topContainer = document.querySelector('.Top-container');
-  topContainer?.addEventListener('scroll', handleTopScroll);
-});
-
-onUnmounted(() => {
-  const topContainer = document.querySelector('.Top-container');
-  topContainer?.removeEventListener('scroll', handleTopScroll);
-});
 //-------------------
 //获取数据库基础信息
 //-------------------
@@ -292,7 +270,12 @@ const cellNum = ref(0);
 const geneNum = ref(0);
 const clusterNum = ref(0);
 const spatialNum = ref(0);
-
+const items = [
+  { image: require('@/assets/image1.png'), alt: 'Image 1', textKey: 'hv3', value: clusterNum },
+  { image: require('@/assets/image3.png'), alt: 'Image 3', textKey: 'hv1', value: cellNum },
+  { image: require('@/assets/image4.png'), alt: 'Image 4', textKey: 'hv4', value: spatialNum },
+  { image: require('@/assets/image2.png'), alt: 'Image 2', textKey: 'hv2', value: geneNum }
+];
 // 缓存图表数据
 const chartDataCache = ref([]);
 
@@ -400,8 +383,6 @@ onMounted(async() => {
                         color: 'black'
                     }
                 },
-                height: 400,
-                width: 400,
                 paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
                 plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
                 margin: {
@@ -459,8 +440,6 @@ onMounted(async() => {
                         color: 'black'
                     }
                 },
-                height: 400,
-                width: 400,
                 paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
                 plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
                 margin: {
@@ -604,14 +583,22 @@ onMounted(async () => {
 });
 
 //------
-
+onMounted(() => {
+  window.addEventListener('resize', resizeMyChart);
+});
+const resizeMyChart = () => {
+  Plotly.Plots.resize('myClusterChart');
+  Plotly.Plots.resize('genderChart');
+  Plotly.Plots.resize('genderChart2');
+  Plotly.Plots.resize('umap-plot');
+};
 
 //------------------------
 //跳转到分析页面
 //------------------------
 const router = useRouter();
 const gotoAnalyzePage = () => {
-  router.push('/analyze'); // 替换 '/target-page' 为目标路由路径
+  router.push('/analyze'); 
 };
 
 </script>
@@ -630,6 +617,7 @@ const gotoAnalyzePage = () => {
   overflow-x: hidden;
   height: 92vh;
   /* scroll-snap-type: y mandatory;  启用滚动捕获 */
+  justify-content: center; /* 水平居中 */
 }
 /* 滚动条整体宽度 */
 .Top-container::-webkit-scrollbar {
@@ -653,16 +641,21 @@ const gotoAnalyzePage = () => {
   background: #555; /* 悬停时的颜色 */
 }
 .container {
-    scroll-snap-align: start; /* 捕获到容器的起始位置 */
     display: flex;
     justify-content: center; /* 水平居中 */
     align-items: center; /* 垂直居中 */
-    height: 92vh;
+    min-height: 80vh;
+    height: auto;
     width: 100%;
-    transform: translateY(50px);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
+.container1 {
+  width: 80%;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
 
+}
 .fade-in {
   animation: fadeIn 1s ease-in-out;
 }
@@ -675,22 +668,19 @@ const gotoAnalyzePage = () => {
     opacity: 1;
   }
 }
-.container1 {
-  display: flex;
-  flex-direction: column; /* 子元素垂直排列 */
-  justify-content: center; /* 水平居中（如果子元素是行内元素） */
-  align-items: center; /* 垂直居中 */
-}
+
 
 .container[data-special="true"] {
     background-color: rgba(84, 164, 255, 0.1);
 }
 .container .image {
-    margin-right: 20px;
-    /* 图片与文字之间的间距 */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 垂直居中 */
+  height:100%;
 }
 .container .text {
-    max-width: 400px;
+    width:100%;
     /* 限制文字宽度为300px */
     /* 或使用 width 代替 max-width 来设定固定宽度 */
     word-wrap: break-word;
@@ -700,29 +690,7 @@ const gotoAnalyzePage = () => {
   opacity: 1;
   transform: translateY(0);
 }
-.back-to-top {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: rgb(093, 116, 162);
-  color: #fff;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  z-index:1000;
-}
 
-.back-to-top:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
 
 .test {
     display: flex;
@@ -737,7 +705,10 @@ const gotoAnalyzePage = () => {
     height: auto; /* 保持图片的纵横比 */
     position: relative; /* 设置相对定位 */
     top: 20px; /* 图片距离顶部 20px */
+    padding: 30px;
 }
+
+
 
 .chart-switch {
   display: flex;
@@ -766,17 +737,6 @@ const gotoAnalyzePage = () => {
   animation: jump 0.5s forwards;
 }
 
-@keyframes jump {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
 .chart-item span {
   font-size: 14px;
@@ -798,41 +758,28 @@ const gotoAnalyzePage = () => {
     transform: scale(1);
   }
 }
-.image-text-container {
-    display: flex;
-    flex-wrap: wrap; /* 在较小的屏幕上换行 */
-    justify-content: space-between; /* 水平分布图片和文字 */
-    gap:5vw;
-}
-
 .image-text-item {
-    display: flex;
-    align-items: center; /* 图片和文字在垂直方向上居中 */
-    margin: 10px;
-    text-align: left; /* 文字左对齐 */
-    max-width: calc(25% - 20px); /* 确保项目在较小屏幕上能适当排列，计算每个项目的最大宽度 */
+  display: flex;          /* 启用flex布局 */
+  align-items: center;    /* 垂直居中对齐 */
+  justify-content: center; /* 水平居中对齐（可选） */
+  gap: 15px;             /* 图片和文字之间的间距 */
+  text-align: left;      /* 文字左对齐 */
+  padding: 10px;
 }
 
 .image-text-item img {
-    max-width: 100px; /* 设置图片的最大宽度 */
-    height: auto; /* 保持图片的纵横比 */
-    margin-right: 10px; /* 图片和文字之间的间距 */
+  max-width: 40%;
+  height: auto;
+  margin: 0;             /* 清除可能存在的默认边距 */
 }
 
-.image-text-item p {
-    margin: 0; /* 文字的外边距为零，防止额外间距 */
+.chart-wrapper {
+  padding: 15px;
+  height: 100%;
+  width: 100%;
 }
 
 
-
-#umap-plot {
-    width: 600px;
-    height: 600px;
-}
-#volcanoChart {
-    width: 500px;
-    height: 500px;
-}
 .goto-button {
   padding: 10px 20px;
   margin-top: 10px;
@@ -854,50 +801,65 @@ const gotoAnalyzePage = () => {
  /* ----------------------------------------------------------- */
   /* 竖屏响应*/
  @media (orientation: portrait) or (max-width: 800px) {
-    .image-text-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* 在图片和文字之间均匀分布空间 */
-        height: auto;
-        width: auto;
-        gap: 5px;
+     .test img {
+         width: 100%;
+         /* 图片宽度不超过容器宽度 */
+         height: auto;
+         /* 保持图片的纵横比 */
+         position: relative;
+         /* 设置相对定位 */
+         top: 20px;
+         /* 图片距离顶部 20px */
+     }
+     .container1 {
+      max-width: 100vw;
+      margin: 0;
+      padding: 0;
     }
-    
-    .image-text-container p {
-        white-space: nowrap; /* 阻止文本换行 */
-    }
-    .container .text {
-            max-width: 800px; /* 限制文字宽度为300px */
-            /* 或使用 width 代替 max-width 来设定固定宽度 */
-        }
-    .container {
-        flex-direction: column;
-        display: flex;
-        justify-content: center; /* 水平居中 */
-        align-items: center; /* 垂直居中 */
-        height: auto; /* 使外部容器高度为全屏高度 */
-        width: 100%;
-    }
-    .Top-container{
-        width: 100%;
-        flex-direction: column;
-        display: flex;
-        align-items: center; /* 垂直居中 */
-        justify-content: center; /* 水平居中 */
-        gap: 50px;
-    }
-    .main-con{
-        width: 100%;
-        gap: 15px;
-    }
-    #umap-plot {
-        width: 100%; /* 宽度填满屏幕 */
-        height: auto; /* 高度自动调整 */
-    }
-    #volcanoChart {
-        width: 100%; /* 宽度填满屏幕 */
-        height: auto; /* 高度自动调整 */
-    }
-}
+     .image-text-container p {
+         white-space: nowrap;
+         /* 阻止文本换行 */
+     }
+     .image-text-item img {
+         max-width: 70%;
+         height: auto;
+     }
+     .image-text-item {
+         flex-direction: column;
+         /* 改为纵向排列 */
+         align-items: center;
+         /* 居中对齐 */
+         text-align: center;
+         /* 文字居中 */
+         gap: 8px;
+         /* 调整间距 */
+     }
+     .container {
+         width: 100%;
+         height: auto;
+     }
 
-</style>
+     .Top-container {
+         width: 100%;
+         flex-direction: column;
+         align-items: center;
+         /* 垂直居中 */
+         justify-content: center;
+         /* 水平居中 */
+         gap: 50px;
+     }
+     .main-con {
+         width: 100%;
+         gap: 15px;
+     }
+     .chart-wrapper {
+      height: 40vh;
+      width: auto;
+    }
+    .text-content{
+        padding: 30px 20px;
+    }
+
+
+ }
+ </style>
