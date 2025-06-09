@@ -1,39 +1,6 @@
 <template>
     <div>
-        <header>
-            <nav>
-                <div class="logo">
-                    <img src="@/assets/logo.png" alt="Logo">
-                </div>
-                <ul>
-                    <li>
-                        <router-link to="/">{{ $t('home') }}</router-link>
-                    </li>
-                    <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu NowPage"> <a>{{ $t('browse') }}</a>
-
-                        <!-- 二级菜单 -->
-                        <ul v-if="showSubMenu" class="submenu">
-                            <li>
-                                <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
-                            </li>
-                            <li>
-                                <router-link to="/browse/spatialtranscriptome">{{ $t('browse-SpatialTranscriptome') }}</router-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <router-link to="/analyze">{{ $t('analyze') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/download">{{ $t('download') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/about">{{ $t('about') }}</router-link>
-                    </li>
-                </ul>
-                <LanguageSwitcher @languageChanged="onLanguageChanged" />
-            </nav>
-        </header>
+        <NavigationBar></NavigationBar>
         <main ref="pageSection">
             <section class="page-section">
                 <div class="main-container">
@@ -362,28 +329,9 @@ import { useRoute } from 'vue-router';
 //import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
 import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
-import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-const showSubMenu = ref(false);//二级菜单
-//----------
-//语言切换
-//----------
-const { locale } = useI18n();
-
-// 处理语言切换
-const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
-};
-
-onMounted(async() => {
-  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
-});
-
-
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 

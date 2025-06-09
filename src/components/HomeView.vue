@@ -7,36 +7,36 @@
                 <!-- <div class="Top-container" @scroll="handleScroll"> -->
                 <div class="Top-container">
                   <div v-if="isVisible" class="back-to-top" @click="scrollToTop">▲</div>
-<!-- 第一个容器 -->
-<el-row :gutter="20" class="">
-  <el-col :span="24">
-    <div class="test">
-      <img src="@/assets/ssmood.jpg" alt="Test Image">
-    </div>
-  </el-col>
-</el-row>
-<el-row :gutter="20" class="container container1">
-  <el-col :span="24">
-    <div class="image-text-container">
-      <div class="image-text-item">
-        <img src="@/assets/image1.png" alt="Image 1">
-        <p>{{ $t('hv3') }}<br>{{ clusterNum }}</p>
-      </div>
-      <div class="image-text-item">
-        <img src="@/assets/image3.png" alt="Image 3">
-        <p>{{ $t('hv1') }}<br>{{ cellNum }}</p>
-      </div>
-      <div class="image-text-item">
-        <img src="@/assets/image4.png" alt="Image 4">
-        <p>{{ $t('hv4') }}<br>{{ spatialNum }}</p>
-      </div>
-      <div class="image-text-item">
-        <img src="@/assets/image2.png" alt="Image 2">
-        <p>{{ $t('hv2') }}<br>{{ geneNum }}</p>
-      </div>
-    </div>
-  </el-col>
-</el-row>
+                    <!-- 第一个容器 -->
+                    <el-row :gutter="20" class="">
+                      <el-col :span="24">
+                        <div class="test">
+                          <img src="@/assets/ssmood.jpg" alt="Test Image">
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-row :gutter="20" class="container container1">
+                      <el-col :span="24">
+                        <div class="image-text-container">
+                          <div class="image-text-item">
+                            <img src="@/assets/image1.png" alt="Image 1">
+                            <p>{{ $t('hv3') }}<br>{{ clusterNum }}</p>
+                          </div>
+                          <div class="image-text-item">
+                            <img src="@/assets/image3.png" alt="Image 3">
+                            <p>{{ $t('hv1') }}<br>{{ cellNum }}</p>
+                          </div>
+                          <div class="image-text-item">
+                            <img src="@/assets/image4.png" alt="Image 4">
+                            <p>{{ $t('hv4') }}<br>{{ spatialNum }}</p>
+                          </div>
+                          <div class="image-text-item">
+                            <img src="@/assets/image2.png" alt="Image 2">
+                            <p>{{ $t('hv2') }}<br>{{ geneNum }}</p>
+                          </div>
+                        </div>
+                      </el-col>
+                    </el-row>
                 <div class="container">
                     <div class="text">
                          <h2>{{ $t('hv5') }}</h2>

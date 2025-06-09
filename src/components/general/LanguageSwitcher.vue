@@ -9,30 +9,36 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'LanguageSwitcher',
-  data() {
-    return {
-      selectedLanguage: this.loadLanguagePreference() || 'zh1',
-    };
-  },
-  methods: {
-    switchLanguage() {
-      this.saveLanguagePreference(this.selectedLanguage);
-      this.$emit('languageChanged', this.selectedLanguage);
-    },
-    loadLanguagePreference() {
-      return localStorage.getItem('selectedLanguage');
-    },
-    saveLanguagePreference(language) {
-      localStorage.setItem('selectedLanguage', language);
-    },
-  },
-  mounted() {
-    this.$emit('languageChanged', this.selectedLanguage);
-  },
+<script setup>
+import { ref, onMounted ,defineEmits} from 'vue';
+
+// 创建响应式引用
+const selectedLanguage = ref('');
+
+// 加载语言偏好
+const loadLanguagePreference = () => {
+  return localStorage.getItem('selectedLanguage') || 'zh1';
 };
+
+// 保存语言偏好
+const saveLanguagePreference = (language) => {
+  localStorage.setItem('selectedLanguage', language);
+};
+
+// 切换语言
+const switchLanguage = () => {
+  saveLanguagePreference(selectedLanguage.value);
+  emit('languageChanged', selectedLanguage.value);
+};
+
+// 在组件挂载时设置初始语言
+onMounted(() => {
+  selectedLanguage.value = loadLanguagePreference();
+  emit('languageChanged', selectedLanguage.value);
+});
+
+// 定义 emit 函数来触发父组件的事件监听器
+const emit = defineEmits(['languageChanged']);
 </script>
 
 <style scoped>

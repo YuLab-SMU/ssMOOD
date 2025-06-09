@@ -1,43 +1,16 @@
 <template>
     <div>
-        <header>
-            <nav>
-                <div class="logo">
-                    <img src="@/assets/logo.png" alt="Logo">
-                </div>
-                <ul>
-                    <li>
-                        <router-link to="/">{{ $t('home') }}</router-link>
-                    </li>
-                    <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu">
-                        <a>{{ $t('browse') }}</a>
-                        <ul v-if="showSubMenu" class="submenu">
-                            <li>
-                                <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
-                            </li>
-                            <li>
-                                <router-link to="/browse/spatialtranscriptome">{{ $t('browse-SpatialTranscriptome') }}</router-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <router-link to="/analyze">{{ $t('analyze') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/download">{{ $t('download') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/about">{{ $t('about') }}</router-link>
-                    </li>
-                </ul>
-                <LanguageSwitcher @languageChanged="onLanguageChanged" />
-            </nav>
-        </header>
+        <NavigationBar></NavigationBar>
         <main>
             <section class="page-section">
                 <div class="dataset-table">
-                    <h3>{{ $t('bst1') }}</h3>
-                    <p>{{ $t('bst2') }}</p>
+                    <h3>{{ $t('bsc1') }}</h3>
+                    <p>{{ $t('bsc2') }}</p>
+                    <div class="studys">
+                    <ssmoodStudy1 />
+                    <ssmoodStudy2 />
+                    </div>
+                    
                     <div class="filters">
                         <label for="species">{{ $t('bsc3') }}</label>
                         <select id="species" v-model="filters.species">
@@ -90,7 +63,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <BackToTop />
+                    <back-to-top />
                 </div>
             </section>
         </main>
@@ -99,70 +72,59 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+
+import ssmoodStudy1 from './study/ssmoodStudy1.vue';
+import ssmoodStudy2 from './study/ssmoodStudy2.vue';
+
 import { useRouter } from 'vue-router';
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
-import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-const showSubMenu = ref(false);//二级菜单
-//----------
-//语言切换
-//----------
-const { locale } = useI18n();
-
-// 处理语言切换
-const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
-};
-
-onMounted(async() => {
-  const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
-});
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
 const datasets = ref([]);
 const filters = ref({
-  species: 'all',
-  area: 'all',
-  sex: 'all'
+    species: 'all',
+    area: 'all',
+    sex: 'all'
 });
 
 const filteredDatasets = computed(() => {
-  return datasets.value.filter(dataset => {
-    return (
-      (filters.value.species === 'all' || dataset.species === filters.value.species) &&
-      (filters.value.area === 'all' || dataset.area === filters.value.area) &&
-      (filters.value.sex === 'all' || dataset.sex === filters.value.sex)
-    );
-  });
+    return datasets.value.filter(dataset => {
+        return (
+            (filters.value.species === 'all' || dataset.species === filters.value.species) &&
+            (filters.value.area === 'all' || dataset.area === filters.value.area) &&
+            (filters.value.sex === 'all' || dataset.sex === filters.value.sex)
+        );
+    });
 });
 
-const router = useRouter();
+onMounted(() => {
+    fetchDatasets();
+});
+
+
 
 const fetchDatasets = async () => {
-  try {
-    const response = await fetch(config.apiUrl + 'bst_getSTDatasetList.php');
-    const data = await response.json();
-    datasets.value = data;
-  } catch (error) {
-    console.error('Error fetching datasets:', error);
-  }
+    try {
+        const response = await fetch(config.apiUrl+'bsc_getSCDatasetList.php');
+        const data = await response.json();
+        datasets.value = data;
+    } catch (error) {
+        console.error('Error fetching datasets:', error);
+    }
 };
 
-onMounted(fetchDatasets);
-
+const router = useRouter();
 const goToDatasetDetails = (datasetId) => {
-  router.push({ name: 'stdDetail', params: { id: datasetId } });
+    router.push({ name: 'SingleCellPage', params: { id: datasetId } });
 };
 </script>
 
 <style scoped>
 @import 'css/MainStyles.css';
-
 .has-submenu {
     background: rgba(255, 255, 255, 0.3);
 }

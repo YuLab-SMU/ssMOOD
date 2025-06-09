@@ -7,12 +7,12 @@ import AnalyzePage from '../components/AnalyzePage.vue';
 //import BrowsePage from '../components/BrowsePage.vue'; 
 
 
-import scListPage from '../components/scListPage.vue'; 
-import scdDetailPage from '../components/scdDetailPage.vue'; 
+import SingleCellList from '../components/SingleCellList.vue'; 
+import SingleCellPage from '../components/SingleCellPage.vue'; 
 import scsDetailPage from '../components/scsDetailPage.vue'; 
 
-import stListPage from '../components/stListPage.vue'; 
-import stdDetailPage from '../components/stdDetailPage.vue'; 
+import STList from '../components/STList.vue'; 
+import STPage from '../components/STPage.vue'; 
 
 
 //import SearchPage from '../components/SearchPage.vue'; 
@@ -23,14 +23,14 @@ const routes = [
   { path: '/', name: 'Home', component: HomeView, meta: { requiresLoading: true } },
   //{ path: '/browse', name: 'Browse', component: BrowsePage, meta: { requiresLoading: true } },
   { path: '/analyze', name: 'Analyze', component: AnalyzePage, meta: { requiresLoading: true } },
-  { path: '/browse/singlecell', name: 'SingleCellList', component: scListPage, meta: { requiresLoading: true } },
-  { path: '/browse/spatialtranscriptome', name: 'SpatialTranscriptomeList', component: stListPage, meta: { requiresLoading: true } },
+  { path: '/browse/SingleCell', name: 'SingleCellList', component: SingleCellList, meta: { requiresLoading: true } },
+  { path: '/browse/SpatialTranscriptome', name: 'SpatialTranscriptomeList', component: STList, meta: { requiresLoading: true } },
   //{ path: '/search', name: 'Search', component: SearchPage, meta: { requiresLoading: true } },
   { path: '/download', name: 'Download', component: DownloadPage, meta: { requiresLoading: true } },
   { path: '/about', name: 'About', component: AboutPage, meta: { requiresLoading: true } },
-  { path: '/browse/singlecell/:id', name: 'scdDetail', component: scdDetailPage, meta: { requiresLoading: true } },
+  { path: '/browse/SingleCell/:id', name: 'SingleCellPage', component: SingleCellPage, meta: { requiresLoading: true } },
   { path: '/browse/singlecellstudy/:study', name: 'scsDetail', component: scsDetailPage, meta: { requiresLoading: true } },
-  { path: '/browse/spatialtranscriptome/:id', name: 'stdDetail', component: stdDetailPage, meta: { requiresLoading: true } }
+  { path: '/browse/SpatialTranscriptome/:id', name: 'STPage', component: STPage, meta: { requiresLoading: true } }
 ];
 
 const router = createRouter({
