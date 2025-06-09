@@ -128,4 +128,12 @@ const goToPage = (study) => {
   bottom: 35px;
   right: 60px;
 }
+
+/* ----------------------------------------------------------- */
+/* 移动端响应 */
+@media (max-width: 800px) {
+  .navigation-button {
+    display: none;
+  }
+}
 </style>

@@ -156,23 +156,23 @@
                     <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
                   </el-row>
                 <!-- 第五个容器 -->
-  <el-row :gutter="20" class="container" data-special="true">
-    <!-- 图像部分 -->
-    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-    <el-col :xs="20" :sm="20" :md="10" :lg="10">
-      <div class="image">
-        <div id="volcanoChart"></div>
-      </div>
-    </el-col>
-    <!-- 文本部分 -->
-    <el-col :xs="20" :sm="20" :md="10" :lg="10">
-      <div class="text">
-        <h2>{{ $t('hv11') }}</h2>
-        <p>{{ $t('hv12') }}</p>
-      </div>
-    </el-col>
-    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-  </el-row>
+                  <el-row :gutter="20" class="container" data-special="true">
+                    <!-- 图像部分 -->
+                    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+                      <div class="image">
+                        <div id="volcanoChart"></div>
+                      </div>
+                    </el-col>
+                    <!-- 文本部分 -->
+                    <el-col :xs="20" :sm="20" :md="10" :lg="10">
+                      <div class="text">
+                        <h2>{{ $t('hv11') }}</h2>
+                        <p>{{ $t('hv12') }}</p>
+                      </div>
+                    </el-col>
+                    <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+                  </el-row>
                 <!-- 第六个容器 -->
                 <div class="container">
                         <div class="text">
@@ -593,6 +593,10 @@ const resizeMyChart = () => {
   Plotly.Plots.resize('umap-plot');
 };
 
+import { onUnmounted } from 'vue';
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeMyChart);
+});
 //------------------------
 //跳转到分析页面
 //------------------------

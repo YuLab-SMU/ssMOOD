@@ -218,4 +218,15 @@ button:hover {
     color: rgba(093, 116, 162, 0.8); /* 悬浮时的颜色 */
 }
 
+
+/* ----------------------------------------------------------- */
+  /* 竖屏响应*/
+ @media (orientation: portrait) or (max-width: 800px) {
+
+table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+ }
 </style>
