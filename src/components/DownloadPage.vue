@@ -1,44 +1,6 @@
 <template>
     <div>
-        <!-- Header -->
-        <header>
-            <nav>
-                <div class="logo">
-                    <img src="@/assets/logo.png" alt="Logo">
-                </div>
-                <ul>
-                    <li>
-                        <router-link to="/">{{ $t('home') }}</router-link>
-                    </li>
-                    <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu"> <a>{{ $t('browse') }}</a>
-
-                        <!-- 二级菜单 -->
-                        <ul v-if="showSubMenu" class="submenu">
-                            <li>
-                                <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
-                            </li>
-                            <li>
-                                <router-link to="/browse/spatialtranscriptome">{{ $t('browse-SpatialTranscriptome') }}</router-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <router-link to="/analyze">{{ $t('analyze') }}</router-link>
-                    </li>
-              <!--       <li>
-                        <router-link to="/search">{{ $t('search') }}</router-link>
-                    </li>
--->
-                    <li class="NowPage">
-                        <router-link to="/download">{{ $t('download') }}</router-link>
-                    </li>
-                    <li>
-                        <router-link to="/about">{{ $t('about') }}</router-link>
-                    </li>
-                </ul>
-                    <LanguageSwitcher @languageChanged="onLanguageChanged" />
-            </nav>
-        </header>
+        <NavigationBar></NavigationBar>
         <!-- Main content -->
         <main class="container">
             <section class="page-section">
@@ -52,60 +14,15 @@
                 </div>
             </section>
         </main>
-        <back-to-top />
+        <BackToTop></BackToTop>
     </div>
 </template>
-<script>
+<script setup>
 import BackToTop from './general/BackToTop.vue';
-import LanguageSwitcher from './general/LanguageSwitcher.vue';
+import NavigationBar from './general/NavigationBar.vue';
 
 
-export
-default {
-    name: 'DownloadPage',
-    data() {
-        return {
-            showSubMenu: false,
-        };
-    },
-    components: {
-        BackToTop,
-        LanguageSwitcher
-    },
-    created() {
-        this.$i18n.locale = this.$root.$selectedLanguage || 'zh1';
-    },
 
-
-    methods: {
-        onLanguageChanged(language) {
-            this.$i18n.locale = language;
-        },
-        exportToCSV() {
-            // 发起下载请求
-            fetch('../php/export_csv.php', {
-                method: 'POST',
-            })
-                .then(response => {
-                if (response.ok) {
-                    // 处理文件下载逻辑
-                    const url = window.URL.createObjectURL(new Blob([response.blob()]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'data.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    link.parentNode.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                } else {
-                    console.error('Failed to download the file');
-                }
-            })
-                .
-            catch (error => console.error('Error:', error));
-        },
-    },
-};
 </script>
 <style scoped>
 @import'css/MainStyles.css';

@@ -56,11 +56,13 @@
     </div>
     <div class="sc-cluster-content">
       <!-- 左侧内容：UMAP图与标记大小控制 -->
-      <div class="information-first">
-        <h1>{{ $t('scd21') }}</h1>
-        <div class="marker-size-controller">
-          <div class="label">{{ $t('scd22') }}:</div>
-          <!-- 减少按钮 -->
+      <h1>{{ $t('scd21') }}</h1>
+  
+    
+      
+      <div class="marker-size-controller">
+        <div class="label">{{ $t('scd22') }}:</div>
+       <!-- 减少按钮 -->
           <button class="custom-plus" icon @click="decreaseSize1">
             -
           </button>
@@ -70,12 +72,17 @@
           <button class="custom-plus" icon @click="increaseSize1">
             +
           </button>
-        </div>
-        <div id="umap-plot"></div>
       </div>
+        <el-row :gutter="20" class="umap-contain">
+            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+            <el-col :xs="24" :sm="24" :md="20" :lg="20">
+                <div id="umap-plot" style="width: 100%; height: 100%;"></div>
+            </el-col>
+            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+        </el-row>
       
       <div class="information-second">
-        <div id="myClusterChart" style="width: 1200px; height: 300px;"></div>
+        <div id="myClusterChart" style="width: auto; height: 100%;"></div>
       </div>
       <!-- 右侧内容：基因搜索与基因列表 -->
       <div class="information-second">
@@ -93,33 +100,22 @@
             <button @click="searchgene" class="search-btn">
               {{ $t('scd21button') }}
             </button>
-    <!-- 新增高度控制容器 -->
-        <div 
-          v-show="showScroller"
-          class="scroller-wrapper"
-          ref="scrollContainer"
-        >
-          <recycle-scroller
-            class="scroller"
-            :items="virtualItem"
-            :max-items="20000"
-            key-field="id"
-            :item-size="15"
-            :buffer="500"
-            :key="resetKey"
-          >
-            <template v-slot="{ item }">
-              <div 
-                class="gene-item"
-                :key="item.id"
-                :class="{ 'is-active': item === searchQuery }"
-                @mousedown="selectItem(item.content)"
-              >
-                {{ item.content }}
-              </div>
-            </template>
-          </recycle-scroller>
-        </div>
+<div
+    v-show="showScroller"
+    class="scroller-wrapper"
+    ref="scrollContainer"
+  >
+  <VirtualList
+    :data-key="'id'"
+    :data-sources="filteredGenes"
+    :keeps="100"
+    :estimate-size="50"
+    :data-component="VirtualListItem"
+    style="height: 400px; overflow-y: auto"
+    class="scroller"
+  >
+    </VirtualList>
+  </div>
           <div class="marker-size-controller">
             <div class="label">{{ $t('scd22') }}:</div>
             <!-- 减少按钮 -->
@@ -135,9 +131,15 @@
           </div>
         </div>
 
-
-        <div id="umap-chart-gene"></div>
-        <div id="expressionHeatmap" style="width: 1200px; height: 400px;"></div>
+        <el-row :gutter="20" class="umap-contain">
+            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+            <el-col :xs="24" :sm="24" :md="20" :lg="20">
+                <div id="umap-chart-gene" style="width: 80%; height: 100%;"></div>
+            </el-col>
+            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
+        </el-row>
+        
+        <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
       </div>
     </div>
   </div>
@@ -171,7 +173,7 @@
                 </div>
                 <div class="log2fc">
                     <label>{{ $t('scd29') }}</label>
-                    <input type="range" min="-10" max="5" step="0.1" v-model="log2fc" class="custom-range"/> <span>{{ log2fc }}</span>
+                    <input type="range" min="0" max="10" step="0.1" v-model="log2fc" class="custom-range"/> <span>{{ log2fc }}</span>
 
                 </div>
                 <div class="adjusted-pvalue">
@@ -180,14 +182,14 @@
 
                 </div>
                   <div class="DEdirection">
-                    <label>DE direction:</label>
+                    <label>Log fold-change direction:</label>
                     <div class="radio-group">
                       <input type="radio" id="all" value="all" v-model="selectedDirection" />
                       <label for="all" class="radio-label">All</label>
                       <input type="radio" id="up" value="up" v-model="selectedDirection" />
-                      <label for="up" class="radio-label">UP</label>
+                      <label for="up" class="radio-label">0↑</label>
                       <input type="radio" id="down" value="down" v-model="selectedDirection"/>
-                      <label for="down" class="radio-label">Down</label>
+                      <label for="down" class="radio-label">0↓</label>
                     </div>
                   </div>
             </div>
@@ -316,18 +318,21 @@
                 </div>
             </section>
         </main>
-        <BackToTop />
+        <BackToTop></BackToTop>
     </div>
 </template>
 
 <script setup>
 import Plotly from 'plotly.js-dist-min';
-import { RecycleScroller } from 'vue3-virtual-scroller';
+//import { RecycleScroller } from 'vue3-virtual-scroller';
+//import VirtualList from 'vue-virtual-scroll-list';
+import VirtualListItem from './general/VirtualListItem.vue';
+import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
 import { ref, onMounted, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
 //import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
-import debounce from 'lodash.debounce';
+//import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
@@ -379,8 +384,8 @@ onMounted(() => {
     })
     .then(data => {
       if (data && data.length > 0 && data[0].information) {
-        dataset.value = data[0]; // 直接赋值，不需要使用 $set
-        dataset.value.information = JSON.parse(data[0].information); // 直接赋值，不需要使用 $set
+        dataset.value = data[0]; 
+        dataset.value.information = JSON.parse(data[0].information); 
       }
     })
     .catch(error => {
@@ -446,7 +451,7 @@ onMounted(() => {
             acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
             return acc;
         }, {});
-        console.log(colors);
+        //console.log(colors);
           const traces = clusterLabels.map((label) => {
             const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
             const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
@@ -465,13 +470,13 @@ onMounted(() => {
               }
             };
           });
-        const halfViewportWidth = window.innerWidth * 0.55;
-        const allViewportWidth = window.innerWidth * 0.66;
+        //const halfViewportWidth = window.innerWidth * 0.55;
+        //const allViewportWidth = window.innerWidth * 0.66;
         
         const layout = {
           title: '',
-          width: allViewportWidth,
-          height: halfViewportWidth,
+          responsive: true,
+          //width: allViewportWidth,
           xaxis: { title: 'UMAP1' },
           yaxis: { title: 'UMAP2' },
           paper_bgcolor: 'rgba(0,0,0,0)',
@@ -558,9 +563,9 @@ onMounted(async() => {
           title: 'Num of Cluster',
           xaxis: {
             title: '',
-            tickangle: -90, // 将标签旋转45度
+            tickangle: 45, // 将标签旋转45度
             tickmode: 'linear', // 确保标签均匀分布
-            tickfont: { size: 9 } // 调整字体大小
+            tickfont: { size: 6 } // 调整字体大小
           },
           yaxis: {
             title: '',
@@ -609,10 +614,11 @@ const showScroller = ref(false);
 const markerSize2 = ref(4); // 默认点大小
 
 // 分页状态管理
-const geneCurrentPage = ref(0)
-const genePageSize = 100;
+//const geneCurrentPage = ref(-1)
+//const genePageSize = 100;
 //const noMore = ref(false)
 //const virtualItems = ref([])
+//const resetKey = ref(0)
 
 /*
 watch(geneCurrentPage, () => {
@@ -646,14 +652,18 @@ const filteredGenes = computed(() => {
 */
 
 
-const virtualItem = ref([]);
+//const virtualItem = ref([]);
+
 const filteredGenes = computed(() => {
-  let data = genes.value;
+  let data = genes.value || [];
   if (searchQuery.value) {
-    data = data.filter(gene => gene.content.includes(searchQuery.value.toLowerCase()));
+    const query = searchQuery.value.toLowerCase();
+    //console.log(query)
+    data = data.filter(gene => (gene.content || '').toLowerCase().includes(query));
   }
-  return data
+  return data;
 });
+
 
 //加载基因
 onMounted(async() => {
@@ -670,41 +680,69 @@ onMounted(async() => {
       throw new Error('Invalid data structure received');
     }
     genes.value = data.genes.map((gene, index) => ({
-    id: index + 1, // 使用数组索引作为 id
-    content: gene.toLowerCase()
+    id: index, // 使用数组索引作为 id
+    content: gene
   }));
-    filteredGenes.value = [...genes.value];
-    virtualItem.value = genes.value.slice(0,genePageSize );
+    //filteredGenes.value = [...genes.value];
+    //virtualItem.value = genes.value.slice(0,genePageSize );
+    //geneCurrentPage.value = 0;
   } catch (error) {
     console.error('Failed to load genes:', error);
     // 可以在这里处理错误，例如显示错误消息或设置错误状态
   }
 });
+/*
+const filteredGenes = ref([]); // 用于存储过滤后的基因数据
+watch(searchQuery, (newQuery) => {
+  if (newQuery) {
+    filteredGenes.value = genes.value.filter(gene => gene.content.toLowerCase().includes(newQuery.toLowerCase()));
+  } else {
+    filteredGenes.value = genes.value; // 如果没有搜索查询，显示所有基因
+  }
+  geneCurrentPage.value = 0;
+  resetKey.value++
+});
+*/
+/*
+watch(filteredGenes, () => {
+  //virtualItem.value = filteredGenes.value.slice(0,genePageSize);
+  geneCurrentPage.value = 0;
+  resetKey.value++
+//}, { flush: 'post' }) // 在DOM更新后执行
+});
+*/
 // 响应式数据
 
 // 方法：过滤基因
 
 // 侦听器：监听 searchQuery 的变化
 //import { nextTick } from 'vue';
-const resetKey = ref(0)
 
 
-watch([filteredGenes, searchQuery], () => {
-  resetKey.value++ // 触发虚拟滚动组件重新渲染
-}, { flush: 'post' }) // 在DOM更新后执行
+import { inject } from 'vue';
+const eventBus = inject('eventBus')
+onMounted(() => {
+    eventBus.on('select-item', handleSelectItem);
+});
+onUnmounted(() => {
+  if (eventBus) {
+    eventBus.off('select-item', handleSelectItem);
+  }
+});
 
-
-watch(searchQuery, () => {
-  virtualItem.value = filteredGenes.value.slice(0,genePageSize);
-  geneCurrentPage.value = 0;
-}, { flush: 'post' }) // 在DOM更新后执行
-
-
-// 选择项时触发的方法
-const selectItem = (item) => {
-  searchQuery.value = item;
-  showScroller.value = false;
+const handleSelectItem = (item) => {
+      searchQuery.value = item;
+      showScroller.value = false;
 };
+
+/*
+function onSelectItem(value) {
+  console.log('父组件接收到选中事件，值是:', value)
+  // 这里写父组件逻辑，比如更新 searchQuery
+    searchQuery.value = value;
+  showScroller.value = false;
+}
+*/
 
 // 处理失去焦点时的方法
 const handleBlur = () => {
@@ -780,7 +818,7 @@ const handleScroll = debounce(() => {
   }
 }, 100);
 
-*/
+
 //import {onUnmounted} from 'vue'
 const scrollContainer = ref(null);
 
@@ -788,13 +826,13 @@ onMounted(() => {
   scrollContainer.value.addEventListener('scroll', handleScroll);
 });
 
-/*
+
 onUnmounted(() => {
   scrollContainer.value.removeEventListener('scroll', handleScroll);
 });
-*/
 
-watch(geneCurrentPage, () => {
+
+watch([geneCurrentPage,filteredGenes], () => {
   virtualItem.value = virtualItem.value.concat(filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize ));
 }) // 在DOM更新后执行
 
@@ -809,6 +847,7 @@ const handleScroll = debounce(() => {
   }
 }, 100);
 
+*/
 
 //---------------测试代码-------------end
 
@@ -904,12 +943,8 @@ mergedArray.forEach(item => {
       };
     });
 
-    // 绘制图表
-    const halfViewportWidth = window.innerWidth * 0.48;
     Plotly.newPlot('umap-chart-gene', traces, {
                     showlegend: false,
-                    width: halfViewportWidth,
-                    height: halfViewportWidth,
     });
 
 //-----------绘制热图------------------------
@@ -920,6 +955,9 @@ mergedArray.forEach(item => {
     title: 'Gene expression heat map(The z axis is the number of cells)',
     xaxis: {
       title: '',
+    tickangle: 45, // 将标签旋转45度
+    tickmode: 'linear', // 确保标签均匀分布
+    tickfont: { size: 6 }, // 调整字体大小
       tickvals: categories.map((category, index) => index),
       ticktext: categories
     },
@@ -983,8 +1021,8 @@ const increaseSize2 = () => {
 const group = ref('cellTypeSpecificGenes');
 const cellTypes = ref([]);
 const cellType = ref('');
-const log2fc = ref(-10);
-const pvalue = ref(1);
+const log2fc = ref(0);
+const pvalue = ref(0.1);
 const selectedDirection = ref('all');
 
 const DEGdata = ref([]);
@@ -1207,7 +1245,7 @@ const KEGGfilteredData = computed(() => {
     return lowerCaseItemI.includes(lowerCaseFilter);
   });
 });
-console.log(KEGGfilteredData.value);
+//console.log(KEGGfilteredData.value);
 
 const KEGGtotalPages = computed(() => {
   // 总页数基于筛选后的数据集计算
@@ -1283,6 +1321,23 @@ const openLink = (gene, linkType) => {
   }
   window.open(url, '_blank'); // 在新标签页中打开链接
 };
+
+
+
+
+//------
+onMounted(() => {
+  window.addEventListener('resize', resizeMyChart);
+});
+const resizeMyChart = () => {
+  Plotly.Plots.resize('myClusterChart');
+  Plotly.Plots.resize('umap-plot');
+};
+
+import { onUnmounted } from 'vue';
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeMyChart);
+});
 </script>
 
 <style scoped>

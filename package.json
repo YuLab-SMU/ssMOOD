@@ -37,6 +37,7 @@
     "vue-virtual-scroll-list": "^2.3.5",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue-web-terminal": "^3.4.0",
+    "vue3-virtual-scroll-list": "^0.2.1",
     "vue3-virtual-scroller": "^0.2.3",
     "vuex": "^4.0.2",
     "webr": "^0.3.3"

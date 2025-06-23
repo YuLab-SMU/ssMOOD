@@ -4,7 +4,7 @@
       <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
       <!-- 按钮 1 -->
       <button class="navigation-button button-1" @click="goToPage('study1.conditions.C')">
-        Control
+        0Day(Control)
       </button>
       <!-- 按钮 2 -->
       <button class="navigation-button button-2" @click="goToPage('study1.conditions.3D')">
@@ -90,7 +90,7 @@ const goToPage = (study) => {
 }
 .button-1 {
   top: 65px;
-  left: 60px;
+  left: 40px;
 }
 .button-2 {
   top: 13px;

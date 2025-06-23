@@ -21,11 +21,11 @@
                         <label for="area">{{ $t('bsc4') }}</label>
                         <select id="area" v-model="filters.area">
                             <option value="all">All</option>
-                            <option value="DRN" v-if="filters.species === 'mouse'||filters.species === 'all'">DRN</option>
-                            <option value="HIP" v-if="filters.species === 'mouse'||filters.species === 'all'">HIP</option>
-                            <option value="Stri" v-if="filters.species === 'mouse'||filters.species === 'all'">Stri</option>
-                            <option value="VTA" v-if="filters.species === 'mouse'||filters.species === 'all'">VTA</option>
-                            <option value="mPFC" v-if="filters.species === 'mouse'||filters.species === 'all'">mPFC</option>
+                            <option value="I" v-if="filters.species === 'mouse'||filters.species === 'all'">I</option>
+                            <option value="II" v-if="filters.species === 'mouse'||filters.species === 'all'">II</option>
+                            <option value="III" v-if="filters.species === 'mouse'||filters.species === 'all'">III</option>
+                            <option value="IV" v-if="filters.species === 'mouse'||filters.species === 'all'">IV</option>
+                            <option value="V" v-if="filters.species === 'mouse'||filters.species === 'all'">V</option>
                             <option value="BA12" v-if="filters.species === 'human'||filters.species === 'all'">BA12</option>
                             <option value="BA46" v-if="filters.species === 'human'||filters.species === 'all'">BA46</option>
                         </select>

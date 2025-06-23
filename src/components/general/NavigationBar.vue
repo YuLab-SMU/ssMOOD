@@ -28,13 +28,35 @@
           </ul>
         </li>
         <li class="nav-item" :class="{ 'active': $route.path === '/analyze' }">
-          <router-link to="/analyze">{{ $t('analyze') }}</router-link>
+          <a href="#" @click.prevent="showModal">{{ $t('analyze') }}</a>
         </li>
         <li class="nav-item" :class="{ 'active': $route.path === '/download' }">
           <router-link to="/download">{{ $t('download') }}</router-link>
         </li>
-        <li class="nav-item" :class="{ 'active': $route.path === '/about' }">
-          <router-link to="/about">{{ $t('about') }}</router-link>
+        <li 
+        @mouseover="showSubMenu1 = true"
+          @mouseleave="showSubMenu1 = false"
+          class="nav-item has-submenu"
+          :class="{ 'active': $route.path.startsWith('/about') }"
+          >
+        <a>{{ $t('about') }}</a>
+          <ul v-if="showSubMenu1" class="submenu">
+            <li>
+              <router-link to="/about/Methods">{{ $t('Methods') }}</router-link>
+            </li>
+            <li>
+              <router-link to="/about/Usage">{{ $t('Usage') }}</router-link>
+            </li>
+            <li>
+              <router-link to="/about/FAQ">{{ $t('FAQ') }}</router-link>
+            </li>
+            <li>
+              <router-link to="/about/AccessAnalytics">{{ $t('AccessAnalytics') }}</router-link>
+            </li>
+            <li>
+              <router-link to="/about/ContactUs">{{ $t('ContactUs') }}</router-link>
+            </li>
+          </ul>
         </li>
       </ul>
       <div class="language-switcher-container">
@@ -46,7 +68,15 @@
         </select>
       </div>
     </nav>
+      <!-- 模态窗 -->
+<div v-if="isModalVisible" class="modal-overlay" @click="closeModal">
+  <div class="modal" @click.stop>
+    <button @click="closeModal">&times;</button>
+    <p>{{ $t('model') }}</p>
+  </div>
+</div>
   </header>
+
 </template>
 
 <script setup>
@@ -57,6 +87,7 @@ import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
 //onst route = useRoute();
 const showSubMenu = ref(false);
+const showSubMenu1 = ref(false);
 const isMenuCollapsed = ref(false);
 
 // 创建响应式引用
@@ -85,6 +116,7 @@ onMounted(() => {
 });
 
 // 监听窗口大小变化，自动折叠或展开导航栏
+/*
 window.addEventListener('resize', () => {
   if (window.innerWidth <= 768) {
     isMenuCollapsed.value = true;
@@ -92,12 +124,26 @@ window.addEventListener('resize', () => {
     isMenuCollapsed.value = false;
   }
 });
-
+*/
 // 切换导航栏的展开和折叠状态
 const toggleMenu = () => {
   if (window.innerWidth <= 768) {
     isMenuCollapsed.value = !isMenuCollapsed.value;
   }
+};
+
+
+// 定义模态窗的显示状态
+const isModalVisible = ref(false);
+
+// 显示模态窗的方法
+const showModal = () => {
+  isModalVisible.value = true;
+};
+
+// 关闭模态窗的方法
+const closeModal = () => {
+  isModalVisible.value = false;
 };
 </script>
 
@@ -145,6 +191,9 @@ header {
 }
 /* 添加active样式 */
 .nav-item.active {
+  background: rgba(255, 255, 255, 0.3);
+}
+.nav-item:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -171,12 +220,13 @@ a {
   padding: 0px;
   background-color: #fff;
   z-index: 2000;
-  top: 100%; /* 父菜单项高度的100% */
+  top: 90%; /* 父菜单项高度的100% */
   left: 0; /* 根据需要调整 */
   transition: opacity 0.3s, visibility 0.3s;
   border: 1px solid #eaeaea;
   border-radius: 8px;
   box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.3);
+
 }
 
 .submenu.show {
@@ -264,6 +314,55 @@ a {
   font-size: 24px;
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal {
+  background-color: rgba(255, 255, 255, 0.6); /* 半透明白色背景 */
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  backdrop-filter: blur(5px); /* 添加毛玻璃效果，模糊半径为 5px */
+  -webkit-backdrop-filter: blur(5px); /* Safari 支持 */
+  position: relative;
+}
+
+.modal p {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color:black;
+}
+
+.modal button {
+  padding: 5px 10px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  border: none;
+  background-color: rgba(255, 255, 255, 0);
+  cursor: pointer;
+  right:0px;
+  position: absolute;
+  top: 0px;
+}
+.modal button:hover,
+.modal button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
     
 .logo {
@@ -299,6 +398,26 @@ a {
     height: auto;
     padding: 10px 0;
   }
+.submenu {
+  position: absolute; 
+  padding: 0px;
+  background-color: #fff;
+  z-index: 2000;
+  top: auto; /* 父菜单项高度的100% */
+  bottom: 0%;
+  left: 50%; /* 根据需要调整 */
+  transition: opacity 0.3s, visibility 0.3s;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.3);
+}
+.submenu li {
+  padding: 0;
+  text-decoration: none;
+  display: block;
+  color: black;
+  border-radius: 5px;
+}
   
   a {
     padding: 12px 20px;
@@ -325,4 +444,8 @@ a {
 }
   
 }
+
+
+
+
 </style>
