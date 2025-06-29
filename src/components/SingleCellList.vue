@@ -26,6 +26,8 @@
                             <option value="III" v-if="filters.species === 'mouse'||filters.species === 'all'">III</option>
                             <option value="IV" v-if="filters.species === 'mouse'||filters.species === 'all'">IV</option>
                             <option value="V" v-if="filters.species === 'mouse'||filters.species === 'all'">V</option>
+                            <option value="BA9" v-if="filters.species === 'human'||filters.species === 'all'">BA9</option>
+                            <option value="BA11" v-if="filters.species === 'human'||filters.species === 'all'">BA11</option>
                             <option value="BA12" v-if="filters.species === 'human'||filters.species === 'all'">BA12</option>
                             <option value="BA46" v-if="filters.species === 'human'||filters.species === 'all'">BA46</option>
                         </select>

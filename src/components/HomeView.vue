@@ -471,7 +471,7 @@ const umapData = ref({}); // 存储4张表的数据
 const title_x= ["UMAP1","coordinate_X","UMAP1","coordinate_X"];
 const title_y= ["UMAP2","coordinate_Y","UMAP2","coordinate_Y"];
 
-const pointSize = [5,2.5,5,3]
+const pointSize = [5,2.5,5,2]
 
 // 切换UMAP图表
 const switchUmapChart = (index) => {

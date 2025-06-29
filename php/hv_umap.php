@@ -18,7 +18,7 @@ $queries = [
     "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0023_S_Stri'",
     "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0049_S_mPFC'",
     "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0039_C_BA11'",
-    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0055_C_BA46'"
+    "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0054_S_BA12'"
 ];
 
 // 初始化数组存储 4 张表的数据

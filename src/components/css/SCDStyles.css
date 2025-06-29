@@ -131,7 +131,9 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px; /* 圆角更柔和 */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-
+  background-color: rgba(255, 255, 255, 0.5); /* 半透明白色背景 */
+  backdrop-filter: blur(5px); /* 添加毛玻璃效果，模糊半径为 5px */
+  -webkit-backdrop-filter: blur(5px); /* Safari 支持 */
   transform: translateZ(0);
 }
 .scroller{
