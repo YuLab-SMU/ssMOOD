@@ -173,12 +173,31 @@
                 </div>
                 <div class="log2fc">
                     <label>{{ $t('scd29') }}</label>
-                    <input type="range" min="0" max="10" step="0.1" v-model="log2fc" class="custom-range"/> <span>{{ log2fc }}</span>
+  <el-slider
+    v-model="log2fc"
+    :min="0"
+    :max="4"
+    :step="0.1"
+    :format-tooltip="val => val.toFixed(1)"
+    show-tooltip
+    tooltip-class="always-show-tooltip custom-tooltip"
+  />
 
                 </div>
+
                 <div class="adjusted-pvalue">
                     <label>{{ $t('scd30') }}</label>
-                    <input type="range" min="0" max="1" step="0.0001" v-model="pvalue" class="custom-range"/> <span>{{ pvalue }}</span>
+                        <!-- 对数刻度滑动条 -->
+                    <el-slider
+                      v-model="pValueSliderIndex"
+                      :aria-hidden="null"
+                      :min="0"
+                      :max="7"
+                      :marks="pValueMarks"
+                      :step="1"
+                      show-tooltip
+                      class="mt-4"
+                    />
 
                 </div>
                   <div class="DEdirection">
@@ -187,9 +206,9 @@
                       <input type="radio" id="all" value="all" v-model="selectedDirection" />
                       <label for="all" class="radio-label">All</label>
                       <input type="radio" id="up" value="up" v-model="selectedDirection" />
-                      <label for="up" class="radio-label">0↑</label>
+                      <label for="up" class="radio-label">UP</label>
                       <input type="radio" id="down" value="down" v-model="selectedDirection"/>
-                      <label for="down" class="radio-label">0↓</label>
+                      <label for="down" class="radio-label">Down</label>
                     </div>
                   </div>
             </div>
@@ -338,6 +357,8 @@ import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
+import colorMap from './color_map.js';
+
 
 
 const route = useRoute();
@@ -445,12 +466,10 @@ onMounted(() => {
           const clusterLabelsData = umapData.value.map(d => d.c);
 
 
-        const colors = Array.from(labelMap.keys()).reduce((acc, label, index) => {
-            const hue = (index * 360 / labelMap.size);
-            const lightness = 70 + (index % 2 === 0 ? 5 : -5);
-            acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
-            return acc;
-        }, {});
+          const colors = clusterLabels.reduce((acc, label) => {
+              acc[label] = colorMap[label] || '#000'; // 如果没有找到对应的颜色，则使用默认颜色 #000
+              return acc;
+          }, {});
         //console.log(colors);
           const traces = clusterLabels.map((label) => {
             const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
@@ -1022,7 +1041,7 @@ const group = ref('cellTypeSpecificGenes');
 const cellTypes = ref([]);
 const cellType = ref('');
 const log2fc = ref(0);
-const pvalue = ref(0.1);
+//const pvalue = ref(5);
 const selectedDirection = ref('all');
 
 const DEGdata = ref([]);
@@ -1030,6 +1049,25 @@ const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
 const filterDEGGenes = ref('');
+
+const pValueSliderIndex = ref(5)  // 默认 0.05
+// 定义 slider 的值及 label
+const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 1]
+const pValueMarks = {
+  0: '10⁻⁶',
+  1: '10⁻⁵',
+  2: '10⁻⁴',
+  3: '10⁻³',
+  4: '0.01',
+  5: '0.05',
+  6: '0.1',
+  7: '1',
+}
+
+const formattedPValue = computed(() => {
+  const val = logPValues[pValueSliderIndex.value]
+  return val < 0.001 ? `10^${Math.log10(val).toFixed(0)}` : val.toFixed(3)
+})
 
 
 //----------------------------------
@@ -1101,7 +1139,7 @@ const filteredData = computed(() => {
     }
 
     return Math.abs(logFoldChange) >= log2fc.value &&
-           adjustedPvalue <= pvalue.value &&
+           adjustedPvalue <= formattedPValue.value &&
            lowerCaseItemI.includes(lowerCaseFilter)&&
            directionFilter;
   });

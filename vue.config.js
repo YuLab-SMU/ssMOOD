@@ -19,18 +19,13 @@ module.exports = {
             'vuetify'
     ],
     chainWebpack: (config) => {
-        config.resolve.alias.set('vue', '@vue/compat');
+        config.resolve.alias.set('vue', 'vue');
         config.module
             .rule('vue')
             .use('vue-loader')
             .tap((options) => {
             return {
                     ...options,
-                compilerOptions: {
-                    compatConfig: {
-                        MODE: 2 // 设置兼容模式
-                    }
-                }
             };
         });
     },

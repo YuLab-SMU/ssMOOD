@@ -351,62 +351,40 @@
 .custom-select::-ms-expand {
   display: none; /* 隐藏 IE 浏览器的默认箭头 */
 }
-/* 重置滑动条默认样式 */
-.custom-range::-webkit-slider-thumb {
-  -webkit-appearance: none; /* 去除 WebKit 浏览器默认样式 */
-  appearance: none;
+/* 👇 强制显示 tooltip（参考 Element Plus 的 tooltip 样式） */
+.always-show-tooltip {
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+/* 示例：紫色背景、白色字体、圆角、阴影、美化箭头 */
+.custom-tooltip {
+  position: relative;
+  background-color: rgb(93, 116, 162) !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.custom-range::-moz-range-thumb {
-  /* 去除 Firefox 默认样式 */
+/* 添加水滴下方的尖角 */
+.custom-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -6px; /* 尖角高度 */
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgb(93, 116, 162);  /* 与背景色一致 */
 }
 
-.custom-range::-ms-thumb {
-  /* 去除 IE 默认样式 */
-}
 
-/* 自定义滑动条样式 */
-.custom-range {
-  width: 300px; /* 滑动条宽度 */
-  height: 10px; /* 滑动条高度 */
-  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
-  border-radius: 5px; /* 滑动条圆角 */
-  outline: none; /* 去掉聚焦时的轮廓 */
-  transition: background 0.3s; /* 平滑过渡效果 */
-}
-
-.custom-range::-webkit-slider-thumb {
-  width: 20px; /* 滑块宽度 */
-  height: 20px; /* 滑块高度 */
-  background: rgb(93, 116, 162); /* 滑块背景颜色 */
-  border-radius: 50%; /* 滑块圆角 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
-  transition: background 0.3s, transform 0.1s; /* 平滑过渡效果 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 滑块阴影 */
-  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
-}
-
-.custom-range::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: rgb(93, 116, 162);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.1s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
-}
-
-.custom-range:active::-webkit-slider-thumb {
-  background: rgb(93, 116, 162); /* 点击时滑块背景颜色 */
-  transform: scale(1.5); /* 点击时滑块放大 */
-  background-color: rgb(93, 116, 162); /* 滑动条背景颜色 */
-}
-
-.custom-range:active::-moz-range-thumb {
-  background: rgb(93, 116, 162);
-  transform: scale(1.2);
-}
 
 .DEdirection {
   display: flex;

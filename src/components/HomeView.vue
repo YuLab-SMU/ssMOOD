@@ -42,19 +42,11 @@
                         <div class="chart-switch">
                           <div
                             class="chart-item"
-                            :class="{ 'active': currentChart === 0 }"
-                            @click="switchChart(0)"
+                            :class="{ 'active': currentChart === 3 }"
+                            @click="switchChart(3)"
                           >
                             <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-1') }}</span>
-                          </div>
-                          <div
-                            class="chart-item"
-                            :class="{ 'active': currentChart === 1 }"
-                            @click="switchChart(1)"
-                          >
-                            <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-2') }}</span>
+                            <span>{{ $t('hv6-4') }}</span>
                           </div>
                           <div
                             class="chart-item"
@@ -66,12 +58,23 @@
                           </div>
                           <div
                             class="chart-item"
-                            :class="{ 'active': currentChart === 3 }"
-                            @click="switchChart(3)"
+                            :class="{ 'active': currentChart === 1 }"
+                            @click="switchChart(1)"
                           >
                             <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-4') }}</span>
+                            <span>{{ $t('hv6-2') }}</span>
                           </div>
+
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentChart === 0 }"
+                            @click="switchChart(0)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-1') }}</span>
+                          </div>
+ 
+
                         </div>
                         <div id="myClusterChart" style="width: 100%; height: auto;"></div>
                       </div>
@@ -119,19 +122,11 @@
                         <div class="chart-switch">
                           <div
                             class="chart-item"
-                            :class="{ 'active': currentUmapChart === 0 }"
-                            @click="switchUmapChart(0)"
+                            :class="{ 'active': currentUmapChart === 3 }"
+                            @click="switchUmapChart(3)"
                           >
                             <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-1') }}</span>
-                          </div>
-                          <div
-                            class="chart-item"
-                            :class="{ 'active': currentUmapChart === 1 }"
-                            @click="switchUmapChart(1)"
-                          >
-                            <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-2') }}</span>
+                            <span>{{ $t('hv6-4') }}</span>
                           </div>
                           <div
                             class="chart-item"
@@ -143,11 +138,19 @@
                           </div>
                           <div
                             class="chart-item"
-                            :class="{ 'active': currentUmapChart === 3 }"
-                            @click="switchUmapChart(3)"
+                            :class="{ 'active': currentUmapChart === 1 }"
+                            @click="switchUmapChart(1)"
                           >
                             <div class="chart-dot"></div>
-                            <span>{{ $t('hv6-4') }}</span>
+                            <span>{{ $t('hv6-2') }}</span>
+                          </div>
+                          <div
+                            class="chart-item"
+                            :class="{ 'active': currentUmapChart === 0 }"
+                            @click="switchUmapChart(0)"
+                          >
+                            <div class="chart-dot"></div>
+                            <span>{{ $t('hv6-1') }}</span>
                           </div>
                         </div>
                         <div id="umap-plot" style="aspect-ratio: 1 / 1;height: auto; width: 95%; "></div>
@@ -212,6 +215,7 @@ import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 
+import colorMap from './color_map.js';
 
 
 //-------------------
@@ -265,7 +269,7 @@ onMounted(async () => {
 
 
 
-const currentChart = ref(0); // 当前显示的图表索引
+const currentChart = ref(3); // 当前显示的图表索引
 const cellNum = ref(0);
 const geneNum = ref(0);
 const clusterNum = ref(0);
@@ -341,7 +345,7 @@ onMounted(async () => {
     const jsonString = new TextDecoder('utf-8').decode(decompressed);
     const data = JSON.parse(jsonString);
     chartDataCache.value = data;
-    renderChart(0); // 默认渲染第0张表
+    renderChart(3); // 默认渲染第0张表
   } catch (error) {
     console.error('Error fetching and decompressing UMAP data:', error);
   }
@@ -466,7 +470,7 @@ onMounted(async() => {
 //获取单细胞和空转的umap
 //------------------------
 
-const currentUmapChart = ref(0); // 默认显示第0张表
+const currentUmapChart = ref(3); // 默认显示第0张表
 const umapData = ref({}); // 存储4张表的数据
 const title_x= ["UMAP1","coordinate_X","UMAP1","coordinate_X"];
 const title_y= ["UMAP2","coordinate_Y","UMAP2","coordinate_Y"];
@@ -505,18 +509,11 @@ const renderUmapChart = (index) => {
             return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
         }
     });
-  // 使用标签的哈希值生成颜色，确保相同标签颜色一致
+
+
   const colors = sortedClusterLabels.reduce((acc, label) => {
-    // 使用简单的哈希函数生成颜色
-    let hash = 0;
-    for (let i = 0; i < label.length; i++) {
-      hash = ((hash << 5) - hash) + label.charCodeAt(i);
-      hash = hash & hash; // 转换为32位整数
-    }
-    const hue = Math.abs(hash % 360);
-    const lightness = 70 + (hash % 2 === 0 ? 5 : -5);
-    acc[label] = `hsl(${hue}, 40%, ${lightness}%)`;
-    return acc;
+      acc[label] = colorMap[label] || '#000'; // 如果没有找到对应的颜色，则使用默认颜色 #000
+      return acc;
   }, {});
 
   const umap1 = oneUmapData.map(d => parseFloat(d.u1));
@@ -576,7 +573,7 @@ onMounted(async () => {
       3: data[3]  // 空转(人)
     };
     
-    renderUmapChart(0); // 默认渲染第0张表
+    renderUmapChart(3); // 默认渲染第0张表
   } catch (error) {
     console.error('Error fetching and decompressing UMAP data:', error);
   }
