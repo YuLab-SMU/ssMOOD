@@ -27,15 +27,19 @@
 }
 
 .title-bar-header {
-  background-color: rgba(93, 116, 162,0.9); /* 标题栏背景颜色 */
+  background-color: rgba(93, 116, 162, 0.9);
   padding: 10px;
-  border-radius: 25px 25px 25px 25px; /* 圆角 */
-  color: #FFFFFF; /* 文字颜色 */
-  text-align: center; /* 文字居中 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 盒子阴影 */
-  margin-bottom: 20px; /* 与内容区域间隔 */
-  width: auto; 
+  border-radius: 25px;
+  color: #FFFFFF;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  width: auto;
+
+  /* 新增动画 */
+  transition: width 0.3s ease;
 }
+
 
 .title-bar-header h1 {
   margin: 0 50px; /* 移除默认的外边距 */
@@ -86,16 +90,6 @@
   max-width: 300px; /* 最大宽度 */
   width: 100%; /* 宽度占满容器 */
   min-height: 40px; 
-  padding: 10px; /* 内边距 */
-  border: 2px solid #ccc; /* 边框颜色和粗细 */
-  border-radius: 5px; /* 圆角 */
-  background-color: #fff; /* 背景颜色 */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
-  font-size: 16px; /* 字体大小 */
-  color: #333; /* 字体颜色 */
-  transition: border-color 0.3s, box-shadow 0.3s; /* 平滑过渡效果 */
-  outline: none; /* 去掉聚焦时的轮廓 */
-  box-sizing: border-box; /* 边框和内边距包含在宽度内 */
   
 }
 
@@ -261,7 +255,7 @@
 }
 
 .de-analysis {
-  width: 40vw;
+  width: 45vw;
   height: 65vh;
   margin: 0 auto;
   padding: 20px;
@@ -271,52 +265,17 @@
   overflow: auto;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
-/* 自定义 Element Plus el-slider 样式 */
-.el-slider__bar {
-  background-color: rgb(93, 116, 162) !important;
+.kegg-card {
+  margin: 16px 0;
+  width: calc(90vw + 60px);
 }
 
-.el-slider__button {
-  border: 2px solid rgb(93, 116, 162) !important;
-  background-color: white !important;
+.search-container {
+  max-width: 300px;
 }
-
-/* 可选：滑块按钮 hover 高亮 */
-.el-slider__button:hover {
-  box-shadow: 0 0 0 4px rgba(93, 116, 162, 0.2);
-}
-/* 滑块选中样式自定义 */
-.custom-radio-group .el-radio-button__fill {
-  background-color: rgb(93, 116, 162) !important;
-  border-color: rgb(93, 116, 162) !important;
-}
-
-.custom-radio-group .el-radio-button__original-radio:checked + .el-radio-button__inner {
-  background-color: rgb(93, 116, 162) !important;
-  border-color: rgb(93, 116, 162) !important;
-  color: white !important;
-}
-.custom-radio-group .el-radio-button__inner:hover {
-  color: rgb(93, 116, 162) !important;
-  border-color: rgb(93, 116, 162) !important;
-}
-.el-table .sort-caret {
-  color: rgb(93, 116, 162) !important;
-}
-/* 上箭头 */
-.el-table .caret-wrapper .ascending::before {
-  border-bottom-color: rgb(93, 116, 162) !important;
-}
-
-/* 下箭头 */
-.el-table .caret-wrapper .descending::after {
-  border-top-color: rgb(93, 116, 162) !important;
-}
-
-
 .kegg-expand-button {
   height: 3vh;
-  width: calc(80vw + 60px);
+  width: calc(90vw + 60px);
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;

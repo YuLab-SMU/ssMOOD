@@ -60,12 +60,17 @@
         </li>
       </ul>
       <div class="language-switcher-container">
-        <a>Language</a>
-        <select v-model="selectedLanguage" @change="switchLanguage" class="language-switcher">
-          <option value="zh1">简体中文</option>
-          <option value="zh2">繁體中文</option>
-          <option value="en">English</option>
-        </select>
+        <span>Language</span>
+        <el-select
+          v-model="selectedLanguage"
+          @change="switchLanguage"
+          placeholder="Select Language"
+          size="big"
+        >
+          <el-option label="简体中文" value="zh1" />
+          <el-option label="繁體中文" value="zh2" />
+          <el-option label="English" value="en" />
+        </el-select>
       </div>
     </nav>
       <!-- 模态窗 -->
@@ -254,61 +259,32 @@ a {
     transition: background 0.3s, color 0.3s;
 }
 .language-switcher-container {
-  display: flex;
-  align-items: center;
   padding: 5px;
-  margin-right: 60px;
+  margin-right: 80px;
   border: 1px solid #5d72a2;
   border-radius: 4px;
   margin-left: auto;
-  position: relative; /* 确保下拉菜单定位正确 */
+
+  /* 不使用flex，改用inline-block水平排列 */
+  white-space: nowrap; /* 防止换行 */
+  text-align: right;   /* 内容右对齐 */
+}
+
+.language-switcher-container > * {
+  display: inline-block;
+  vertical-align: middle; /* 让元素垂直居中 */
+  margin-left: 8px;       /* 控制间距 */
+}
+
+.language-switcher-container > *:first-child {
+  margin-left: 0;         /* 第一个元素左边距去掉 */
 }
 
 .language-switcher-container a {
-  margin-right: 10px;
   color: white;
-  text-decoration: none;
 }
 
-.language-switcher {
-  padding: 5px 20px;
-  margin: 0;
-  border: none;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 16px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px 16px;
-  transition: border-color 0.2s, background-color 0.2s;
-  /* 确保下拉菜单在按钮正下方 */
-  position: relative;
-  top: 0;
-  left: 0;
-}
 
-.language-switcher:focus {
-  border-color: rgb(093, 116, 162);
-  background-color: #f8f8f8;
-}
-
-/* 美化下拉菜单的选项 */
-.language-switcher option {
-  padding: 10px;
-  background-color: #f2f2f2;
-  border: none;
-  font-size: 16px;
-  color: black; /* 确保选项文本颜色与背景对比明显 */
-}
-
-/* 确保下拉菜单在按钮正下方 */
-.language-switcher::-ms-expand {
-  display: none; /* 隐藏 IE 浏览器的默认下拉箭头 */
-}
 /* 移动端样式 */
 .toggle-button {
   font-size: 24px;

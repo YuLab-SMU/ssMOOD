@@ -1,11 +1,16 @@
 <template>
   <div class="language-switcher-container">
-    <a>Language</a>
-    <select v-model="selectedLanguage" @change="switchLanguage" class="language-switcher">
-      <option value="zh1">简体中文</option>
-      <option value="zh2">繁體中文</option>
-      <option value="en">English</option>
-    </select>
+    <span class="language-label">Language</span>
+    <el-select
+      v-model="selectedLanguage"
+      @change="switchLanguage"
+      size="small"
+      placeholder="Select"
+    >
+      <el-option label="简体中文" value="zh1" />
+      <el-option label="繁體中文" value="zh2" />
+      <el-option label="English" value="en" />
+    </el-select>
   </div>
 </template>
 

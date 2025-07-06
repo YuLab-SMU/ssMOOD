@@ -60,19 +60,18 @@
   
     
       
-      <div class="marker-size-controller">
-        <div class="label">{{ $t('scd22') }}:</div>
-       <!-- 减少按钮 -->
-          <button class="custom-plus" icon @click="decreaseSize1">
-            -
-          </button>
-          <!-- 显示当前大小 -->
-          <span class="size-value">{{ markerSize1 }}</span>
-          <!-- 增加按钮 -->
-          <button class="custom-plus" icon @click="increaseSize1">
-            +
-          </button>
-      </div>
+          <div class="marker-size-control">
+            <span class="label">{{ $t('scd22') }}:</span>
+            <el-input-number
+              v-model="markerSize1"
+              :min="1"
+              :max="100"
+              :step="1"
+              size="small"
+              controls-position="default"
+              @change="updateUmap1"
+            />
+          </div>
         <el-row :gutter="20" class="umap-contain">
             <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
             <el-col :xs="24" :sm="24" :md="20" :lg="20">
@@ -88,46 +87,50 @@
       <div class="information-second">
         <h1>{{ $t('scd23') }}</h1>
         <div class="gene-search-con">
-        <input
-              class="search-gene-input"
-              v-model="searchQuery"
-              :placeholder="$t('scd24')"
-              @input="filterGenes"
-              @focus="showScroller = true"
-              @blur="handleBlur"
-              type="text"
+          <el-input
+            v-model="searchQuery"
+            :placeholder="$t('scd24')"
+            @input="filterGenes"
+            @focus="showScroller = true"
+            @blur="handleBlur"
+            class="search-gene-input"
+            clearable
+            size="big"
+          >
+            <template #append>
+              <el-button @click="searchgene" type="primary">
+                {{ $t('scd21button') }}
+              </el-button>
+            </template>
+          </el-input>
+          <!--虚拟下拉列表-->
+          <div
+              v-show="showScroller"
+              class="scroller-wrapper"
+              ref="scrollContainer"
+            >
+            <VirtualList
+              :data-key="'id'"
+              :data-sources="filteredGenes"
+              :keeps="100"
+              :estimate-size="50"
+              :data-component="VirtualListItem"
+              style="height: 400px; overflow-y: auto"
+              class="scroller"
+            >
+            </VirtualList>
+          </div>
+          <div class="marker-size-control">
+            <span class="label">{{ $t('scd22') }}:</span>
+            <el-input-number
+              v-model="markerSize2"
+              :min="1"
+              :max="100"
+              :step="1"
+              size="small"
+              controls-position="default"
+              @change="updateUmap2"
             />
-            <button @click="searchgene" class="search-btn">
-              {{ $t('scd21button') }}
-            </button>
-<div
-    v-show="showScroller"
-    class="scroller-wrapper"
-    ref="scrollContainer"
-  >
-  <VirtualList
-    :data-key="'id'"
-    :data-sources="filteredGenes"
-    :keeps="100"
-    :estimate-size="50"
-    :data-component="VirtualListItem"
-    style="height: 400px; overflow-y: auto"
-    class="scroller"
-  >
-    </VirtualList>
-  </div>
-          <div class="marker-size-controller">
-            <div class="label">{{ $t('scd22') }}:</div>
-            <!-- 减少按钮 -->
-            <button class="custom-plus" @click="decreaseSize2">
-              -
-            </button>
-            <!-- 显示当前大小 -->
-            <span class="size-value">{{ markerSize2 }}</span>
-            <!-- 增加按钮 -->
-            <button class="custom-plus" @click="increaseSize2">
-              +
-            </button>
           </div>
         </div>
 
@@ -159,17 +162,28 @@
                     <p>{{ $t('scd26') }}</p>
                 </div>
                 <div class="group">
-                    <label>{{ $t('scd27') }}</label>
-                    <select v-model="group" class="custom-select">
-                        <option value="cellTypeSpecificGenes">One Cell type vs Other Cell types</option>
-                    </select>
+                  <label>{{ $t('scd27') }}</label>
+                  <el-select v-model="group" placeholder="Select Comparison">
+                    <el-option
+                      label="One Cell type vs Other Cell types"
+                      value="cellTypeSpecificGenes"
+                    />
+                  </el-select>
                 </div>
                 <div class="cell-type">
-                    <label>{{ $t('scd28') }}</label>
-                    <select v-model="cellType" class="custom-select">
-                      <!-- 动态生成选项 -->
-                      <option v-for="type in cellTypes" :key="type" :value="type">{{ type }}</option>
-                    </select>
+                  <label>{{ $t('scd28') }}</label>
+                  <el-select
+                    v-model="cellType"
+                    placeholder="请选择"
+                    size="default"
+                  >
+                    <el-option
+                      v-for="type in cellTypes"
+                      :key="type"
+                      :label="type"
+                      :value="type"
+                    />
+                  </el-select>
                 </div>
                                   <!-- 标签 -->
                   <label style="white-space: nowrap; font-weight: 600;">
@@ -217,7 +231,7 @@
 
                 </div>
               <div class="DEdirection" style="margin-top: 1rem;">
-                <label class="font-semibold text-gray-700 mr-4">Log fold-change direction：</label>
+                <label class="font-semibold text-gray-700 mr-4">{{ $t('scd30-1') }}</label>
 
                 <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
                   <el-radio-button label="all">All</el-radio-button>
@@ -231,67 +245,77 @@
         <div class="information-right">
             
             <div class="de-analysis  modern-ui">
-            <input
-              class="search-gene-input"
-              v-model="filterDEGGenes"
-              :placeholder="$t('scd31')"
-              type="text"
-            />
-                
+                <el-input
+                  v-model="filterDEGGenes"
+                  :placeholder="$t('scd31')"
+                  clearable
+                  size="big"
+                />
+                <!-- 表格 -->
                 <div class="table-container">
-  <el-table
-    :data="paginatedData"
-    @sort-change="handleSortChange"
-    style="width: 100%"
-    :default-sort="{ prop: sortProp, order: sortOrder }"
-  >
-    <el-table-column
-      prop="i"
-      :label="$t('scd33')"
-      sortable="custom"
-    >
-      <template #default="{ row }">{{ row.i }}</template>
-    </el-table-column>
+                  <el-table
+                    :data="paginatedData"
+                    @sort-change="handleSortChange"
+                    style="width: 100%;"
+                    :default-sort="{ prop: sortProp, order: sortOrder }"
+                  >
+                    <el-table-column
+                      prop="i"
+                      :label="$t('scd33')"
+                      sortable="custom"
+                    >
+                      <template #default="{ row }">{{ row.i }}</template>
+                    </el-table-column>
 
-    <el-table-column
-      prop="f"
-      :label="$t('scd34')"
-      sortable="custom"
-    >
-      <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
-    </el-table-column>
+                    <el-table-column
+                      prop="f"
+                      :label="$t('scd34')"
+                      sortable="custom"
+                      min-width="100"
+                    >
+                      <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
+                    </el-table-column>
 
-    <el-table-column
-      prop="t1"
-      :label="$t('scd35')"
-      sortable="custom"
-    >
-      <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
-    </el-table-column>
+                    <el-table-column
+                      prop="t1"
+                      :label="$t('scd35')"
+                      sortable="custom"
+                    >
+                      <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
+                    </el-table-column>
 
-    <el-table-column
-      prop="t2"
-      :label="$t('scd36')"
-      sortable="custom"
-    >
-      <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
-    </el-table-column>
+                    <el-table-column
+                      prop="t2"
+                      :label="$t('scd36')"
+                      sortable="custom"
+                    >
+                      <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
+                    </el-table-column>
 
-    <el-table-column
-      prop="a"
-      :label="$t('scd37')"
-      sortable="custom"
-    >
-      <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
-    </el-table-column>
-  </el-table>
+                    <el-table-column
+                      prop="a"
+                      :label="$t('scd37')"
+                      sortable="custom"
+                      min-width="100"
+                    >
+                      <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
+                    </el-table-column>
+                  </el-table>
                 <div class="pagination">
-                <div class="left-section">
-                  <button @click="prevPage" :disabled="currentPage === 1" class="page">{{ $t('scd38') }}</button>
-                  <span>{{ $t('scd39') }} {{ currentPage }} {{ $t('scd40') }} {{ totalPages }}</span>
-                  <button @click="nextPage" :disabled="currentPage === totalPages" class="page">{{ $t('scd41') }}</button>
-                  <span>{{ $t('scd39-1') }} {{ filteredData.length  }}{{ $t('scd39-2') }}</span>
-                </div>
+              <!-- 翻页 -->
+              <div class="left-section">
+  <el-pagination
+    layout="prev, pager, next"
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :total="filteredData.length"
+    @current-change="handlePageChange"
+    small
+    background
+    class="page-pagination"
+  />
+              </div>
+
                   <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
                 </div>
               </div>
@@ -299,77 +323,128 @@
             </div>
         </div>
         </div>
-        <div class="information-deg-second">
-        <div class="kegg-expand-button"  @click="enrichment_expand_button1" :class="{ 'enrichment-button-expanded': isenrichmentExpanded1 }">{{ $t('scd42') }} </div>
-        <div class="kegg-analysis modern-ui" v-if = "isenrichmentExpanded1" >
-            <input
-              class="search-gene-input"
-              v-model="filterKEGG"
-              :placeholder="$t('scd31')"
+
+
+
+  <el-card class="kegg-card" shadow="never">
+    <!-- 折叠面板头 -->
+    <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
+      <el-collapse-item :title="$t('scd42')" name="1">
+        <div class="search-container" style="margin-bottom: 12px;">
+          <el-input
+            v-model="filterKEGG"
+            :placeholder="$t('scd31')"
+            clearable
+            prefix-icon="el-icon-search"
+            size="big"
+          />
+        </div>
+
+        <el-table
+          :data="KEGGpaginatedData"
+          stripe
+          size="big"
+          style="width: 100%"
+          :default-sort="{ prop: sortProp, order: sortOrder }"
+          @sort-change="handleKEGGSortChange"
+        >
+          <el-table-column
+            prop="t"
+            :label="$t('scd44')"
+            sortable="custom"
+            min-width="400"
+          />
+          <el-table-column
+            prop="p"
+            :label="$t('scd45')"
+            sortable="custom"
+          >
+            <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
+          </el-table-column>
+          <el-table-column
+            prop="o"
+            :label="$t('scd46')"
+            sortable="custom"
+          >
+            <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
+          </el-table-column>
+          <el-table-column
+            prop="c"
+            :label="$t('scd47')"
+            sortable="custom"
+          >
+            <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('scd48')"
+          >
+            <template #default="{ row }">
+              <el-button
+                size="mini"
+                type="primary"
+                @click="openKeggModal(row.g)"
+              >
+                {{ $t('scd49') }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页 -->
+        <div class="pagination" style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :current-page="KEGGcurrentPage"
+            :page-size="pageSize"
+            :total="KEGGfilteredData.length"
+            @current-change="handleKEGGPageChange"
+            size="small"
+          />
+          <el-button size="big" type="primary" @click="KEGGdownload" class="downloadButton">
+            {{ $t('scd32') }}
+          </el-button>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+
+    <!-- 模态框 -->
+    <el-dialog
+      :visible.sync="isKeggModalOpen"
+      width="50%"
+      :before-close="closeKeggModal"
+      title="$t('scd48')"
+    >
+      <el-table
+        :data="selectedKeggGene"
+        style="width: 100%"
+        size="big"
+      >
+        <el-table-column
+          prop="name"
+          :label="$t('scd50')"
+        />
+        <el-table-column label="$t('scd51')">
+          <template #default="{ row }">
+            <el-button
               type="text"
-            />
-                <div class="table-container">
-                <table>
-                  <thead>
-                      <tr>
-                        <th @click="sortTable(0)">{{ $t('scd44') }}</th>
-                        <th @click="sortTable(1)">{{ $t('scd45') }}</th>
-                        <th @click="sortTable(2)">{{ $t('scd46') }}</th>
-                        <th @click="sortTable(3)">{{ $t('scd47') }}</th>
-                        <th>{{ $t('scd48') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in KEGGpaginatedData" :key="item.t">
-                      <td>{{ item.t }}</td>
-                      <td>{{ item.p.toExponential(3) }}</td> <!-- 保留6位小数 -->
-                      <td>{{ item.o.toFixed(3) }}</td> <!-- 保留3位小数 -->
-                      <td>{{ item.c.toFixed(3) }}</td> <!-- 保留3位小数 -->
-                        <td>
-                            <button @click="openKeggModal(item.g)" class="geneModelButton" >{{ $t('scd49') }}</button>
-                        </td>
-                    </tr>
-                  </tbody>
-                </table>
-                
-                <!-- 模态窗 -->
-                <div v-if="isKeggModalOpen" class="keggModal">
-                    <div class="keggModal-content"> <span class="close" @click="closeKeggModal">&times;</span>
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>{{ $t('scd50') }}</th>
-                              <th>{{ $t('scd51') }}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr v-for="gene in selectedKeggGene" :key="gene">
-                              <td>{{ gene }}</td>
-                              <td>
-                                <button @click="openLink(gene, 'link1')" class="geneModelButton">UNIPROT🔗</button>
-                                <button @click="openLink(gene, 'link2')" class="geneModelButton">GENECARDS🔗</button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="pagination">
-                    <div class="left-section">
-                  <button @click="KEGGprevPage" :disabled="KEGGcurrentPage === 1" class="page">{{ $t('scd38') }}</button>
-                  <span>{{ $t('scd39') }} {{ KEGGcurrentPage }} {{ $t('scd40') }} {{ KEGGtotalPages }}</span>
-                  <button @click="KEGGnextPage" :disabled="KEGGcurrentPage === KEGGtotalPages" class="page">{{ $t('scd41') }}</button>
-                  </div>
-                   <button @click="KEGGdownload" class="downloadButton">{{ $t('scd32') }}</button>
-                </div>
-                
-                
-                
-              </div>
-                
-            </div>
-            
-            </div>
+              size="small"
+              @click="openLink(row.name, 'link1')"
+            >
+              UNIPROT🔗
+            </el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="openLink(row.name, 'link2')"
+            >
+              GENECARDS🔗
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+  </el-card>
     </div>
 </div>
         
@@ -571,7 +646,7 @@ const markerSize1 = ref(4); // 默认点大小
 const updateUmap1 = () => {
   Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
 };
-
+/*
 // 减少 UMAP 图1 的点大小
 const decreaseSize1 = () => {
   if (markerSize1.value > 1) {
@@ -587,7 +662,7 @@ const increaseSize1 = () => {
     updateUmap1();
   }
 };
-
+*/
 //###################################//
 //分类表
 //###################################//
@@ -1054,6 +1129,7 @@ const updateUmap2 = () => {
   Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
 };
 
+/*
 // 减少 UMAP 图2 的点大小
 const decreaseSize2 = () => {
   if (markerSize2.value > 1) {
@@ -1069,7 +1145,7 @@ const increaseSize2 = () => {
     updateUmap2();
   }
 };
-
+*/
 
 
 
@@ -1184,7 +1260,10 @@ const filteredData = computed(() => {
            directionFilter;
   });
 });
-
+function handlePageChange(page) {
+  currentPage.value = page
+  // 你可以在这里重新 slice 数据用于渲染当前页内容
+}
 //------------------------------------------------------
 //数据发生变化，需要基因富集分析数据，折叠基因富集分析面板
 //------------------------------------------------------
@@ -1193,11 +1272,12 @@ watch(filteredData, () => {
   isenrichmentExpanded1.value = false;
 });
 
+/*
 const totalPages = computed(() => {
   // 总页数基于筛选后的数据集计算
   return Math.ceil(filteredData.value.length / itemsPerPage.value);
 });
-
+*/
 const paginatedData = computed(() => {
   // 分页应用于筛选后的数据集
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -1205,6 +1285,7 @@ const paginatedData = computed(() => {
   return sortedData.value.slice(start, end);
 });
 
+/*
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
@@ -1216,7 +1297,7 @@ const nextPage = () => {
     currentPage.value++;
   }
 };
-
+*/
 const headers = ['gene name', 'Adjusted p-value', 'Log fold-change','Pct.1','Pct.2'];
 const download = () => {
   // 创建一个二维数组，每个元素都是表格的一行
@@ -1264,6 +1345,7 @@ const sortedData = computed(() => {
 
 // 监听排序变化
 function handleSortChange({ prop, order }) {
+  currentPage.value = 1;
   sortProp.value = prop
   sortOrder.value = order
 }
@@ -1326,6 +1408,7 @@ const getKEGG = () => {
 //------------------------------------------------------//
 //展开或关闭kegg面板
 //------------------------------------------------------//
+/*
 const enrichment_expand_button1 =() => {
     isenrichmentExpanded1.value = !isenrichmentExpanded1.value
     
@@ -1335,6 +1418,7 @@ const enrichment_expand_button1 =() => {
         KEGGdata.value = [];
     }
 }
+*/
 
 
 //------------------------------------------------------//
@@ -1353,18 +1437,22 @@ const KEGGfilteredData = computed(() => {
 });
 //console.log(KEGGfilteredData.value);
 
+
+/*
 const KEGGtotalPages = computed(() => {
   // 总页数基于筛选后的数据集计算
   return Math.ceil(KEGGfilteredData.value.length / KEGGitemsPerPage.value);
 });
+*/
 
 const KEGGpaginatedData = computed(() => {
   // 分页应用于筛选后的数据集
   const start = (KEGGcurrentPage.value - 1) * KEGGitemsPerPage.value;
   const end = start + KEGGitemsPerPage.value;
-  return KEGGfilteredData.value.slice(start, end);
+  return KEGGsortedData.value.slice(start, end);
 });
 
+/*
 const KEGGprevPage = () => {
   if (KEGGcurrentPage.value > 1) {
     KEGGcurrentPage.value--;
@@ -1376,7 +1464,41 @@ const KEGGnextPage = () => {
     KEGGcurrentPage.value++;
   }
 };
+*/
+function handleKEGGPageChange(page) {
+  KEGGcurrentPage.value = page
+  // 你可以在这里重新 slice 数据用于渲染当前页内容
+}
 
+const KEGGsortProp = ref('') // 当前排序字段
+const KEGGsortOrder = ref('') // asc / desc
+
+// 排序计算属性
+const KEGGsortedData = computed(() => {
+  if (!KEGGsortProp.value || !KEGGsortOrder.value) {
+    return KEGGfilteredData.value
+  }
+  // 排序逻辑
+  return [...KEGGfilteredData.value].sort((a, b) => {
+    const prop = KEGGsortProp.value
+    let res = 0
+    if (prop === 'i') {
+      // 字符串排序
+      res = a.i.localeCompare(b.i)
+    } else {
+      // 数字排序
+      res = a[prop] - b[prop]
+    }
+    return KEGGsortOrder.value === 'ascending' ? res : -res
+  })
+})
+
+// 监听排序变化
+function handleKEGGSortChange({ prop, order }) {
+  KEGGcurrentPage.value = 1;
+  KEGGsortProp.value = prop
+  KEGGsortOrder.value = order
+}
 //------------------------------------------------------//
 //保存kegg数据为CSV
 //------------------------------------------------------//
@@ -1444,42 +1566,40 @@ import { onUnmounted } from 'vue';
 onUnmounted(() => {
   window.removeEventListener('resize', resizeMyChart);
 });
+
+
 </script>
 
 <style scoped>
 @import 'css/MainStyles.css';
 @import 'css/SCDStyles.css';
 
-
- /* ----------------------------------------------------------- */
- /* 差异表达分析右容器表格,避免影响全局样式 */
-.table-container {
-  max-width: 100%;
-  overflow-x: auto;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-
-button {
-  margin: 0 5px;
-}
-
  /* ----------------------------------------------------------- */
 .scroller-wrapper{
     height: 400px;
 }
-::v-deep(.el-table .caret-wrapper .el-icon-arrow-up),
-::v-deep(.el-table .caret-wrapper .el-icon-arrow-down) {
-  color: rgb(93, 116, 162);
-  font-weight: 700; /* 你也可以尝试加粗看看 */
+/* 修改 el-select 的主题颜色 */
+:deep(.el-select .el-input__wrapper) {
+  border-color: rgb(93, 116, 162);
+  box-shadow: 0 0 0 1px rgb(93, 116, 162);
 }
 
+/* 选中项颜色 */
+:deep(.el-select .el-input.is-focus .el-input__wrapper),
+:deep(.el-select .el-input__wrapper:hover) {
+  border-color: rgb(93, 116, 162);
+  box-shadow: 0 0 0 2px rgba(93, 116, 162, 0.2);
+}
+
+/* 下拉选项 hover 颜色 */
+:deep(.el-select-dropdown__item:hover) {
+  background-color: rgba(93, 116, 162, 0.1);
+  color: rgb(93, 116, 162);
+}
+
+/* 被选中项的颜色 */
+:deep(.el-select-dropdown__item.selected) {
+  color: rgb(93, 116, 162);
+  font-weight: bold;
+}
 </style>

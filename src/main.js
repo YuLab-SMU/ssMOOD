@@ -10,6 +10,7 @@ import mitt from 'mitt';
 import { createTerminal } from 'vue-web-terminal';
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'; // 引入整个样式文件
+import './styles/element-theme.css'
 
 // 创建国际化实例
 const i18n = createI18n({
