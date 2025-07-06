@@ -50,6 +50,7 @@
   display: flex;
   justify-content: space-between; /* 子元素水平排列 */
   flex-grow: 1; /* 内容区域填充剩余空间 */
+  
 }
 
 .information-left, .information-right {
@@ -270,6 +271,49 @@
   overflow: auto;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
+/* 自定义 Element Plus el-slider 样式 */
+.el-slider__bar {
+  background-color: rgb(93, 116, 162) !important;
+}
+
+.el-slider__button {
+  border: 2px solid rgb(93, 116, 162) !important;
+  background-color: white !important;
+}
+
+/* 可选：滑块按钮 hover 高亮 */
+.el-slider__button:hover {
+  box-shadow: 0 0 0 4px rgba(93, 116, 162, 0.2);
+}
+/* 滑块选中样式自定义 */
+.custom-radio-group .el-radio-button__fill {
+  background-color: rgb(93, 116, 162) !important;
+  border-color: rgb(93, 116, 162) !important;
+}
+
+.custom-radio-group .el-radio-button__original-radio:checked + .el-radio-button__inner {
+  background-color: rgb(93, 116, 162) !important;
+  border-color: rgb(93, 116, 162) !important;
+  color: white !important;
+}
+.custom-radio-group .el-radio-button__inner:hover {
+  color: rgb(93, 116, 162) !important;
+  border-color: rgb(93, 116, 162) !important;
+}
+.el-table .sort-caret {
+  color: rgb(93, 116, 162) !important;
+}
+/* 上箭头 */
+.el-table .caret-wrapper .ascending::before {
+  border-bottom-color: rgb(93, 116, 162) !important;
+}
+
+/* 下箭头 */
+.el-table .caret-wrapper .descending::after {
+  border-top-color: rgb(93, 116, 162) !important;
+}
+
+
 .kegg-expand-button {
   height: 3vh;
   width: calc(80vw + 60px);
@@ -317,7 +361,6 @@
 
 .group, .cell-type, .log2fc, .adjusted-pvalue, .de-direction {
   margin-bottom: 15px;
-  
 }
 
 
@@ -351,44 +394,13 @@
 .custom-select::-ms-expand {
   display: none; /* 隐藏 IE 浏览器的默认箭头 */
 }
-/* 👇 强制显示 tooltip（参考 Element Plus 的 tooltip 样式） */
-.always-show-tooltip {
-  display: block !important;
-  opacity: 1 !important;
-  transform: translateY(-10px);
-  pointer-events: none;
-}
-/* 示例：紫色背景、白色字体、圆角、阴影、美化箭头 */
-.custom-tooltip {
-  position: relative;
-  background-color: rgb(93, 116, 162) !important;
-  color: white !important;
-  font-weight: bold;
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* 添加水滴下方的尖角 */
-.custom-tooltip::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -6px; /* 尖角高度 */
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid rgb(93, 116, 162);  /* 与背景色一致 */
-}
 
 
 
 .DEdirection {
   display: flex;
   align-items: center;
+  padding: 15px 0px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 

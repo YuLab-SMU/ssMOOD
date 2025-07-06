@@ -171,18 +171,34 @@
                       <option v-for="type in cellTypes" :key="type" :value="type">{{ type }}</option>
                     </select>
                 </div>
-                <div class="log2fc">
-                    <label>{{ $t('scd29') }}</label>
-  <el-slider
-    v-model="log2fc"
-    :min="0"
-    :max="4"
-    :step="0.1"
-    :format-tooltip="val => val.toFixed(1)"
-    show-tooltip
-    tooltip-class="always-show-tooltip custom-tooltip"
-  />
+                                  <!-- 标签 -->
+                  <label style="white-space: nowrap; font-weight: 600;">
+                    {{ $t('scd29') }}
+                  </label>
+                <div class="log2fc" style="display: flex; align-items: center; gap: 12px;">
+                  <!-- 滑动条 -->
+                  <el-slider
+                    v-model="log2fc"
+                    :min="0"
+                    :max="10"
+                    :step="0.1"
+                    :format-tooltip="val => val.toFixed(1)"
+                    show-tooltip
+                    tooltip-class="always-show-tooltip custom-tooltip"
+                    style="flex: 1;"
+                  />
 
+                <div
+                  style="
+                    width: 48px;
+                    text-align: right;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: #666;
+                  "
+                >
+                  {{ log2fc.toFixed(1) }}
+                </div>
                 </div>
 
                 <div class="adjusted-pvalue">
@@ -195,22 +211,20 @@
                       :max="7"
                       :marks="pValueMarks"
                       :step="1"
-                      show-tooltip
+                      :show-tooltip="false" 
                       class="mt-4"
                     />
 
                 </div>
-                  <div class="DEdirection">
-                    <label>Log fold-change direction:</label>
-                    <div class="radio-group">
-                      <input type="radio" id="all" value="all" v-model="selectedDirection" />
-                      <label for="all" class="radio-label">All</label>
-                      <input type="radio" id="up" value="up" v-model="selectedDirection" />
-                      <label for="up" class="radio-label">UP</label>
-                      <input type="radio" id="down" value="down" v-model="selectedDirection"/>
-                      <label for="down" class="radio-label">Down</label>
-                    </div>
-                  </div>
+              <div class="DEdirection" style="margin-top: 1rem;">
+                <label class="font-semibold text-gray-700 mr-4">Log fold-change direction：</label>
+
+                <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
+                  <el-radio-button label="all">All</el-radio-button>
+                  <el-radio-button label="up">UP</el-radio-button>
+                  <el-radio-button label="down">Down</el-radio-button>
+                </el-radio-group>
+              </div>
             </div>
         </div>
         
@@ -225,26 +239,52 @@
             />
                 
                 <div class="table-container">
-                <table>
-                  <thead>
-                      <tr>
-                        <th @click="sortTable(0)">{{ $t('scd33') }}</th>
-                        <th @click="sortTable(1)">{{ $t('scd34') }}</th>
-                        <th @click="sortTable(2)">{{ $t('scd35') }}</th>
-                        <th @click="sortTable(3)">{{ $t('scd36') }}</th>
-                        <th @click="sortTable(4)">{{ $t('scd37') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in paginatedData" :key="item.i">
-                      <td>{{ item.i }}</td>
-                      <td>{{ item.f.toFixed(6) }}</td> <!-- 保留6位小数 -->
-                      <td>{{ item.t1.toFixed(3) }}</td> <!-- 保留3位小数 -->
-                      <td>{{ item.t2.toFixed(3) }}</td> <!-- 保留3位小数 -->
-                      <td>{{ item.a.toExponential(3) }}</td> <!-- 使用e表示法 -->
-                    </tr>
-                  </tbody>
-                </table>
+  <el-table
+    :data="paginatedData"
+    @sort-change="handleSortChange"
+    style="width: 100%"
+    :default-sort="{ prop: sortProp, order: sortOrder }"
+  >
+    <el-table-column
+      prop="i"
+      :label="$t('scd33')"
+      sortable="custom"
+    >
+      <template #default="{ row }">{{ row.i }}</template>
+    </el-table-column>
+
+    <el-table-column
+      prop="f"
+      :label="$t('scd34')"
+      sortable="custom"
+    >
+      <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
+    </el-table-column>
+
+    <el-table-column
+      prop="t1"
+      :label="$t('scd35')"
+      sortable="custom"
+    >
+      <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
+    </el-table-column>
+
+    <el-table-column
+      prop="t2"
+      :label="$t('scd36')"
+      sortable="custom"
+    >
+      <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
+    </el-table-column>
+
+    <el-table-column
+      prop="a"
+      :label="$t('scd37')"
+      sortable="custom"
+    >
+      <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
+    </el-table-column>
+  </el-table>
                 <div class="pagination">
                 <div class="left-section">
                   <button @click="prevPage" :disabled="currentPage === 1" class="page">{{ $t('scd38') }}</button>
@@ -1162,7 +1202,7 @@ const paginatedData = computed(() => {
   // 分页应用于筛选后的数据集
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return filteredData.value.slice(start, end);
+  return sortedData.value.slice(start, end);
 });
 
 const prevPage = () => {
@@ -1199,6 +1239,34 @@ const download = () => {
 //差异数据排序
 //------------------------------------------------------
 
+const sortProp = ref('') // 当前排序字段
+const sortOrder = ref('') // asc / desc
+
+// 排序计算属性
+const sortedData = computed(() => {
+  if (!sortProp.value || !sortOrder.value) {
+    return filteredData.value
+  }
+  // 排序逻辑
+  return [...filteredData.value].sort((a, b) => {
+    const prop = sortProp.value
+    let res = 0
+    if (prop === 'i') {
+      // 字符串排序
+      res = a.i.localeCompare(b.i)
+    } else {
+      // 数字排序
+      res = a[prop] - b[prop]
+    }
+    return sortOrder.value === 'ascending' ? res : -res
+  })
+})
+
+// 监听排序变化
+function handleSortChange({ prop, order }) {
+  sortProp.value = prop
+  sortOrder.value = order
+}
 
 //###################################//
 //KEGG分析
@@ -1408,4 +1476,10 @@ button {
 .scroller-wrapper{
     height: 400px;
 }
+::v-deep(.el-table .caret-wrapper .el-icon-arrow-up),
+::v-deep(.el-table .caret-wrapper .el-icon-arrow-down) {
+  color: rgb(93, 116, 162);
+  font-weight: 700; /* 你也可以尝试加粗看看 */
+}
+
 </style>
