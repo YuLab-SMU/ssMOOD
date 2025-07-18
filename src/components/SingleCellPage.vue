@@ -95,7 +95,7 @@
             @blur="handleBlur"
             class="search-gene-input"
             clearable
-            size="big"
+            size="default"
           >
             <template #append>
               <el-button @click="searchgene" type="primary">
@@ -249,7 +249,7 @@
                   v-model="filterDEGGenes"
                   :placeholder="$t('scd31')"
                   clearable
-                  size="big"
+                  size="default"
                 />
                 <!-- 表格 -->
                 <div class="table-container">
@@ -304,16 +304,16 @@
                 <div class="pagination">
               <!-- 翻页 -->
               <div class="left-section">
-  <el-pagination
-    layout="prev, pager, next"
-    :current-page="currentPage"
-    :page-size="pageSize"
-    :total="filteredData.length"
-    @current-change="handlePageChange"
-    small
-    background
-    class="page-pagination"
-  />
+              <el-pagination
+                layout="prev, pager, next"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                :total="filteredData.length"
+                @current-change="handlePageChange"
+                small
+                background
+                class="page-pagination"
+              />
               </div>
 
                   <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
@@ -336,14 +336,14 @@
             :placeholder="$t('scd31')"
             clearable
             prefix-icon="el-icon-search"
-            size="big"
+            size="default"
           />
         </div>
 
         <el-table
           :data="KEGGpaginatedData"
           stripe
-          size="big"
+          size="default"
           style="width: 100%"
           :default-sort="{ prop: sortProp, order: sortOrder }"
           @sort-change="handleKEGGSortChange"
@@ -401,7 +401,7 @@
             @current-change="handleKEGGPageChange"
             size="small"
           />
-          <el-button size="big" type="primary" @click="KEGGdownload" class="downloadButton">
+          <el-button size="default" type="primary" @click="KEGGdownload" class="downloadButton">
             {{ $t('scd32') }}
           </el-button>
         </div>
@@ -409,22 +409,23 @@
     </el-collapse>
 
     <!-- 模态框 -->
-    <el-dialog
-      :visible.sync="isKeggModalOpen"
-      width="50%"
-      :before-close="closeKeggModal"
-      title="$t('scd48')"
-    >
-      <el-table
-        :data="selectedKeggGene"
-        style="width: 100%"
-        size="big"
-      >
-        <el-table-column
-          prop="name"
-          :label="$t('scd50')"
-        />
-        <el-table-column label="$t('scd51')">
+        <el-dialog
+          v-model="isKeggModalOpen"
+          width="50%"
+          :title="$t('scd48')"
+        >
+        <el-table
+          :data="selectedKeggGene"
+          style="width: 100%"
+          size="default"
+        >
+        <el-table-column :label="$t('scd50')">
+          <template #default="{ row }">
+            {{ row }}
+          </template>
+        </el-table-column>
+        
+        <el-table-column :label="$t('scd51')">
           <template #default="{ row }">
             <el-button
               type="text"
@@ -1055,9 +1056,8 @@ mergedArray.forEach(item => {
 });
 
     //------------------------------------------------------
-    //按分类信息创建轨迹
-    //重要优化点！！！
-    //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅。
+    //‼️ 按分类信息创建轨迹
+    //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅😊。
     //------------------------------------------------------
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
@@ -1535,11 +1535,12 @@ const openKeggModal = (gene) => {
   isKeggModalOpen.value = true;
 };
 
+/*
 // 关闭模态窗
 const closeKeggModal = () => {
   isKeggModalOpen.value = false;
 };
-
+*/
 const openLink = (gene, linkType) => {
   let url;
   if (linkType === 'link1') {

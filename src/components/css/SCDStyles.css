@@ -464,6 +464,9 @@ input[type="radio"] {
   outline: none; /* 去掉聚焦时的轮廓 */
 }
 
+:deep(.el-overlay-dialog) {
+  z-index: 9999 !important;
+}
 .keggModal {
   position: fixed;
   z-index: 1;

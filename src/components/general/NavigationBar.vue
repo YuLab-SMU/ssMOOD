@@ -65,7 +65,7 @@
           v-model="selectedLanguage"
           @change="switchLanguage"
           placeholder="Select Language"
-          size="big"
+          size="default"
         >
           <el-option label="简体中文" value="zh1" />
           <el-option label="繁體中文" value="zh2" />

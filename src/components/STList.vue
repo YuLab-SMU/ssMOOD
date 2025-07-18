@@ -6,58 +6,96 @@
                 <div class="dataset-table">
                     <h3>{{ $t('bst1') }}</h3>
                     <p>{{ $t('bst2') }}</p>
-                    <div class="filters">
-                        <label for="species">{{ $t('bsc3') }}</label>
-                        <select id="species" v-model="filters.species">
-                            <option value="all">All</option>
-                            <option value="mouse">Mouse</option>
-                            <option value="human">Human</option>
-                        </select>
-                        <label for="area">{{ $t('bsc4') }}</label>
-                        <select id="area" v-model="filters.area">
-                            <option value="all">All</option>
-                            <option value="DRN" v-if="filters.species === 'mouse'||filters.species === 'all'">DRN</option>
-                            <option value="HIP" v-if="filters.species === 'mouse'||filters.species === 'all'">HIP</option>
-                            <option value="Stri" v-if="filters.species === 'mouse'||filters.species === 'all'">Stri</option>
-                            <option value="VTA" v-if="filters.species === 'mouse'||filters.species === 'all'">VTA</option>
-                            <option value="mPFC" v-if="filters.species === 'mouse'||filters.species === 'all'">mPFC</option>
-                            <option value="BA12" v-if="filters.species === 'human'||filters.species === 'all'">BA12</option>
-                            <option value="BA46" v-if="filters.species === 'human'||filters.species === 'all'">BA46</option>
-                        </select>
-                        <label for="sex">{{ $t('bsc5') }}</label>
-                        <select id="sex" v-model="filters.sex">
-                            <option value="all">All</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>{{ $t('bsc6.1') }}</th>
-                                <th>{{ $t('bsc6.2') }}</th>
-                                <th>{{ $t('bsc6.3') }}</th>
-                                <th>{{ $t('bsc6.4') }}</th>
-                                <th>{{ $t('bsc6.5') }}</th>
-                                <th>{{ $t('bsc6.6') }}</th>
-                                <th>{{ $t('bsc6.7') }}</th>
-                                <th>{{ $t('bsc6.8') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="dataset in filteredDatasets" :key="dataset.dataset_id">
-                                <td @click="goToDatasetDetails(dataset.dataset_id)" class="clickable">{{ dataset.dataset_id }}</td>
-                                <td>{{ dataset.species }}</td>
-                                <td>{{ dataset.sex }}</td>
-                                <td>{{ dataset.conditions }}</td>
-                                <td>{{ dataset.area }}</td>
-                                <td>{{ dataset.age }}</td>
-                                <td>{{ dataset.cells }}</td>
-                                <td>{{ dataset.way }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- 筛选逻辑 -->                   
+                    <el-card class="filter-box" shadow="never">
+                    <el-row :gutter="20" align="middle" class="filter-row">
+                        <!-- 物种 -->
+                        <el-col :span="1" class="filter-label">
+                        {{ $t('bsc3') }}
+                        </el-col>
+                        <el-col :span="3">
+                        <el-select
+                            v-model="filters.species"
+                            size="default"
+                            class="filter-select"
+                            placeholder="Select Species"
+                        >
+                            <el-option label="All"  value="all"  />
+                            <el-option label="Mouse" value="mouse" />
+                            <el-option label="Human" value="human" />
+                        </el-select>
+                        </el-col>
+
+                        <!-- 区域 -->
+                        <el-col :span="1" class="filter-label">
+                        {{ $t('bsc4') }}
+                        </el-col>
+                        <el-col :span="3">
+                        <el-select
+                            v-model="filters.area"
+                            size="default"
+                            class="filter-select"
+                            placeholder="Select Area"
+                        >
+                            <el-option label="All"  value="all" />
+                            <!-- Mouse / All 可见 -->
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="DRN"  value="DRN" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="HIP"  value="HIP" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="Stri" value="Stri" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="VTA"  value="VTA" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="mPFC" value="mPFC" />
+                            <!-- Human / All 可见 -->
+                            <el-option v-if="filters.species === 'human' || filters.species === 'all'" label="BA12" value="BA12" />
+                            <el-option v-if="filters.species === 'human' || filters.species === 'all'" label="BA46" value="BA46" />
+                        </el-select>
+                        </el-col>
+
+                        <!-- 性别 -->
+                        <el-col :span="1" class="filter-label">
+                        {{ $t('bsc5') }}
+                        </el-col>
+                        <el-col :span="3">
+                        <el-select
+                            v-model="filters.sex"
+                            size="default"
+                            class="filter-select"
+                            placeholder="Select Sex"
+                        >
+                            <el-option label="All"     value="all" />
+                            <el-option label="Male"    value="male" />
+                            <el-option label="Female"  value="female" />
+                        </el-select>
+                        </el-col>
+                    </el-row>
+                    </el-card>
+
+                    <!-- 数据集列表 -->  
+
+                    <el-table
+                    :data="filteredDatasets"
+                    stripe
+                    style="width: 100%;"
+                    >
+                    <!-- 数据集编号（可点击跳转） -->
+                    <el-table-column
+                        prop="dataset_id"
+                        :label="$t('bsc6.1')"
+                        width="180"
+                    >
+                        <template #default="{ row }">
+                        <span class="clickable" @click="goToDatasetDetails(row.dataset_id)">
+                            {{ row.dataset_id }}
+                        </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="species"    :label="$t('bsc6.2')" />
+                    <el-table-column prop="sex"        :label="$t('bsc6.3')" />
+                    <el-table-column prop="conditions" :label="$t('bsc6.4')" />
+                    <el-table-column prop="area"       :label="$t('bsc6.5')" />
+                    <el-table-column prop="age"        :label="$t('bsc6.6')" />
+                    <el-table-column prop="cells"      :label="$t('bsc6.7')" />
+                    <el-table-column prop="way"        :label="$t('bsc6.8')" />
+                    </el-table>
                     <BackToTop />
                 </div>
             </section>

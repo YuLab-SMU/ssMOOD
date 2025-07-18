@@ -11,7 +11,18 @@
                     <el-row :gutter="20" >
                       <el-col :span="24">
                         <div class="test">
-                          <img src="@/assets/ssmood.jpg" alt="Test Image">
+  <video
+    ref="video"
+    src="/ssmood.mov"
+    muted
+    autoplay
+    playsinline
+    loop
+    :playbackRate="0.8"
+    @ended="handleEnded"
+    @loadedmetadata="handleLoaded"
+    style="width: 80%;"
+  ></video>
                         </div>
                       </el-col>
                     </el-row>
@@ -177,16 +188,16 @@
                     <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
                   </el-row>
                 <!-- 第六个容器 -->
-                <div class="container">
-                        <div class="text">
-                             <h2>{{ $t('hv13') }}</h2>
-                            <p>{{ $t('hv14') }}</p>
-                            <button @click="gotoAnalyzePage" class="goto-button">{{ $t('hv16') }}</button>
-                        </div>
-                        <div class="image">
-                            <canvas id="plot-canvas" width="400px" height="400px"></canvas>
-                        </div>
-                </div>
+                <!-- <div class="container">
+                  <div class="text">
+                    <h2>{{ $t('hv13') }}</h2>
+                    <p>{{ $t('hv14') }}</p>
+                    <button @click="gotoAnalyzePage" class="goto-button">{{ $t('hv16') }}</button>
+                  </div>
+                  <div class="image">
+                    <canvas id="plot-canvas" width="400px" height="400px"></canvas>
+                  </div>
+                </div> -->
                 
                 </div>
                 <BackToTop :target-selector="'.Top-container'"></BackToTop>
@@ -205,7 +216,7 @@
 import Plotly from 'plotly.js-dist-min';
 import pako from 'pako';
 import { ref, onMounted} from 'vue';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router';
 
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 //import { useI18n } from 'vue-i18n';
@@ -218,6 +229,22 @@ import config from '@/config';
 import colorMap from './color_map.js';
 
 
+
+
+const video = ref(null)
+
+function handleLoaded() {
+  const el = video.value
+  el.play()
+}
+
+function handleEnded() {
+  const el = video.value
+
+  // 防止闪屏做法：立即跳到0.01而不是0
+  el.currentTime = 0.01
+  el.play()
+}
 //-------------------
 //处理定位滚动逻辑
 //-------------------
@@ -597,11 +624,12 @@ onUnmounted(() => {
 //------------------------
 //跳转到分析页面
 //------------------------
+/*
 const router = useRouter();
 const gotoAnalyzePage = () => {
   router.push('/analyze'); 
 };
-
+*/
 </script>
 
 <style scoped>
@@ -701,7 +729,7 @@ const gotoAnalyzePage = () => {
     position: relative; /* 设置相对定位 */
 }
 
-.test img {
+.test video {
     width: 80%; /* 图片宽度不超过容器宽度 */
     height: auto; /* 保持图片的纵横比 */
     position: relative; /* 设置相对定位 */
@@ -796,7 +824,6 @@ const gotoAnalyzePage = () => {
 .execute-button:hover {
   background-color: rgba(093, 116, 162, 0.8); /* 鼠标悬停时的背景颜色 */
 }
-
 
 
  /* ----------------------------------------------------------- */
