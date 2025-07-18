@@ -8,7 +8,7 @@
                     <p>{{ $t('bsc2') }}</p>
                     <div class="studys">
                     <ssmoodStudy1 />
-                    <ssmoodStudy2 />
+                    <ssmoodStudy3 />
                     </div>
                     
                     <el-card class="filter-box" shadow="never">

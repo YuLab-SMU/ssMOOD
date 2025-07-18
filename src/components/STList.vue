@@ -6,6 +6,10 @@
                 <div class="dataset-table">
                     <h3>{{ $t('bst1') }}</h3>
                     <p>{{ $t('bst2') }}</p>
+                    <div class="studys">
+                    <ssmoodStudy2 />
+                    <ssmoodStudy4 />
+                    </div>
                     <!-- 筛选逻辑 -->                   
                     <el-card class="filter-box" shadow="never">
                     <el-row :gutter="20" align="middle" class="filter-row">
