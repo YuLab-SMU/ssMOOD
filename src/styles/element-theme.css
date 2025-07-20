@@ -6,3 +6,8 @@
   --el-color-primary-light-9: rgba(93, 116, 162, 0.25);
   --el-color-primary-dark-2: rgba(93, 116, 162, 0.9);
 }
+/* 在全局样式文件或 <style>（无 scoped）里写 */
+.el-collapse-item__header {
+  font-weight: 700;      /* 加粗 */
+  font-size: 18px;       /* 字号，可按需调整 */
+}

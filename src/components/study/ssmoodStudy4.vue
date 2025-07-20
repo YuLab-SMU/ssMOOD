@@ -6,12 +6,6 @@
       class="navigation-image"
     />
 
-    <!-- BA9 -->
-    <div class="nav-overlay ba9">
-      <span class="nav-label">BA9:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.C')">16Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.17MDD')">17MDD</button>
-    </div>
 
     <!-- BA46 -->
     <div class="nav-overlay ba46">
@@ -27,12 +21,6 @@
       <button class="nav-btn" @click="goToPage('study1.conditions.2MDD')">2MDD</button>
     </div>
 
-    <!-- BA11 -->
-    <div class="nav-overlay ba11">
-      <span class="nav-label">BA11:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.S')">2Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.3MDD')">3MDD</button>
-    </div>
   </div>
 </template>
 
@@ -71,10 +59,9 @@ const goToPage = (study) => {
 }
 
 /* 根据脑区在图上的实际位置微调 left / top */
-.ba9   { top: 10%; left: 35%; }
 .ba46  { top: 30%; left: 35%; }
 .ba12  { top: 50%; left: 35%; }
-.ba11  { top: 70%; left: 35%; }
+
 
 
 .nav-btn {

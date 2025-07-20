@@ -342,6 +342,7 @@
 
         <el-table
           :data="KEGGpaginatedData"
+          v-loading="loadingKEGG"
           stripe
           size="default"
           style="width: 100%"
@@ -583,7 +584,7 @@ onMounted(() => {
 
 
           const colors = clusterLabels.reduce((acc, label) => {
-              acc[label] = colorMap[label] || '#000'; // 如果没有找到对应的颜色，则使用默认颜色 #000
+              acc[label] = colorMap[label] || 'rgb(128,128,128)'; // 如果没有找到对应的颜色，则使用默认颜色 #000
               return acc;
           }, {});
         //console.log(colors);
@@ -647,23 +648,7 @@ const markerSize1 = ref(4); // 默认点大小
 const updateUmap1 = () => {
   Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
 };
-/*
-// 减少 UMAP 图1 的点大小
-const decreaseSize1 = () => {
-  if (markerSize1.value > 1) {
-    markerSize1.value -= 1;
-    updateUmap1();
-  }
-};
 
-// 增加 UMAP 图1 的点大小
-const increaseSize1 = () => {
-  if (markerSize1.value < 10) {
-    markerSize1.value += 1;
-    updateUmap1();
-  }
-};
-*/
 //###################################//
 //分类表
 //###################################//
@@ -700,7 +685,7 @@ onMounted(async() => {
             title: '',
             tickangle: 45, // 将标签旋转45度
             tickmode: 'linear', // 确保标签均匀分布
-            tickfont: { size: 6 } // 调整字体大小
+            tickfont: { size: 7 } // 调整字体大小
           },
           yaxis: {
             title: '',
@@ -722,72 +707,11 @@ onMounted(async() => {
 //###################################//
 
 
-
-//const isGeneLoad = ref(false);
-// 计算 wrapper 的高度
-
-/*
-const wrapperHeight = computed(() => {
-  const itemCount = filteredGenes.value.length;
-  const maxHeight = 400; // 36px/item * 11 items ≈ 400px
-  return Math.min(itemCount * 36, maxHeight);
-});
-import { throttle } from 'lodash';
-
-const onScroll = throttle(() => {
-}, 200); // 每 200 毫秒触发一次
-
-// 添加监听
-const scrollerElement = document.querySelector('.scroller');
-scrollerElement.addEventListener('scroll', onScroll);
-*/
-
 const genes = ref([]);
-//const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
 const markerSize2 = ref(4); // 默认点大小
 
-// 分页状态管理
-//const geneCurrentPage = ref(-1)
-//const genePageSize = 100;
-//const noMore = ref(false)
-//const virtualItems = ref([])
-//const resetKey = ref(0)
-
-/*
-watch(geneCurrentPage, () => {
-  virtualItems.value = filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
-  console.log(virtualItems.value);
-}, { flush: 'post', immediate: true }) // 在DOM更新后执行
-
-
-watch(virtualItems, () => {
-  resetKey.value++ // 触发虚拟滚动组件重新渲染
-}, { flush: 'post' }) // 在DOM更新后执行
-
-*/
-/*
-const filteredGenes = computed(() => {
-  if (!searchQuery.value) {
-    return genes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
-  }
-  const data = genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()))
-  // 将搜索查询转换为小写并进行过滤
-  return data.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize );
-});
-const filteredGenes = computed(() => {
-  if (!searchQuery.value) {
-    return genes.value;
-  }
-  const data = genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()))
-  // 将搜索查询转换为小写并进行过滤
-  return data;
-});
-*/
-
-
-//const virtualItem = ref([]);
 
 const filteredGenes = computed(() => {
   let data = genes.value || [];
@@ -826,34 +750,14 @@ onMounted(async() => {
     // 可以在这里处理错误，例如显示错误消息或设置错误状态
   }
 });
-/*
-const filteredGenes = ref([]); // 用于存储过滤后的基因数据
-watch(searchQuery, (newQuery) => {
-  if (newQuery) {
-    filteredGenes.value = genes.value.filter(gene => gene.content.toLowerCase().includes(newQuery.toLowerCase()));
-  } else {
-    filteredGenes.value = genes.value; // 如果没有搜索查询，显示所有基因
-  }
-  geneCurrentPage.value = 0;
-  resetKey.value++
-});
-*/
-/*
-watch(filteredGenes, () => {
-  //virtualItem.value = filteredGenes.value.slice(0,genePageSize);
-  geneCurrentPage.value = 0;
-  resetKey.value++
-//}, { flush: 'post' }) // 在DOM更新后执行
-});
-*/
-// 响应式数据
-
-// 方法：过滤基因
-
-// 侦听器：监听 searchQuery 的变化
-//import { nextTick } from 'vue';
 
 
+
+
+//-------------------------------------------------------------
+//选中选项后的事件
+//⚠️vue3-virtual-scroll-list组件自带的有问题，这里使用全局事件总线
+//-------------------------------------------------------------
 import { inject } from 'vue';
 const eventBus = inject('eventBus')
 onMounted(() => {
@@ -870,14 +774,7 @@ const handleSelectItem = (item) => {
       showScroller.value = false;
 };
 
-/*
-function onSelectItem(value) {
-  console.log('父组件接收到选中事件，值是:', value)
-  // 这里写父组件逻辑，比如更新 searchQuery
-    searchQuery.value = value;
-  showScroller.value = false;
-}
-*/
+
 
 // 处理失去焦点时的方法
 const handleBlur = () => {
@@ -887,115 +784,25 @@ const handleBlur = () => {
     }
   }, 100);
 };
-//---------------测试代码-------------start
-/*
-import { onClickOutside } from '@vueuse/core';
-import {defineEmits,watchEffect} from 'vue';
-
-const totalItems = ref(0)
-// 使用computed缓存数据长度
-
-watchEffect(() => {
-  totalItems.value = filteredGenes.value.length;
-});
 
 
-const virtualItem = ref([]);
-const dropdownHeight =300;
-
-const isOpen = ref(false);
-const selectedItem = ref(null);
-const dropdown = ref(null);
-
-const toggleDropdown = () => {
-  isOpen.value = !isOpen.value;
-  if (isOpen.value) {
-    fetchPage(0); // 初始加载第一页数据
-  }
-};
-
-const selectItem_test = (item) => {
-  selectedItem.value = item;
-  isOpen.value = false;
-  emit('change', item);
-};
-
-// 直接返回数据切片，无需维护visibleItems
-const fetchPage = async (page) => {
-  const start = page * 40
-  virtualItem.value = filteredGenes.value.slice(start, start + 40)
-  return virtualItem.value
-}
 
 
-const emit = defineEmits(['change']);
+//-------------------------------------------------------------
+//颜色
+//⚠️需要修改为渐变色
+//-------------------------------------------------------------
+const maxNc = ref(0)
 
-onMounted(() => {
-  onClickOutside(dropdown, () => {
-    isOpen.value = false;
-  });
-});
-
-const handleScroll = debounce(() => {
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
-  const scrollBottom = scrollHeight - (scrollTop + clientHeight);
-  const threshold = 100; // 提前100px触发加载
-
-  // 滚动到底部
-  if (scrollBottom < threshold && geneCurrentPage.value < 50 ) {
-    geneCurrentPage.value++;
-  }
-
-  // 滚动到顶部
-  if (scrollTop < threshold && geneCurrentPage.value > 0) {
-    geneCurrentPage.value--;
-    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-  }
-}, 100);
-
-
-//import {onUnmounted} from 'vue'
-const scrollContainer = ref(null);
-
-onMounted(() => {
-  scrollContainer.value.addEventListener('scroll', handleScroll);
-});
-
-
-onUnmounted(() => {
-  scrollContainer.value.removeEventListener('scroll', handleScroll);
-});
-
-
-watch([geneCurrentPage,filteredGenes], () => {
-  virtualItem.value = virtualItem.value.concat(filteredGenes.value.slice(geneCurrentPage.value * genePageSize,geneCurrentPage.value * genePageSize+genePageSize ));
-}) // 在DOM更新后执行
-
-const handleScroll = debounce(() => {
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
-  const scrollBottom = scrollHeight - (scrollTop + clientHeight);
-  const threshold = 100; // 提前100px触发加载
-
-  // 滚动到底部
-  if (scrollBottom < threshold && geneCurrentPage.value < 50 ) {
-    geneCurrentPage.value++;
-  }
-}, 100);
-
-*/
-
-//---------------测试代码-------------end
-
+// 2. 修改颜色函数
 const getColor = (value) => {
-    if (value > 2) {
-        return 'rgb(142, 45, 48)';
-      } else if (value > 0) {
-        return 'rgb(93, 116, 162)';
-      } else {
-        return 'rgba(128, 128, 128, 0.2)'; 
-      }
+  if (value === 0) return 'rgba(128, 128, 128, 0.15)';
+  const normalized = Math.min(value / maxNc.value, 1);
+  const r = 255;
+  const g = Math.floor(165 - 165 * normalized);
+  const b = 0;
+  return `rgb(${r}, ${g}, ${b})`;
 };
-
  
  
 const searchgene = async() => {
@@ -1031,6 +838,9 @@ const searchgene = async() => {
     // 分类信息
     const categories = [...new Set(mergedArray.map(item => item.c))];
     categories.sort();
+
+    // 1. 计算最大值
+    maxNc.value= Math.max(...mergedArray.map(item => item.nc));
     //-----------创建热图信息------------------------
 const numCategories = categories.length;
 
@@ -1128,25 +938,6 @@ mergedArray.forEach(item => {
 const updateUmap2 = () => {
   Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
 };
-
-/*
-// 减少 UMAP 图2 的点大小
-const decreaseSize2 = () => {
-  if (markerSize2.value > 1) {
-    markerSize2.value -= 1;
-    updateUmap2();
-  }
-};
-
-// 增加 UMAP 图2 的点大小
-const increaseSize2 = () => {
-  if (markerSize2.value < 10) {
-    markerSize2.value += 1;
-    updateUmap2();
-  }
-};
-*/
-
 
 
 //###################################//
@@ -1367,42 +1158,48 @@ const KeggGenes = computed(() => {
       return filteredData.value.map(item => item.i);
 });
 
+const loadingKEGG = ref(true);
 
 //------------------------------------------------------//
 //向服务器请求kegg数据
 //------------------------------------------------------//
-const getKEGG = () => {
-  // 将 KeggGenes.value 转换为 JSON 字符串
-  const genesJson = JSON.stringify(KeggGenes.value);
-  
-  // 创建一个 FormData 对象来存储请求参数
-  const params = new FormData();
-  params.append('genes', genesJson);
-  params.append('gene_sets', "Mouse_GO_2024.gmt");
-  
-  // 发送 POST 请求
-  fetch(config.apiUrl + 'enrichment.php', {
-    method: 'POST', // 指定请求方法为 POST
-    body: params, // 添加请求体
-  })
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json(); // 解析 JSON 响应
-  })
-  .then((data) => {
-      // kegg面板展开时才将获取的数据存储到 KEGGdata
-      if(isenrichmentExpanded1.value == true){
-          KEGGdata.value = data; 
-      }
-    
-    //console.log(KEGGdata.value);
-  })
-  .catch((error) => {
-    console.error("Failed to load DEGs:", error);
-  });
-};
+const getKEGG = (activeNames) => {
+  // activeNames 是当前展开面板的 name 数组
+  const isOpen = activeNames.includes('1')
+
+  if (isOpen) {
+    // 1. 展开：开始加载
+    loadingKEGG.value = true
+    KEGGdata.value = []          // 先清空旧数据（防止闪旧值）
+
+    const genesJson = JSON.stringify(KeggGenes.value)
+    const params = new FormData()
+    params.append('genes', genesJson)
+    params.append('gene_sets', 'Mouse_GO_2024.gmt')
+
+    fetch(config.apiUrl + 'enrichment.php', {
+      method: 'POST',
+      body: params
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Network error')
+        return res.json()
+      })
+      .then(data => {
+        KEGGdata.value = data
+      })
+      .catch(err => {
+        console.error('Failed to load KEGG:', err)
+      })
+      .finally(() => {
+        loadingKEGG.value = false
+      })
+  } else {
+    // 2. 折叠：仅清空
+    KEGGdata.value = []
+    loadingKEGG.value = false
+  }
+}
 
 
 //------------------------------------------------------//
@@ -1478,20 +1275,35 @@ const KEGGsortedData = computed(() => {
   if (!KEGGsortProp.value || !KEGGsortOrder.value) {
     return KEGGfilteredData.value
   }
-  // 排序逻辑
+
+  const sortPaths = KEGGsortProp.value.split(',').map(s => s.trim()) // 支持多个排序字段（如 'go_a.go_b, go_c'）
+
   return [...KEGGfilteredData.value].sort((a, b) => {
-    const prop = KEGGsortProp.value
-    let res = 0
-    if (prop === 'i') {
-      // 字符串排序
-      res = a.i.localeCompare(b.i)
-    } else {
-      // 数字排序
-      res = a[prop] - b[prop]
+    for (const path of sortPaths) {
+      const valA = getNestedValue(a, path)
+      const valB = getNestedValue(b, path)
+      
+      let res = 0
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        res = valA.localeCompare(valB)
+      } else {
+        res = (valA ?? 0) - (valB ?? 0)
+      }
+
+      if (res !== 0) {
+        return KEGGsortOrder.value === 'ascending' ? res : -res
+      }
+      // 如果当前字段相等，继续比较下一个字段
     }
-    return KEGGsortOrder.value === 'ascending' ? res : -res
+    return 0
   })
 })
+
+// 辅助函数：通过字符串路径访问嵌套对象属性
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((acc, key) => acc?.[key], obj)
+}
+
 
 // 监听排序变化
 function handleKEGGSortChange({ prop, order }) {
@@ -1578,29 +1390,5 @@ onUnmounted(() => {
  /* ----------------------------------------------------------- */
 .scroller-wrapper{
     height: 400px;
-}
-/* 修改 el-select 的主题颜色 */
-:deep(.el-select .el-input__wrapper) {
-  border-color: rgb(93, 116, 162);
-  box-shadow: 0 0 0 1px rgb(93, 116, 162);
-}
-
-/* 选中项颜色 */
-:deep(.el-select .el-input.is-focus .el-input__wrapper),
-:deep(.el-select .el-input__wrapper:hover) {
-  border-color: rgb(93, 116, 162);
-  box-shadow: 0 0 0 2px rgba(93, 116, 162, 0.2);
-}
-
-/* 下拉选项 hover 颜色 */
-:deep(.el-select-dropdown__item:hover) {
-  background-color: rgba(93, 116, 162, 0.1);
-  color: rgb(93, 116, 162);
-}
-
-/* 被选中项的颜色 */
-:deep(.el-select-dropdown__item.selected) {
-  color: rgb(93, 116, 162);
-  font-weight: bold;
 }
 </style>

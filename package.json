@@ -20,6 +20,7 @@
     "codemirror": "^6.0.1",
     "core-js": "^3.8.3",
     "js-base64": "^3.7.7",
+    "leaflet": "^1.9.4",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
     "pako": "^2.1.0",

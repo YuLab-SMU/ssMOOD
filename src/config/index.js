@@ -8,7 +8,7 @@ const devConfig = {
 
 // 生产环境配置
 const prodConfig = {
-  apiUrl: '../php/',
+  apiUrl: './php/',
   email:"xxxx@xxx.com"
 };
 

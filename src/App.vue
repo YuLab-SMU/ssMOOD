@@ -6,7 +6,8 @@
 
 </template>
 <script setup>
-
+import { onMounted} from 'vue';
+import config from '@/config';
 //-------------------------------------------------------
 //💻 终端欢迎信息输出
 //项目使用git管理，欢迎信息中的版本号自动获取，为git的branch名
@@ -29,4 +30,11 @@ window.ResizeObserver = class extends NativeResizeObserver {
     super(debounce(callback, 100))
   }
 }
+//-------------------------------------------------------
+//💻 访问统计
+//-------------------------------------------------------
+onMounted(() => {
+  fetch(config.apiUrl+`log_visit.php`)
+})
+
 </script>

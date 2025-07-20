@@ -1,13 +1,35 @@
 <?php
-// 跨域配置
-header("Access-Control-Allow-Origin: *");//发布时去掉此代码，仅用于生产环境。
 
+//------------------------------------------------------------------------------
+// 发布时去掉此处代码，仅用于生产和测试环境。
+// 跨域配置
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
+//------------------------------------------------------------------------------
+
+
 header('Content-Type: application/json');
 // 数据库配置
 $servername = "localhost";
-$username = "scast";
-$password = "20030609";
+
+
+
+/*
+/etc/ssmood/db.php示例：
+<?php
+return [
+    'user' => '数据库用户名',
+    'pass' => '数据库密码',
+];
+
+设置权限，避免泄漏
+sudo chown www-data:www-data /etc/ssmood/db.php
+sudo chmod 600       /etc/ssmood/db.php
+*/
+
+$creds = require '/etc/ssmood/db.php';
+$username = $creds['user'];
+$password = $creds['pass'];
 $dbname = "ssmood";
 $logFile = "./logfile.log";
 

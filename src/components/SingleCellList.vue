@@ -111,7 +111,7 @@
 import { ref, onMounted, computed } from 'vue';
 
 import ssmoodStudy1 from './study/ssmoodStudy1.vue';
-import ssmoodStudy2 from './study/ssmoodStudy2.vue';
+import ssmoodStudy3 from './study/ssmoodStudy3.vue';
 
 import { useRouter } from 'vue-router';
 

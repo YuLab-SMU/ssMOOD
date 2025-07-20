@@ -43,11 +43,11 @@
                         >
                             <el-option label="All"  value="all" />
                             <!-- Mouse / All 可见 -->
-                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="DRN"  value="DRN" />
-                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="HIP"  value="HIP" />
-                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="Stri" value="Stri" />
-                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="VTA"  value="VTA" />
-                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="mPFC" value="mPFC" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="I"  value="I" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="II"  value="II" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="III" value="III" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="IV"  value="IV" />
+                            <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="V" value="V" />
                             <!-- Human / All 可见 -->
                             <el-option v-if="filters.species === 'human' || filters.species === 'all'" label="BA12" value="BA12" />
                             <el-option v-if="filters.species === 'human' || filters.species === 'all'" label="BA46" value="BA46" />
@@ -110,7 +110,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-
+import ssmoodStudy2 from './study/ssmoodStudy2.vue';
+import ssmoodStudy4 from './study/ssmoodStudy4.vue';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';

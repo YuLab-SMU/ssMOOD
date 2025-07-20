@@ -8,7 +8,9 @@
 <!--详细信息容器-->
 <div class="information-container">
     <div class="title-bar">
+        <div class="title-bar-header">
         <h1>{{ $t('std1') }}</h1>
+        </div>
     </div>
     <div class="information-content">
         <div class="information-left">
@@ -37,90 +39,84 @@
 <!--细胞分类容器-->
 <div class="information-container">
   <div class="title-bar">
-    <h1>{{ $t('std14') }}</h1>
+      <div class="title-bar-header">
+        <h1>{{ $t('std14') }}</h1>
+      </div>
   </div>
   <div class="st-coord-content">
   <div class="st-information-first">
 
       <h1>{{ $t('std17') }}</h1>
       <div class="marker-size-controller">
-        <div class="label">{{ $t('std18') }}:</div>
-        <!-- 减少按钮 -->
-        <v-btn class="custom-plus" icon @click="decreaseSize1">
-          -
-        </v-btn>
-        <!-- 显示当前大小 --> 
-        <span class="size-value">{{ markerSize1 }}</span>
-        <!-- 增加按钮 -->
-        <v-btn class="custom-plus" icon @click="increaseSize1">
-          +
-        </v-btn>
+        <span class="label">{{ $t('std16') }}:</span>
+            <el-input-number
+              v-model="markerSize1"
+              :min="1"
+              :max="100"
+              :step="1"
+              size="small"
+              controls-position="default"
+              @change="updateUmap1"
+            />
       </div>
       <div id="coord_chart"></div>
   </div>
     <div class="information-second">
-        <div id="myClusterChart" style="width: 1200px; height: 300px;"></div>
+        <div id="myClusterChart" style="width: auto; height: 100%;"></div>
     </div>
   <!-- ################################ -->
   <!-- 第二列 -->
   <div class="st-information-second">
       <h1>{{ $t('std19') }}</h1>
-            <div class="gene-search-con">
-        <input
-          class="search-gene-input"
-          v-model="searchQuery"
-          :placeholder="$t('scd24')"
-          @input="filterGenes"
-          @focus="showScroller = true"
-          @blur="handleBlur"
-          type="text"
-        />
-    <!-- 新增高度控制容器 -->
-        <div 
-          v-show="showScroller"
-          class="scroller-wrapper"
-          :style="{ height: wrapperHeight + 'px' }"
-        >
-          <recycle-scroller
-            class="scroller"
-            :items="filteredGenes"
-            :item-size="12"
-            :buffer="50"
-            page-mode="true"
-            :key="resetKey"
+                  <div class="gene-search-con">
+          <el-input
+            v-model="searchQuery"
+            :placeholder="$t('scd24')"
+            @input="filterGenes"
+            @focus="showScroller = true"
+            @blur="handleBlur"
+            class="search-gene-input"
+            clearable
+            size="default"
           >
-            <template v-slot="{ item }">
-              <div 
-                class="gene-item"
-                :class="{ 'is-active': item === searchQuery }"
-                @mousedown="selectItem(item)"
-              >
-                {{ item }}
-              </div>
+            <template #append>
+              <el-button @click="searchgene" type="primary">
+                {{ $t('scd21button') }}
+              </el-button>
             </template>
-          </recycle-scroller>
-        </div>
-        <v-btn text @click="searchgene" class="search-btn">
-          {{ $t('std21') }}
-        </v-btn>
-      </div>
-      <div class="marker-size-controller">
-        <div class="label">{{ $t('std20') }}:</div>
-        <!-- 减少按钮 -->
-        <v-btn class="custom-plus" icon @click="decreaseSize2">
-          -
-        </v-btn>
-        <!-- 显示当前大小 --> 
-        <span class="size-value">{{ markerSize2 }}</span>
-        <!-- 增加按钮 -->
-        <v-btn class="custom-plus" icon @click="increaseSize2">
-          +
-        </v-btn>
-        
-        
-      </div>
+          </el-input>
+          <!--虚拟下拉列表-->
+          <div
+              v-show="showScroller"
+              class="scroller-wrapper"
+              ref="scrollContainer"
+            >
+            <VirtualList
+              :data-key="'id'"
+              :data-sources="filteredGenes"
+              :keeps="100"
+              :estimate-size="50"
+              :data-component="VirtualListItem"
+              style="height: 400px; overflow-y: auto"
+              class="scroller"
+            >
+            </VirtualList>
+          </div>
+          <div class="marker-size-control">
+            <span class="label">{{ $t('scd22') }}:</span>
+            <el-input-number
+              v-model="markerSize2"
+              :min="1"
+              :max="100"
+              :step="1"
+              size="small"
+              controls-position="default"
+              @change="updateUmap2"
+            />
+          </div>
+          </div>
   <div id="coord_chart_gene"></div>
-  <div id="expressionHeatmap" style="width: 1200px; height: 400px;"></div>
+    <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
 </div>
 </div>
 </div>
@@ -216,9 +212,10 @@
 
 <script setup>
 import Plotly from 'plotly.js-dist-min';
-import { RecycleScroller } from 'vue3-virtual-scroller';
+import VirtualListItem from './general/VirtualListItem.vue';
+import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
-import { ref, onMounted, computed, watch} from 'vue';
+import { ref, onMounted, computed, watch,onUnmounted} from 'vue';
 import { useRoute } from 'vue-router';
 //import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
@@ -395,21 +392,6 @@ const updateUmap1 = () => {
   Plotly.restyle('coord_chart', 'marker.size', [markerSize1.value]);
 };
 
-// 减小标记大小的方法
-const decreaseSize1 = () => {
-  if (markerSize1.value > 1) {
-    markerSize1.value -= 1;
-    updateUmap1();
-  }
-};
-
-// 增大标记大小的方法
-const increaseSize1 = () => {
-  if (markerSize1.value < 10) {
-    markerSize1.value += 1;
-    updateUmap1();
-  }
-};
 //------------------------------------------------------
 //分类表
 //------------------------------------------------------
@@ -444,9 +426,9 @@ onMounted(async() => {
           title: 'Num of Cluster',
           xaxis: {
             title: '',
-            tickangle: -90, // 将标签旋转45度
+            tickangle: 45, // 将标签旋转45度
             tickmode: 'linear', // 确保标签均匀分布
-            tickfont: { size: 8 } // 调整字体大小
+            tickfont: { size: 7 } // 调整字体大小
           },
           yaxis: {
             title: '',
@@ -465,18 +447,24 @@ onMounted(async() => {
 //基因搜索框
 //------------------------------------------------------
 
-// 计算 wrapper 的高度
-const wrapperHeight = computed(() => {
-  const itemCount = filteredGenes.value.length;
-  const maxHeight = 400; // 36px/item * 11 items ≈ 400px
-  return Math.min(itemCount * 36, maxHeight);
-});
 
 const genes = ref([]);
 //const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
 const markerSize2 = ref(2); // 默认点大小
+
+
+const filteredGenes = computed(() => {
+  let data = genes.value || [];
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    //console.log(query)
+    data = data.filter(gene => (gene.content || '').toLowerCase().includes(query));
+  }
+  return data;
+});
+
 //加载基因
 onMounted(async() => {
   const params = new URLSearchParams({
@@ -491,35 +479,38 @@ onMounted(async() => {
     if (!data || !Array.isArray(data.genes)) {
       throw new Error('Invalid data structure received');
     }
-    genes.value = data.genes.map(gene => gene.toLowerCase());
-    filteredGenes.value = [...genes.value];
+    genes.value = data.genes.map((gene, index) => ({
+    id: index, // 使用数组索引作为 id
+    content: gene
+  }));
+    //filteredGenes.value = [...genes.value];
+    //virtualItem.value = genes.value.slice(0,genePageSize );
+    //geneCurrentPage.value = 0;
   } catch (error) {
     console.error('Failed to load genes:', error);
     // 可以在这里处理错误，例如显示错误消息或设置错误状态
   }
 });
-// 响应式数据
 
-// 方法：过滤基因
 
-// 侦听器：监听 searchQuery 的变化
-//import { nextTick } from 'vue';
-const resetKey = ref(0)
-const filteredGenes = computed(() => {
-  if (!searchQuery.value) {
-    return genes.value;
-  }
-  // 将搜索查询转换为小写并进行过滤
-  return genes.value.filter(gene => gene.toLowerCase().includes(searchQuery.value.toLowerCase()));
+//-------------------------------------------------------------
+//选中选项后的事件
+//⚠️vue3-virtual-scroll-list组件自带的有问题，这里使用全局事件总线
+//-------------------------------------------------------------
+import { inject } from 'vue';
+const eventBus = inject('eventBus')
+onMounted(() => {
+    eventBus.on('select-item', handleSelectItem);
 });
-watch([filteredGenes, searchQuery], () => {
-  resetKey.value++ // 触发虚拟滚动组件重新渲染
-}, { flush: 'post' }) // 在DOM更新后执行
+onUnmounted(() => {
+  if (eventBus) {
+    eventBus.off('select-item', handleSelectItem);
+  }
+});
 
-// 选择项时触发的方法
-const selectItem = (item) => {
-  searchQuery.value = item;
-  showScroller.value = false;
+const handleSelectItem = (item) => {
+      searchQuery.value = item;
+      showScroller.value = false;
 };
 
 // 处理失去焦点时的方法
@@ -674,22 +665,6 @@ const updateUmap2 = () => {
   Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
 };
 
-// 减少 UMAP 图2 的点大小
-const decreaseSize2 = () => {
-  if (markerSize2.value > 1) {
-    markerSize2.value -= 1;
-    updateUmap2();
-  }
-};
-
-// 增加 UMAP 图2 的点大小
-const increaseSize2 = () => {
-  if (markerSize2.value < 10) {
-    markerSize2.value += 1;
-    updateUmap2();
-  }
-};
-
 
 //------------------------------------------------------
 //差异表达分析
@@ -832,6 +807,7 @@ button {
     display: flex;
     flex-direction: column; /* 子元素垂直排列 */
     flex:1;
+    gap: 30px;
 }
  /* ----------------------------------------------------------- */
 </style>

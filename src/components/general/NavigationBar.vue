@@ -51,7 +51,7 @@
               <router-link to="/about/FAQ">{{ $t('FAQ') }}</router-link>
             </li>
             <li>
-              <router-link to="/about/AccessAnalytics">{{ $t('AccessAnalytics') }}</router-link>
+              <router-link to="/about/VisitLogPage">{{ $t('AccessAnalytics') }}</router-link>
             </li>
             <li>
               <router-link to="/about/ContactUs">{{ $t('ContactUs') }}</router-link>

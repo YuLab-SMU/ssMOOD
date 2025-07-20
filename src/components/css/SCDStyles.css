@@ -14,7 +14,10 @@
   
 }
 .sc-cluster-content {
-
+      display: flex;
+    flex-direction: column; /* 子元素垂直排列 */
+    flex:1;
+  gap: 30px;
 }
 .umap-contain{
     height: 80vh;
@@ -266,8 +269,13 @@
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 .kegg-card {
-  margin: 16px 0;
+  margin: 0;
+  padding: 20px ;
   width: calc(90vw + 60px);
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 20px !important; 
 }
 
 .search-container {
