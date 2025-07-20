@@ -137,6 +137,59 @@
 .scroller{
 }
 
+/* ----------------------- */
+/* 自定义图例 */
+/* ----------------------- */
+.legend-wrapper {
+  width: 40vw;               /* 40% 页面宽度 */
+  height: 30vh;              /* 30% 页面高度 */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+/* 全选按钮样式 */
+.select-all {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* 复选框项通用样式 */
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  margin: 4px;
+  cursor: pointer;
+}
+
+/* 图例分组为双列布局 */
+.legend-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);  /* 双列 */
+  gap: 6px;
+}
+
+/* 彩色标签样式 */
+.label-box {
+  padding: 2px 8px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  user-select: none;
+}
+/* ----------------------- */
+
+.select-all {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
 .gene-item {
   height: 50px;
   line-height: 50px;

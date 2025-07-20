@@ -72,14 +72,48 @@
               @change="updateUmap1"
             />
           </div>
-        <el-row :gutter="20" class="umap-contain">
-            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-            <el-col :xs="24" :sm="24" :md="20" :lg="20">
-                <div id="umap-plot" style="width: 100%; height: 100%;"></div>
-            </el-col>
-            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-        </el-row>
-      
+
+                <div id="umap-plot" style="width: 800px; height: 800px;"></div>
+
+          <!-- 自定义图例区域 -->
+    <div class="legend-wrapper">
+    <!-- ✅ 全选复选框（必须 label 包裹 input 和文字） -->
+    <label class="checkbox-item select-all">
+      <input
+        type="checkbox"
+        v-model="checkAllFlag"
+        @change="toggleAll"
+      />
+      <span>全选</span>
+    </label>
+
+    <!-- ✅ 图例复选框组 -->
+    <div class="legend-group">
+      <label
+        v-for="label in global_clusterLabels"
+        :key="label"
+        class="checkbox-item"
+      >
+        <input
+          type="checkbox"
+          :value="label"
+          v-model="visibleLabels"
+          @change="onCheckboxChange"
+        />
+        <span
+          class="label-box"
+          :style="{
+            backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
+            borderColor: colors[label],
+            color: visibleLabels.includes(label) ? '#fff' : colors[label]
+          }"
+        >
+          {{ label }}
+        </span>
+      </label>
+    </div>
+  </div>
+
       <div class="information-second">
         <div id="myClusterChart" style="width: auto; height: 100%;"></div>
       </div>
@@ -137,7 +171,7 @@
         <el-row :gutter="20" class="umap-contain">
             <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
             <el-col :xs="24" :sm="24" :md="20" :lg="20">
-                <div id="umap-chart-gene" style="width: 80%; height: 100%;"></div>
+                <div id="umap-chart-gene" style="width: 600px; height: 600px;"></div>
             </el-col>
             <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
         </el-row>
@@ -537,6 +571,73 @@ onMounted(() => {
 //加载Umap图
 //###################################//
 const umapData = ref([]);
+const global_clusterLabels = ref([]);
+const visibleLabels = ref([]);
+const colors = ref({}) // 存储颜色映射
+// 全选
+// 全选复选框状态
+const checkAllFlag = ref(true)
+
+const toggleAll = () => {
+  if (checkAllFlag.value) {
+    visibleLabels.value = [...global_clusterLabels.value];
+  } else {
+    visibleLabels.value = [];
+  }
+  updatePlot()
+};
+
+const onCheckboxChange = () => {
+  checkAllFlag.value = visibleLabels.value.length === global_clusterLabels.value.length;
+  updatePlot()
+};
+
+
+
+
+const updatePlot = () => {
+  const umap1 = umapData.value.map(d => parseFloat(d.u1));
+  const umap2 = umapData.value.map(d => parseFloat(d.u2));
+  const cellIds = umapData.value.map(d => d.i);
+  const clusterLabelsData = umapData.value.map(d => d.c);
+
+  const traces = global_clusterLabels.value.map((label) => {
+    const show = visibleLabels.value.includes(label)
+    const indices = clusterLabelsData
+      .map((l, i) => l === label ? i : -1)
+      .filter(i => i !== -1)
+
+    const x = show ? indices.map(i => umap1[i]) : []
+    const y = show ? indices.map(i => umap2[i]) : []
+    const text = show ? indices.map(i => cellIds[i]) : []
+
+    return {
+      x,
+      y,
+      mode: 'markers',
+      type: 'scattergl',
+      name: label,
+      text,
+      marker: {
+        size: markerSize1.value,
+        color: colors.value[label]
+      }
+    }
+  })
+
+  const layout = {
+    responsive: true,
+    showlegend: false,
+    xaxis: { title: 'UMAP1', scaleanchor: 'y' },
+    yaxis: { title: 'UMAP2', scaleratio: 1 },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)'
+  }
+
+  Plotly.react('umap-plot', traces, layout)
+}
+
+
 onMounted(() => {
     const params = new URLSearchParams({
           id: route.params.id
@@ -553,6 +654,7 @@ onMounted(() => {
         //console.log(data);
           umapData.value = data.umap_data;
           const clusterLabels = data.cluster_labels;
+
           const labelMap = new Map();
             clusterLabels.forEach((label, index) => {
               labelMap.set(label, index);
@@ -575,7 +677,8 @@ onMounted(() => {
             return a.localeCompare(b);
           }
         });
-
+          global_clusterLabels.value = [...clusterLabels];
+          visibleLabels.value = [...clusterLabels];
           //console.log(clusterLabels);
           const umap1 = umapData.value.map(d => parseFloat(d.u1));
           const umap2 = umapData.value.map(d => parseFloat(d.u2));
@@ -583,7 +686,7 @@ onMounted(() => {
           const clusterLabelsData = umapData.value.map(d => d.c);
 
 
-          const colors = clusterLabels.reduce((acc, label) => {
+          colors.value = clusterLabels.reduce((acc, label) => {
               acc[label] = colorMap[label] || 'rgb(128,128,128)'; // 如果没有找到对应的颜色，则使用默认颜色 #000
               return acc;
           }, {});
@@ -602,7 +705,7 @@ onMounted(() => {
               text: text,
               marker: {
                 size:  markerSize1.value,
-                color: colors[label]
+                color: colors.value[label]
               }
             };
           });
@@ -612,19 +715,24 @@ onMounted(() => {
         const layout = {
           title: '',
           responsive: true,
+          showlegend: false,
           //width: allViewportWidth,
-          xaxis: { title: 'UMAP1' },
-          yaxis: { title: 'UMAP2' },
+  xaxis: {
+    title: 'UMAP1',
+  },
+  yaxis: {
+    title: 'UMAP2',
+  },
           paper_bgcolor: 'rgba(0,0,0,0)',
           plot_bgcolor: 'rgba(0,0,0,0)',
           legend: {
-            orientation: 'v', // 设置图例垂直排列
-            xanchor: 'left', // 图例的x轴锚点设置为左对齐
-            yanchor: 'bottom', // 图例的y轴锚点设置为底部对齐
-            x: 1, // 图例在水平方向上的位置，1表示最右侧
-            y: 0, // 图例在垂直方向上的位置，0.5表示中间
+            orientation: 'h', // 设置图例垂直排列
+            xanchor: 'center', // 图例的x轴锚点设置为左对齐
+            yanchor: 'top', // 图例的y轴锚点设置为底部对齐
+            x: 0.5, // 图例在水平方向上的位置，1表示最右侧
+            y: -0.15, // 图例在垂直方向上的位置，0.5表示中间
             font: {
-              size: 12 // 设置图例文本的大小
+              size: 14 // 设置图例文本的大小
             },
             itemwidth: 30, // 控制每个图例项的宽度
             itemheight: 20 // 控制每个图例项的高度
@@ -790,21 +898,19 @@ const handleBlur = () => {
 
 //-------------------------------------------------------------
 //颜色
-//⚠️需要修改为渐变色
+//⚠️修改为渐变色
 //-------------------------------------------------------------
 const maxNc = ref(0)
 
-// 2. 修改颜色函数
 const getColor = (value) => {
   if (value === 0) return 'rgba(128, 128, 128, 0.15)';
-  const normalized = Math.min(value / maxNc.value, 1);
-  const r = 255;
-  const g = Math.floor(165 - 165 * normalized);
-  const b = 0;
-  return `rgb(${r}, ${g}, ${b})`;
+  const t = Math.min(value / maxNc.value, 1);
+  const h = 0;                    // 红色
+  const s = 60 + 40 * t;          // 60% → 100%
+  const l = 80 - 35 * t;          // 80% → 45%
+  return `hsl(${h}, ${s}%, ${l}%)`;
 };
- 
- 
+
 const searchgene = async() => {
 
   // 请求参数
