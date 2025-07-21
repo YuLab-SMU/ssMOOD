@@ -4,6 +4,7 @@ include 'config.php';
 
 $genes = $_POST['genes'] ?? '';
 $gene_sets = $_POST['gene_sets'] ?? '';
+$id = _POST['id'] ?? '';
 
 //'Mouse_GO_2024.gmt'
 

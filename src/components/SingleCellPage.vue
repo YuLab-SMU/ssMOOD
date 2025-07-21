@@ -1,495 +1,326 @@
 <template>
-    <div>
-        <NavigationBar></NavigationBar>
-        <main ref="pageSection">
-            <section class="page-section">
-                <div class="main-container">
-<!--##################################################-->      
-<!--详细信息容器-->
-<div class="information-container">
-    <div class="title-bar">
-        <div class="title-bar-header">
-         <h1>{{ $t('scd1') }}</h1>
-         </div>
-    </div>
-    <div class="information-content">
-        <div class="information-left">
-             <h1>{{ $t('scd2') }}</h1>
+  <div>
+    <NavigationBar></NavigationBar>
+    <main ref="pageSection">
+      <section class="page-section">
+        <div class="main-container">
+          <!--##################################################-->
+          <!--详细信息容器-->
+          <div class="information-container">
+            <div class="title-bar">
+              <div class="title-bar-header">
+                <h1>{{ $t('scd1') }}</h1>
+              </div>
+            </div>
+            <div class="information-content">
+              <div class="information-left">
+                <h1>{{ $t('scd2') }}</h1>
 
-            <p><span class="bold-black">{{ $t('scd3') }}</span>: {{ dataset.dataset_id }}</p>
-            <p><span class="bold-black">{{ $t('scd4') }}</span>: {{ dataset.species }}</p>
-            <p><span class="bold-black">{{ $t('scd5') }}</span>: {{ dataset.area }}</p>
-            <p><span class="bold-black">{{ $t('scd6') }}</span>: {{ dataset.conditions }}</p>
-            <p><span class="bold-black">{{ $t('scd7') }}</span>: {{ dataset.sex }}</p>
-            <p><span class="bold-black">{{ $t('scd8') }}</span>: {{ dataset.age }}</p>
-             <h2>{{ $t('scd9') }}</h2>
+                <p><span class="bold-black">{{ $t('scd3') }}</span>: {{ dataset.dataset_id }}</p>
+                <p><span class="bold-black">{{ $t('scd4') }}</span>: {{ dataset.species }}</p>
+                <p><span class="bold-black">{{ $t('scd5') }}</span>: {{ dataset.area }}</p>
+                <p><span class="bold-black">{{ $t('scd6') }}</span>: {{ dataset.conditions }}</p>
+                <p><span class="bold-black">{{ $t('scd7') }}</span>: {{ dataset.sex }}</p>
+                <p><span class="bold-black">{{ $t('scd8') }}</span>: {{ dataset.age }}</p>
+                <h2>{{ $t('scd9') }}</h2>
 
-            <p><span class="bold-black">{{ $t('scd10') }}</span>: {{ dataset.information.DatasetInformation.NumberOfCells }}</p>
-            <p><span class="bold-black">{{ $t('scd11') }}</span>: {{ dataset.information.DatasetInformation.NumberOfIdentifiedCellTypes }}</p>
-        </div>
-        <div class="information-right">
-             <h2>{{ $t('scd12') }}</h2>
+                <p><span class="bold-black">{{ $t('scd10') }}</span>: {{
+                  dataset.information.DatasetInformation.NumberOfCells }}</p>
+                <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
+                  dataset.information.DatasetInformation.NumberOfIdentifiedCellTypes }}</p>
+              </div>
+              <div class="information-right">
+                <h2>{{ $t('scd12') }}</h2>
 
-            <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
-            <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology }}</p>
-            <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}</p>
-            <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID }}</p>
-            <p><span class="bold-black">{{ $t('scd17') }}</span>: <a :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed" target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
+                <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
+                <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
+                  }}</p>
+                <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
+                </p>
+                <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
+                  }}</p>
+                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
+                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
+                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
 
-            </p>
-            <p><span class="bold-black">{{ $t('scd18') }}</span>: <a :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{ dataset.information.DatasetSource1.DOI }}</a>
+                </p>
+                <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
+                    :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
+                      dataset.information.DatasetSource1.DOI }}</a>
 
-            </p>
-            <p><span class="bold-black">{{ $t('scd19') }}</span>: {{ dataset.information.DatasetSource1.Statement }}</p>
-        </div>
-    </div>
-</div>
-                    
-<!--##################################################-->                    
-<!--细胞分类容器-->
-  <div class="information-container">
-    
-    <div class="title-bar">
-        <div class="title-bar-header">
-         <h1>{{ $t('scd20') }}</h1>
-         </div>
-    </div>
-    <div class="sc-cluster-content">
-      <!-- 左侧内容：UMAP图与标记大小控制 -->
-      <h1>{{ $t('scd21') }}</h1>
-  
-    
-      
-          <div class="marker-size-control">
-            <span class="label">{{ $t('scd22') }}:</span>
-            <el-input-number
-              v-model="markerSize1"
-              :min="1"
-              :max="100"
-              :step="1"
-              size="small"
-              controls-position="default"
-              @change="updateUmap1"
-            />
+                </p>
+                <p><span class="bold-black">{{ $t('scd19') }}</span>: {{ dataset.information.DatasetSource1.Statement }}
+                </p>
+              </div>
+            </div>
           </div>
 
-                <div id="umap-plot" style="width: 800px; height: 800px;"></div>
+          <!--##################################################-->
+          <!--细胞分类容器-->
+          <div class="information-container">
 
-          <!-- 自定义图例区域 -->
-    <div class="legend-wrapper">
-    <!-- ✅ 全选复选框（必须 label 包裹 input 和文字） -->
-    <label class="checkbox-item select-all">
-      <input
-        type="checkbox"
-        v-model="checkAllFlag"
-        @change="toggleAll"
-      />
-      <span>全选</span>
-    </label>
+            <div class="title-bar">
+              <div class="title-bar-header">
+                <h1>{{ $t('scd20') }}</h1>
+              </div>
+            </div>
+            <div class="information-content">
 
-    <!-- ✅ 图例复选框组 -->
-    <div class="legend-group">
-      <label
-        v-for="label in global_clusterLabels"
-        :key="label"
-        class="checkbox-item"
-      >
-        <input
-          type="checkbox"
-          :value="label"
-          v-model="visibleLabels"
-          @change="onCheckboxChange"
-        />
-        <span
-          class="label-box"
-          :style="{
-            backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
-            borderColor: colors[label],
-            color: visibleLabels.includes(label) ? '#fff' : colors[label]
-          }"
-        >
-          {{ label }}
-        </span>
-      </label>
-    </div>
-  </div>
+              <div class="information-left">
 
-      <div class="information-second">
-        <div id="myClusterChart" style="width: auto; height: 100%;"></div>
-      </div>
-      <!-- 右侧内容：基因搜索与基因列表 -->
-      <div class="information-second">
-        <h1>{{ $t('scd23') }}</h1>
-        <div class="gene-search-con">
-          <el-input
-            v-model="searchQuery"
-            :placeholder="$t('scd24')"
-            @input="filterGenes"
-            @focus="showScroller = true"
-            @blur="handleBlur"
-            class="search-gene-input"
-            clearable
-            size="default"
-          >
-            <template #append>
-              <el-button @click="searchgene" type="primary">
-                {{ $t('scd21button') }}
-              </el-button>
-            </template>
-          </el-input>
-          <!--虚拟下拉列表-->
-          <div
-              v-show="showScroller"
-              class="scroller-wrapper"
-              ref="scrollContainer"
-            >
-            <VirtualList
-              :data-key="'id'"
-              :data-sources="filteredGenes"
-              :keeps="100"
-              :estimate-size="50"
-              :data-component="VirtualListItem"
-              style="height: 400px; overflow-y: auto"
-              class="scroller"
-            >
-            </VirtualList>
+                <h1>{{ $t('scd21') }}</h1>
+
+                <div class="marker-size-control">
+                  <span class="label">{{ $t('scd22') }}:</span>
+                  <el-input-number v-model="markerSize1" :min="1" :max="100" :step="1" size="small"
+                    controls-position="default" @change="updateUmap1" />
+                </div>
+
+                <div id="umap-plot" style="width: 100%; aspect-ratio: 1 / 1;"></div>
+              </div>
+
+              <div class="information-right">
+                <h1>{{ $t('scd23') }}</h1>
+                <div class="gene-search-con">
+                  <el-input v-model="searchQuery" :placeholder="$t('scd24')" @input="filterGenes"
+                    @focus="showScroller = true" @blur="handleBlur" class="search-gene-input" clearable size="default">
+                    <template #append>
+                      <el-button @click="searchgene" type="primary">
+                        {{ $t('scd21button') }}
+                      </el-button>
+                    </template>
+                  </el-input>
+                  <!--虚拟下拉列表-->
+                  <div v-show="showScroller" class="scroller-wrapper" ref="scrollContainer">
+                    <VirtualList :data-key="'id'" :data-sources="filteredGenes" :keeps="100" :estimate-size="50"
+                      :data-component="VirtualListItem" style="height: 400px; overflow-y: auto" class="scroller">
+                    </VirtualList>
+                  </div>
+                  <div class="marker-size-control">
+                    <span class="label">{{ $t('scd22') }}:</span>
+                    <el-input-number v-model="markerSize2" :min="1" :max="100" :step="1" size="small"
+                      controls-position="default" @change="updateUmap2" />
+                  </div>
+                </div>
+
+                <div id="umap-chart-gene" style="width: 100%; aspect-ratio: 1 / 1;"></div>
+
+
+              </div>
+
+            </div>
+            <div class="information-second">
+                <!-- 🔔自定义图例，官方图例会影响图的比例 -->
+                <div class="legend-wrapper">
+                  <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
+                    class="select-all">
+                    全选
+                  </el-checkbox>
+                  <el-checkbox-group v-model="visibleLabels" @change="onCheckboxChange" class="legend-group">
+                    <el-checkbox v-for="label in global_clusterLabels" :key="label" :label="label"
+                      class="checkbox-item">
+                      <span class="label-box" :style="{
+                        backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
+                        borderColor: colors[label],
+                        color: visibleLabels.includes(label) ? '#fff' : colors[label]
+                      }">
+                        {{ label }}
+                      </span>
+                    </el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              <div id="myClusterChart" style="width: auto; height: 100%;"></div>
+              <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
+
+            </div>
           </div>
-          <div class="marker-size-control">
-            <span class="label">{{ $t('scd22') }}:</span>
-            <el-input-number
-              v-model="markerSize2"
-              :min="1"
-              :max="100"
-              :step="1"
-              size="small"
-              controls-position="default"
-              @change="updateUmap2"
-            />
-          </div>
-        </div>
+          <!--##################################################-->
+          <!--差异表达分析容器-->
+          <div class="information-container">
+            <div class="title-bar">
+              <div class="title-bar-header">
+                <h1>{{ $t('scd25') }}</h1>
+              </div>
+            </div>
+            <div class="sc-deg-content">
+              <div class="information-deg-first">
+                <div class="information-left">
+                  <div class="de-analysis  modern-ui">
+                    <div class="note">
+                      <p>{{ $t('scd26') }}</p>
+                    </div>
+                    <div class="group">
+                      <label>{{ $t('scd27') }}</label>
+                      <el-select v-model="group" placeholder="Select Comparison">
+                        <el-option label="One Cell type vs Other Cell types" value="cellTypeSpecificGenes" />
+                      </el-select>
+                    </div>
+                    <div class="cell-type">
+                      <label>{{ $t('scd28') }}</label>
+                      <el-select v-model="cellType" placeholder="请选择" size="default">
+                        <el-option v-for="type in cellTypes" :key="type" :label="type" :value="type" />
+                      </el-select>
+                    </div>
+                    <!-- 标签 -->
+                    <label style="white-space: nowrap; font-weight: 600;">
+                      {{ $t('scd29') }}
+                    </label>
+                    <div class="log2fc" style="display: flex; align-items: center; gap: 12px;">
+                      <!-- 滑动条 -->
+                      <el-slider v-model="log2fc" :min="0" :max="10" :step="0.1" :format-tooltip="val => val.toFixed(1)"
+                        show-tooltip tooltip-class="always-show-tooltip custom-tooltip" style="flex: 1;" />
 
-        <el-row :gutter="20" class="umap-contain">
-            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-            <el-col :xs="24" :sm="24" :md="20" :lg="20">
-                <div id="umap-chart-gene" style="width: 600px; height: 600px;"></div>
-            </el-col>
-            <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-        </el-row>
-        
-        <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
-      </div>
-    </div>
-  </div>
-<!--##################################################-->                  
-<!--差异表达分析容器-->
-<div class="information-container">
-    <div class="title-bar">
-        <div class="title-bar-header">
-         <h1>{{ $t('scd25') }}</h1>
-         </div>
-    </div>
-    <div class="sc-deg-content">
-        <div class="information-deg-first">
-        <div class="information-left">
-            <div class="de-analysis  modern-ui">
-                <div class="note">
-                    <p>{{ $t('scd26') }}</p>
-                </div>
-                <div class="group">
-                  <label>{{ $t('scd27') }}</label>
-                  <el-select v-model="group" placeholder="Select Comparison">
-                    <el-option
-                      label="One Cell type vs Other Cell types"
-                      value="cellTypeSpecificGenes"
-                    />
-                  </el-select>
-                </div>
-                <div class="cell-type">
-                  <label>{{ $t('scd28') }}</label>
-                  <el-select
-                    v-model="cellType"
-                    placeholder="请选择"
-                    size="default"
-                  >
-                    <el-option
-                      v-for="type in cellTypes"
-                      :key="type"
-                      :label="type"
-                      :value="type"
-                    />
-                  </el-select>
-                </div>
-                                  <!-- 标签 -->
-                  <label style="white-space: nowrap; font-weight: 600;">
-                    {{ $t('scd29') }}
-                  </label>
-                <div class="log2fc" style="display: flex; align-items: center; gap: 12px;">
-                  <!-- 滑动条 -->
-                  <el-slider
-                    v-model="log2fc"
-                    :min="0"
-                    :max="10"
-                    :step="0.1"
-                    :format-tooltip="val => val.toFixed(1)"
-                    show-tooltip
-                    tooltip-class="always-show-tooltip custom-tooltip"
-                    style="flex: 1;"
-                  />
-
-                <div
-                  style="
+                      <div style="
                     width: 48px;
                     text-align: right;
                     font-size: 14px;
                     font-weight: bold;
                     color: #666;
-                  "
-                >
-                  {{ log2fc.toFixed(1) }}
-                </div>
+                  ">
+                        {{ log2fc.toFixed(1) }}
+                      </div>
+                    </div>
+
+                    <div class="adjusted-pvalue">
+                      <label>{{ $t('scd30') }}</label>
+                      <!-- 对数刻度滑动条 -->
+                      <el-slider v-model="pValueSliderIndex" :aria-hidden="null" :min="0" :max="7" :marks="pValueMarks"
+                        :step="1" :show-tooltip="false" class="mt-4" />
+
+                    </div>
+                    <div class="DEdirection" style="margin-top: 1rem;">
+                      <label class="font-semibold text-gray-700 mr-4">{{ $t('scd30-1') }}</label>
+
+                      <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
+                        <el-radio-button label="all">All</el-radio-button>
+                        <el-radio-button label="up">UP</el-radio-button>
+                        <el-radio-button label="down">Down</el-radio-button>
+                      </el-radio-group>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="adjusted-pvalue">
-                    <label>{{ $t('scd30') }}</label>
-                        <!-- 对数刻度滑动条 -->
-                    <el-slider
-                      v-model="pValueSliderIndex"
-                      :aria-hidden="null"
-                      :min="0"
-                      :max="7"
-                      :marks="pValueMarks"
-                      :step="1"
-                      :show-tooltip="false" 
-                      class="mt-4"
-                    />
+                <div class="information-right">
 
+                  <div class="de-analysis  modern-ui">
+                    <el-input v-model="filterDEGGenes" :placeholder="$t('scd31')" clearable size="default" />
+                    <!-- 表格 -->
+                    <div class="table-container">
+                      <el-table :data="paginatedData" @sort-change="handleSortChange" style="width: 100%;"
+                        :default-sort="{ prop: sortProp, order: sortOrder }">
+                        <el-table-column prop="i" :label="$t('scd33')" sortable="custom">
+                          <template #default="{ row }">{{ row.i }}</template>
+                        </el-table-column>
+
+                        <el-table-column prop="f" :label="$t('scd34')" sortable="custom" min-width="100">
+                          <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
+                        </el-table-column>
+
+                        <el-table-column prop="t1" :label="$t('scd35')" sortable="custom">
+                          <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
+                        </el-table-column>
+
+                        <el-table-column prop="t2" :label="$t('scd36')" sortable="custom">
+                          <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
+                        </el-table-column>
+
+                        <el-table-column prop="a" :label="$t('scd37')" sortable="custom" min-width="100">
+                          <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
+                        </el-table-column>
+                      </el-table>
+                      <div class="pagination">
+                        <!-- 翻页 -->
+                        <div class="left-section">
+                          <el-pagination layout="prev, pager, next" :current-page="currentPage" :page-size="pageSize"
+                            :total="filteredData.length" @current-change="handlePageChange" small background
+                            class="page-pagination" />
+                        </div>
+
+                        <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-              <div class="DEdirection" style="margin-top: 1rem;">
-                <label class="font-semibold text-gray-700 mr-4">{{ $t('scd30-1') }}</label>
-
-                <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
-                  <el-radio-button label="all">All</el-radio-button>
-                  <el-radio-button label="up">UP</el-radio-button>
-                  <el-radio-button label="down">Down</el-radio-button>
-                </el-radio-group>
               </div>
-            </div>
-        </div>
-        
-        <div class="information-right">
-            
-            <div class="de-analysis  modern-ui">
-                <el-input
-                  v-model="filterDEGGenes"
-                  :placeholder="$t('scd31')"
-                  clearable
-                  size="default"
-                />
-                <!-- 表格 -->
-                <div class="table-container">
-                  <el-table
-                    :data="paginatedData"
-                    @sort-change="handleSortChange"
-                    style="width: 100%;"
-                    :default-sort="{ prop: sortProp, order: sortOrder }"
-                  >
-                    <el-table-column
-                      prop="i"
-                      :label="$t('scd33')"
-                      sortable="custom"
-                    >
-                      <template #default="{ row }">{{ row.i }}</template>
+
+
+
+              <el-card class="kegg-card" shadow="never">
+                <!-- 折叠面板头 -->
+                <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
+                  <el-collapse-item :title="$t('scd42')" name="1">
+                    <div class="search-container" style="margin-bottom: 12px;">
+                      <el-input v-model="filterKEGG" :placeholder="$t('scd31')" clearable prefix-icon="el-icon-search"
+                        size="default" />
+                    </div>
+
+                    <el-table :data="KEGGpaginatedData" v-loading="loadingKEGG" stripe size="default"
+                      style="width: 100%" :default-sort="{ prop: sortProp, order: sortOrder }"
+                      @sort-change="handleKEGGSortChange">
+                      <el-table-column prop="t" :label="$t('scd44')" sortable="custom" min-width="400" />
+                      <el-table-column prop="p" :label="$t('scd45')" sortable="custom">
+                        <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="o" :label="$t('scd46')" sortable="custom">
+                        <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="c" :label="$t('scd47')" sortable="custom">
+                        <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column :label="$t('scd48')">
+                        <template #default="{ row }">
+                          <el-button size="mini" type="primary" @click="openKeggModal(row.g)">
+                            {{ $t('scd49') }}
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <!-- 分页 -->
+                    <div class="pagination"
+                      style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                      <el-pagination background layout="prev, pager, next" :current-page="KEGGcurrentPage"
+                        :page-size="pageSize" :total="KEGGfilteredData.length" @current-change="handleKEGGPageChange"
+                        size="small" />
+                      <el-button size="default" type="primary" @click="KEGGdownload" class="downloadButton">
+                        {{ $t('scd32') }}
+                      </el-button>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
+
+                <!-- 模态框 -->
+                <el-dialog v-model="isKeggModalOpen" width="50%" :title="$t('scd48')">
+                  <el-table :data="selectedKeggGene" style="width: 100%" size="default">
+                    <el-table-column :label="$t('scd50')">
+                      <template #default="{ row }">
+                        {{ row }}
+                      </template>
                     </el-table-column>
 
-                    <el-table-column
-                      prop="f"
-                      :label="$t('scd34')"
-                      sortable="custom"
-                      min-width="100"
-                    >
-                      <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
-                    </el-table-column>
-
-                    <el-table-column
-                      prop="t1"
-                      :label="$t('scd35')"
-                      sortable="custom"
-                    >
-                      <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
-                    </el-table-column>
-
-                    <el-table-column
-                      prop="t2"
-                      :label="$t('scd36')"
-                      sortable="custom"
-                    >
-                      <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
-                    </el-table-column>
-
-                    <el-table-column
-                      prop="a"
-                      :label="$t('scd37')"
-                      sortable="custom"
-                      min-width="100"
-                    >
-                      <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
+                    <el-table-column :label="$t('scd51')">
+                      <template #default="{ row }">
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                          UNIPROT🔗
+                        </el-button>
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                          GENECARDS🔗
+                        </el-button>
+                      </template>
                     </el-table-column>
                   </el-table>
-                <div class="pagination">
-              <!-- 翻页 -->
-              <div class="left-section">
-              <el-pagination
-                layout="prev, pager, next"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                :total="filteredData.length"
-                @current-change="handlePageChange"
-                small
-                background
-                class="page-pagination"
-              />
-              </div>
-
-                  <button @click="download" class="downloadButton">{{ $t('scd32') }}</button>
-                </div>
-              </div>
-                
+                </el-dialog>
+              </el-card>
             </div>
+          </div>
+
+          <!--##################################################-->
         </div>
-        </div>
-
-
-
-  <el-card class="kegg-card" shadow="never">
-    <!-- 折叠面板头 -->
-    <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
-      <el-collapse-item :title="$t('scd42')" name="1">
-        <div class="search-container" style="margin-bottom: 12px;">
-          <el-input
-            v-model="filterKEGG"
-            :placeholder="$t('scd31')"
-            clearable
-            prefix-icon="el-icon-search"
-            size="default"
-          />
-        </div>
-
-        <el-table
-          :data="KEGGpaginatedData"
-          v-loading="loadingKEGG"
-          stripe
-          size="default"
-          style="width: 100%"
-          :default-sort="{ prop: sortProp, order: sortOrder }"
-          @sort-change="handleKEGGSortChange"
-        >
-          <el-table-column
-            prop="t"
-            :label="$t('scd44')"
-            sortable="custom"
-            min-width="400"
-          />
-          <el-table-column
-            prop="p"
-            :label="$t('scd45')"
-            sortable="custom"
-          >
-            <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
-          </el-table-column>
-          <el-table-column
-            prop="o"
-            :label="$t('scd46')"
-            sortable="custom"
-          >
-            <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
-          </el-table-column>
-          <el-table-column
-            prop="c"
-            :label="$t('scd47')"
-            sortable="custom"
-          >
-            <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('scd48')"
-          >
-            <template #default="{ row }">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="openKeggModal(row.g)"
-              >
-                {{ $t('scd49') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <!-- 分页 -->
-        <div class="pagination" style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
-          <el-pagination
-            background
-            layout="prev, pager, next"
-            :current-page="KEGGcurrentPage"
-            :page-size="pageSize"
-            :total="KEGGfilteredData.length"
-            @current-change="handleKEGGPageChange"
-            size="small"
-          />
-          <el-button size="default" type="primary" @click="KEGGdownload" class="downloadButton">
-            {{ $t('scd32') }}
-          </el-button>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
-
-    <!-- 模态框 -->
-        <el-dialog
-          v-model="isKeggModalOpen"
-          width="50%"
-          :title="$t('scd48')"
-        >
-        <el-table
-          :data="selectedKeggGene"
-          style="width: 100%"
-          size="default"
-        >
-        <el-table-column :label="$t('scd50')">
-          <template #default="{ row }">
-            {{ row }}
-          </template>
-        </el-table-column>
-        
-        <el-table-column :label="$t('scd51')">
-          <template #default="{ row }">
-            <el-button
-              type="text"
-              size="small"
-              @click="openLink(row.name, 'link1')"
-            >
-              UNIPROT🔗
-            </el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="openLink(row.name, 'link2')"
-            >
-              GENECARDS🔗
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
-  </el-card>
-    </div>
-</div>
-        
-<!--##################################################-->  
-                </div>
-            </section>
-        </main>
-        <BackToTop></BackToTop>
-    </div>
+      </section>
+    </main>
+    <BackToTop></BackToTop>
+  </div>
 </template>
 
 <script setup>
@@ -499,7 +330,7 @@ import Plotly from 'plotly.js-dist-min';
 import VirtualListItem from './general/VirtualListItem.vue';
 import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
-import { ref, onMounted, computed, watch} from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 //import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
 //import debounce from 'lodash.debounce';
@@ -547,7 +378,7 @@ onMounted(() => {
     id: route.params.id
   });
 
-  fetch(config.apiUrl+`scd_getSCDatasetDetail.php?${params}`)
+  fetch(config.apiUrl + `scd_getSCDatasetDetail.php?${params}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -556,8 +387,8 @@ onMounted(() => {
     })
     .then(data => {
       if (data && data.length > 0 && data[0].information) {
-        dataset.value = data[0]; 
-        dataset.value.information = JSON.parse(data[0].information); 
+        dataset.value = data[0];
+        dataset.value.information = JSON.parse(data[0].information);
       }
     })
     .catch(error => {
@@ -571,29 +402,74 @@ onMounted(() => {
 //加载Umap图
 //###################################//
 const umapData = ref([]);
-const global_clusterLabels = ref([]);
-const visibleLabels = ref([]);
-const colors = ref({}) // 存储颜色映射
-// 全选
-// 全选复选框状态
+const global_clusterLabels = ref([])
+const visibleLabels = ref([])
+const colors = ref({})
+const isIndeterminate = ref(false)
 const checkAllFlag = ref(true)
 
+// 全选/全不选
 const toggleAll = () => {
   if (checkAllFlag.value) {
-    visibleLabels.value = [...global_clusterLabels.value];
+    visibleLabels.value = [...global_clusterLabels.value]
   } else {
-    visibleLabels.value = [];
+    visibleLabels.value = []
   }
-  updatePlot()
-};
+}
 
+// 单个复选框变动时
 const onCheckboxChange = () => {
-  checkAllFlag.value = visibleLabels.value.length === global_clusterLabels.value.length;
+  // 这里只处理图更新，选中状态由 watch 管
   updatePlot()
-};
+  updateGenePlot()
+}
 
+// 自动追踪 visibleLabels 的变化，更新全选与半选中状态
+watch(visibleLabels, (val) => {
+  const total = global_clusterLabels.value.length
+  const checkedCount = val.length
 
+  checkAllFlag.value = checkedCount === total
+  isIndeterminate.value = checkedCount > 0 && checkedCount < total
+  updatePlot()
+  updateGenePlot()
+})
 
+const updateGenePlot = () => {
+ if(isSearchgene.value===true){
+  const filteredArray = mergedGeneArray.value.filter(item =>
+    visibleLabels.value.includes(item.c)
+  );
+
+  const categories = [...new Set(filteredArray.map(item => item.c))].sort();
+
+  const traces = categories.map(category => {
+    const categoryPoints = filteredArray.filter(point => point.c === category);
+    const colors = categoryPoints.map(point => getColor(point.nc));
+    return {
+      x: categoryPoints.map(point => point.u1),
+      y: categoryPoints.map(point => point.u2),
+      mode: 'markers',
+      type: 'scattergl',
+      name: category,
+      marker: {
+        color: colors,
+        size: markerSize2.value,
+      },
+      text: categoryPoints.map(point => `${point.i}<br>${point.nc}`),
+    };
+  });
+
+  const genelayout = {
+    showlegend: false,
+    autosize: true,
+    xaxis: { title: 'UMAP1' },
+    yaxis: { title: 'UMAP2' },
+  };
+
+  Plotly.react('umap-chart-gene', traces, genelayout);
+ }
+}
 
 const updatePlot = () => {
   const umap1 = umapData.value.map(d => parseFloat(d.u1));
@@ -628,8 +504,8 @@ const updatePlot = () => {
   const layout = {
     responsive: true,
     showlegend: false,
-    xaxis: { title: 'UMAP1', scaleanchor: 'y' },
-    yaxis: { title: 'UMAP2', scaleratio: 1 },
+    xaxis: { title: 'UMAP1' },
+    yaxis: { title: 'UMAP2' },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)'
   }
@@ -637,114 +513,100 @@ const updatePlot = () => {
   Plotly.react('umap-plot', traces, layout)
 }
 
-
 onMounted(() => {
-    const params = new URLSearchParams({
-          id: route.params.id
-        });
-    fetch(config.apiUrl+`scd_getumapdata.php?${params}`)
-        .then(response => response.arrayBuffer())
-        .then(arrayBuffer => {
-            
-        const compressed = new Uint8Array(arrayBuffer);
-        const decompressed = pako.ungzip(compressed); // 使用pako解压
-        const jsonString = new TextDecoder('utf-8').decode(decompressed);
-        const data = JSON.parse(jsonString); // 解析JSON字符串
-        
-        //console.log(data);
-          umapData.value = data.umap_data;
-          const clusterLabels = data.cluster_labels;
+  const params = new URLSearchParams({
+    id: route.params.id
+  });
+  fetch(config.apiUrl + `scd_getumapdata.php?${params}`)
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => {
 
-          const labelMap = new Map();
-            clusterLabels.forEach((label, index) => {
-              labelMap.set(label, index);
-            });
+      const compressed = new Uint8Array(arrayBuffer);
+      const decompressed = pako.ungzip(compressed); // 使用pako解压
+      const jsonString = new TextDecoder('utf-8').decode(decompressed);
+      const data = JSON.parse(jsonString); // 解析JSON字符串
 
-        clusterLabels.sort((a, b) => {
-          const partsA = a.match(/\d+/);
-          const partsB = b.match(/\d+/);
-          if (partsA && partsB) {
-            // 如果两个字符串都包含数字，则按数字排序
-            return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
-          } else if (partsA) {
-            // 如果只有 a 包含数字，则 a 排在 b 前面
-            return -1;
-          } else if (partsB) {
-            // 如果只有 b 包含数字，则 b 排在 a 前面
-            return 1;
-          } else {
-            // 如果两个字符串都不包含数字，则按字母顺序排序
-            return a.localeCompare(b);
+      //console.log(data);
+      umapData.value = data.umap_data;
+      const clusterLabels = data.cluster_labels;
+
+      const labelMap = new Map();
+      clusterLabels.forEach((label, index) => {
+        labelMap.set(label, index);
+      });
+
+      clusterLabels.sort((a, b) => {
+        const partsA = a.match(/\d+/);
+        const partsB = b.match(/\d+/);
+        if (partsA && partsB) {
+          // 如果两个字符串都包含数字，则按数字排序
+          return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
+        } else if (partsA) {
+          // 如果只有 a 包含数字，则 a 排在 b 前面
+          return -1;
+        } else if (partsB) {
+          // 如果只有 b 包含数字，则 b 排在 a 前面
+          return 1;
+        } else {
+          // 如果两个字符串都不包含数字，则按字母顺序排序
+          return a.localeCompare(b);
+        }
+      });
+      global_clusterLabels.value = [...clusterLabels];
+      visibleLabels.value = [...clusterLabels];
+      //console.log(clusterLabels);
+      const umap1 = umapData.value.map(d => parseFloat(d.u1));
+      const umap2 = umapData.value.map(d => parseFloat(d.u2));
+      const cellIds = umapData.value.map(d => d.i);
+      const clusterLabelsData = umapData.value.map(d => d.c);
+
+
+      colors.value = clusterLabels.reduce((acc, label) => {
+        acc[label] = colorMap[label] || 'rgb(128,128,128)'; // 如果没有找到对应的颜色，则使用默认颜色 #000
+        return acc;
+      }, {});
+      //console.log(colors);
+      const traces = clusterLabels.map((label) => {
+        const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
+        const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
+        const text = cellIds.filter((_, i) => clusterLabelsData[i] === label);
+
+        return {
+          x: x,
+          y: y,
+          mode: 'markers',
+          type: 'scattergl',
+          name: label,
+          text: text,
+          marker: {
+            size: markerSize1.value,
+            color: colors.value[label]
           }
-        });
-          global_clusterLabels.value = [...clusterLabels];
-          visibleLabels.value = [...clusterLabels];
-          //console.log(clusterLabels);
-          const umap1 = umapData.value.map(d => parseFloat(d.u1));
-          const umap2 = umapData.value.map(d => parseFloat(d.u2));
-          const cellIds = umapData.value.map(d => d.i);
-          const clusterLabelsData = umapData.value.map(d => d.c);
-
-
-          colors.value = clusterLabels.reduce((acc, label) => {
-              acc[label] = colorMap[label] || 'rgb(128,128,128)'; // 如果没有找到对应的颜色，则使用默认颜色 #000
-              return acc;
-          }, {});
-        //console.log(colors);
-          const traces = clusterLabels.map((label) => {
-            const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
-            const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
-            const text = cellIds.filter((_, i) => clusterLabelsData[i] === label);
-
-            return {
-              x: x,
-              y: y,
-              mode: 'markers',
-              type: 'scattergl',
-              name: label,
-              text: text,
-              marker: {
-                size:  markerSize1.value,
-                color: colors.value[label]
-              }
-            };
-          });
-        //const halfViewportWidth = window.innerWidth * 0.55;
-        //const allViewportWidth = window.innerWidth * 0.66;
-        
-        const layout = {
-          title: '',
-          responsive: true,
-          showlegend: false,
-          //width: allViewportWidth,
-  xaxis: {
-    title: 'UMAP1',
-  },
-  yaxis: {
-    title: 'UMAP2',
-  },
-          paper_bgcolor: 'rgba(0,0,0,0)',
-          plot_bgcolor: 'rgba(0,0,0,0)',
-          legend: {
-            orientation: 'h', // 设置图例垂直排列
-            xanchor: 'center', // 图例的x轴锚点设置为左对齐
-            yanchor: 'top', // 图例的y轴锚点设置为底部对齐
-            x: 0.5, // 图例在水平方向上的位置，1表示最右侧
-            y: -0.15, // 图例在垂直方向上的位置，0.5表示中间
-            font: {
-              size: 14 // 设置图例文本的大小
-            },
-            itemwidth: 30, // 控制每个图例项的宽度
-            itemheight: 20 // 控制每个图例项的高度
-          },
-
         };
+      });
 
-    
-          Plotly.newPlot('umap-plot', traces, layout);
-          
-        })
-        .catch(error => console.error('Error fetching UMAP data:', error));
+
+      const layout = {
+        title: '',
+        responsive: true,
+        showlegend: false,
+        autosize: true, // 自动适配容器大小
+        xaxis: {
+          title: 'UMAP1',
+        },
+        yaxis: {
+          title: 'UMAP2',
+        },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+
+      };
+
+
+      Plotly.newPlot('umap-plot', traces, layout);
+
+    })
+    .catch(error => console.error('Error fetching UMAP data:', error));
 });
 
 
@@ -760,52 +622,52 @@ const updateUmap1 = () => {
 //###################################//
 //分类表
 //###################################//
-onMounted(async() => {
-        const params = new URLSearchParams({
-          id: route.params.id
-        });
-    // 绘制各数据集分布
-    fetch(config.apiUrl+`scd_getNumberOfCluster.php?${params}`)
-      .then(response => response.json())
-      .then(dataFromPhp => {
-        // 提取标签和细胞数量
-        const labels = Object.keys(dataFromPhp);
-        const cellCounts = Object.values(dataFromPhp);
-    
-        // 创建条形图数据
-        const trace = {
-          x: labels,
-          y: cellCounts,
-          type: 'bar',
-          marker: {
-            color: 'rgba(93, 116, 162 ,0.6)',
-            line: {
-              color: 'rgba(93, 116, 162 ,1)',
-              width: 1
-            }
+onMounted(async () => {
+  const params = new URLSearchParams({
+    id: route.params.id
+  });
+  // 绘制各数据集分布
+  fetch(config.apiUrl + `scd_getNumberOfCluster.php?${params}`)
+    .then(response => response.json())
+    .then(dataFromPhp => {
+      // 提取标签和细胞数量
+      const labels = Object.keys(dataFromPhp);
+      const cellCounts = Object.values(dataFromPhp);
+
+      // 创建条形图数据
+      const trace = {
+        x: labels,
+        y: cellCounts,
+        type: 'bar',
+        marker: {
+          color: 'rgba(93, 116, 162 ,0.6)',
+          line: {
+            color: 'rgba(93, 116, 162 ,1)',
+            width: 1
           }
-        };
-    
-        // 创建布局
-        const layout = {
-          title: 'Num of Cluster',
-          xaxis: {
-            title: '',
-            tickangle: 45, // 将标签旋转45度
-            tickmode: 'linear', // 确保标签均匀分布
-            tickfont: { size: 7 } // 调整字体大小
-          },
-          yaxis: {
-            title: '',
-            showgrid: true,
-            zeroline: true
-          }
-        };
-    
-        // 绘制图表
-        Plotly.newPlot('myClusterChart', [trace], layout);
-      })
-      .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
+        }
+      };
+
+      // 创建布局
+      const layout = {
+        title: 'Num of Cluster',
+        xaxis: {
+          title: '',
+          tickangle: 45, // 将标签旋转45度
+          tickmode: 'linear', // 确保标签均匀分布
+          tickfont: { size: 7 } // 调整字体大小
+        },
+        yaxis: {
+          title: '',
+          showgrid: true,
+          zeroline: true
+        }
+      };
+
+      // 绘制图表
+      Plotly.newPlot('myClusterChart', [trace], layout);
+    })
+    .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
 });
 
 
@@ -833,12 +695,12 @@ const filteredGenes = computed(() => {
 
 
 //加载基因
-onMounted(async() => {
+onMounted(async () => {
   const params = new URLSearchParams({
     id: route.params.id
   });
   try {
-    const response = await fetch(config.apiUrl+`scd_getgene.php?${params}`);
+    const response = await fetch(config.apiUrl + `scd_getgene.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -847,9 +709,9 @@ onMounted(async() => {
       throw new Error('Invalid data structure received');
     }
     genes.value = data.genes.map((gene, index) => ({
-    id: index, // 使用数组索引作为 id
-    content: gene
-  }));
+      id: index, // 使用数组索引作为 id
+      content: gene
+    }));
     //filteredGenes.value = [...genes.value];
     //virtualItem.value = genes.value.slice(0,genePageSize );
     //geneCurrentPage.value = 0;
@@ -869,7 +731,7 @@ onMounted(async() => {
 import { inject } from 'vue';
 const eventBus = inject('eventBus')
 onMounted(() => {
-    eventBus.on('select-item', handleSelectItem);
+  eventBus.on('select-item', handleSelectItem);
 });
 onUnmounted(() => {
   if (eventBus) {
@@ -878,8 +740,8 @@ onUnmounted(() => {
 });
 
 const handleSelectItem = (item) => {
-      searchQuery.value = item;
-      showScroller.value = false;
+  searchQuery.value = item;
+  showScroller.value = false;
 };
 
 
@@ -911,7 +773,10 @@ const getColor = (value) => {
   return `hsl(${h}, ${s}%, ${l}%)`;
 };
 
-const searchgene = async() => {
+
+const isSearchgene = ref(false);
+const mergedGeneArray = ref([]);
+const searchgene = async () => {
 
   // 请求参数
   const params = new URLSearchParams({
@@ -920,16 +785,18 @@ const searchgene = async() => {
   });
 
   try {
-    const response = await fetch(config.apiUrl+`scd_getGeneExpression_bin.php?${params}`);
+    const response = await fetch(config.apiUrl + `scd_getGeneExpression_bin.php?${params}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const compressed = new Uint8Array(await response.arrayBuffer());
     const decompressed = pako.ungzip(compressed); // 使用pako解压
-    
-    const data = new TextDecoder('utf-8').decode(decompressed);
-     const jsonData = JSON.parse(data);
 
+    const data = new TextDecoder('utf-8').decode(decompressed);
+    const jsonData = JSON.parse(data);
+    isSearchgene.value = true;
+    visibleLabels.value = [...global_clusterLabels.value];
+    updatePlot();
     // 合并数据
     const ncMap = jsonData.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
@@ -941,35 +808,48 @@ const searchgene = async() => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
+    mergedGeneArray.value = mergedArray;
+    //console.log(mergedGeneArray.value);
     // 分类信息
     const categories = [...new Set(mergedArray.map(item => item.c))];
     categories.sort();
 
     // 1. 计算最大值
-    maxNc.value= Math.max(...mergedArray.map(item => item.nc));
+    maxNc.value = Math.max(...mergedArray.map(item => item.nc));
     //-----------创建热图信息------------------------
-const numCategories = categories.length;
+    /*
+    const numCategories = categories.length;
 
-const heatmapData = Array.from({ length: 11 }, () => 
-  Array.from({ length: numCategories }, () => 0)
-);
+    const heatmapData = Array.from({ length: 11 }, () =>
+      Array.from({ length: numCategories }, () => 0)
+    );
+    */
+    const ncValues = mergedArray.map(item => item.nc).filter(n => n > 0);
+    const minLogNC = Math.log10(Math.min(...ncValues));
+    const maxLogNC = Math.log10(Math.max(...ncValues));
+    const numBins = 11;
 
+    const heatmapData = Array.from({ length: numBins }, () =>
+      Array(categories.length).fill(0)
+    );
 
-// 填充热图数据数组
-mergedArray.forEach(item => {
-  const categoryIndex = categories.indexOf(item.c);
-    if (categoryIndex !== -1 && categoryIndex < numCategories) {
-        // 限制 nc 在 0-5 范围内
-        const cappedNC = Math.min(Math.max(item.nc, 0), 5);
-        const expressionIndex = Math.floor(cappedNC / 0.5);
-        
-        if (expressionIndex >= 0 && expressionIndex < 11) {
-          heatmapData[expressionIndex][categoryIndex]++;
-        } else {
-          console.warn(`Invalid expressionIndex: ${expressionIndex}`, item);
-        }
+    mergedArray.forEach(item => {
+      const categoryIndex = categories.indexOf(item.c);
+      if (categoryIndex !== -1 && item.nc > 0) {
+        const logNC = Math.log10(item.nc);
+
+        // 修正逻辑：不要 * numBins - 1，而是 * numBins
+        const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
+        const expressionIndex = Math.floor(normLogNC * numBins);
+
+        // 保证 expressionIndex 落在 0 到 numBins - 1 范围
+        const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
+
+        heatmapData[safeIndex][categoryIndex]++;
       }
-});
+    });
+
+
 
     //------------------------------------------------------
     //‼️ 按分类信息创建轨迹
@@ -977,8 +857,8 @@ mergedArray.forEach(item => {
     //------------------------------------------------------
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
-      
-       const colors = categoryPoints.map(point => getColor(point.nc));
+
+      const colors = categoryPoints.map(point => getColor(point.nc));
       return {
         x: categoryPoints.map(point => point.u1),
         y: categoryPoints.map(point => point.u2),
@@ -986,54 +866,66 @@ mergedArray.forEach(item => {
         type: 'scattergl',
         name: category,
         marker: {
-          color: colors, 
+          color: colors,
           size: markerSize2.value,
         },
         text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
       };
     });
+    const genelayout = {
+      showlegend: false,
+      autosize: true, // 自动适配容器大小
+      xaxis: {
+        title: 'UMAP1',
+      },
+      yaxis: {
+        title: 'UMAP2',
+      },
+    };
+    Plotly.newPlot('umap-chart-gene', traces, genelayout);
 
-    Plotly.newPlot('umap-chart-gene', traces, {
-                    showlegend: false,
-    });
+    //-----------绘制热图------------------------
+    const zmax = Math.max(...heatmapData.flat());
 
-//-----------绘制热图------------------------
+    // 绘制热图
+    const layout = {
 
+      title: 'Gene expression heat map(The z axis is the number of cells)',
+      xaxis: {
+        title: '',
+        tickangle: 45, // 将标签旋转45度
+        tickmode: 'linear', // 确保标签均匀分布
+        tickfont: { size: 6 }, // 调整字体大小
+        tickvals: categories.map((category, index) => index),
+        ticktext: categories,
+        scaleanchor: 'y',
+      },
+      yaxis: {
+        title: 'Gene expression (log10 scale)',
+        tickvals: Array.from({ length: numBins }, (_, i) => i),
+        ticktext: Array.from({ length: numBins }, (_, i) => {
+          const logVal = minLogNC + (i / (numBins - 1)) * (maxLogNC - minLogNC)
+          return Math.pow(10, logVal).toFixed(2)  // 显示原始值
+        })
+      }
 
-  // 绘制热图
-  const layout = {
-    title: 'Gene expression heat map(The z axis is the number of cells)',
-    xaxis: {
-      title: '',
-    tickangle: 45, // 将标签旋转45度
-    tickmode: 'linear', // 确保标签均匀分布
-    tickfont: { size: 6 }, // 调整字体大小
-      tickvals: categories.map((category, index) => index),
-      ticktext: categories
-    },
-    yaxis: {
-      title: 'Gene expression',
-      tickvals: Array.from({ length: 11 }, (_, i) => i ),
-      ticktext: Array.from({ length: 11 }, (_, i) => (i* 0.5 ).toFixed(1))
-    },
-    autosize: true
-  };
+    };
 
-  const trace = {
-    x: categories,
-    y: Array.from({ length: 11 }, (_, i) => i ),
-    z: heatmapData,
-    type: 'heatmap',
-  colorscale: [
-    [0, 'rgb(255, 255, 255)'],   // 对应值为0时的颜色（#5D74A2）
-    [1, 'rgb(93, 116, 162)']     // 对应值为1时的颜色（#FF6347，番茄红）
-  ],
-    zmin: 0,  // 设置热图颜色的最小值
-    zmax: 5,  // 设置热图颜色的最大值（对应于最大表达量）
-  };
+    const trace = {
+      x: categories,
+      y: Array.from({ length: 11 }, (_, i) => i),
+      z: heatmapData,
+      type: 'heatmap',
+      colorscale: [
+        [0, 'rgb(255, 255, 255)'],   // 对应值为0时的颜色（#5D74A2）
+        [1, 'rgb(93, 116, 162)']     // 对应值为1时的颜色（#FF6347，番茄红）
+      ],
+      zmin: 0,  // 设置热图颜色的最小值
+      zmax: zmax,  // 设置热图颜色的最大值（对应于最大表达量）
+    };
 
-  Plotly.newPlot('expressionHeatmap', [trace], layout);
-  
+    Plotly.newPlot('expressionHeatmap', [trace], layout);
+
   } catch (error) {
     console.error('Failed to load genes:', error);
   }
@@ -1042,7 +934,9 @@ mergedArray.forEach(item => {
 
 // 更新 UMAP 图2 的点大小
 const updateUmap2 = () => {
-  Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
+  if (isSearchgene.value === true) {
+    Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
+  }
 };
 
 
@@ -1095,13 +989,13 @@ const isenrichmentExpanded1 = ref(false);
 //默认加载第一个细胞类型的差异数据
 //------------------------------------------------------//
 onMounted(() => {
-    const params = new URLSearchParams({
+  const params = new URLSearchParams({
     id: route.params.id,
   });
-  fetch(config.apiUrl+`scd_DEG_CellType.php?${params}`)
+  fetch(config.apiUrl + `scd_DEG_CellType.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
-      cellTypes.value = data; 
+      cellTypes.value = data;
       cellType.value = cellTypes.value[0];
     })
     .catch((error) => {
@@ -1118,11 +1012,11 @@ watch(cellType, async (newcellType) => {
     id: route.params.id,
     cluster: newcellType
   });
-  fetch(config.apiUrl+`scd_getDEG_ByCluster.php?${params}`)
+  fetch(config.apiUrl + `scd_getDEG_ByCluster.php?${params}`)
     .then((response) => response.json())
     .then((data) => {
       //console.log(data);
-      DEGdata.value = data.data; 
+      DEGdata.value = data.data;
       currentPage.value = 1;//回到第一页
     })
     .catch((error) => {
@@ -1143,7 +1037,7 @@ const filteredData = computed(() => {
     // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
     const lowerCaseFilter = filterDEGGenes.value.toLowerCase();
     const lowerCaseItemI = item.i.toLowerCase();
-    
+
     let directionFilter = true;
     if (selectedDirection.value === 'up' && logFoldChange < 0) {
       directionFilter = false;
@@ -1152,9 +1046,9 @@ const filteredData = computed(() => {
     }
 
     return Math.abs(logFoldChange) >= log2fc.value &&
-           adjustedPvalue <= formattedPValue.value &&
-           lowerCaseItemI.includes(lowerCaseFilter)&&
-           directionFilter;
+      adjustedPvalue <= formattedPValue.value &&
+      lowerCaseItemI.includes(lowerCaseFilter) &&
+      directionFilter;
   });
 });
 function handlePageChange(page) {
@@ -1195,7 +1089,7 @@ const nextPage = () => {
   }
 };
 */
-const headers = ['gene name', 'Adjusted p-value', 'Log fold-change','Pct.1','Pct.2'];
+const headers = ['gene name', 'Adjusted p-value', 'Log fold-change', 'Pct.1', 'Pct.2'];
 const download = () => {
   // 创建一个二维数组，每个元素都是表格的一行
   const dataForTable = filteredData.value.map((item) => {
@@ -1209,7 +1103,7 @@ const download = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-"+route.params.id+"-differential_expression.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.id + "-deg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1253,15 +1147,15 @@ function handleSortChange({ prop, order }) {
 
 
 //const isenrichmentExpanded1 = ref(false);定义在差异部分
-
 //const KEGGdata = ref([]);定义在差异部分
+
 const KEGGcurrentPage = ref(1);
 const KEGGitemsPerPage = ref(10);
 
 const filterKEGG = ref('');
 
 const KeggGenes = computed(() => {
-      return filteredData.value.map(item => item.i);
+  return filteredData.value.map(item => item.i);
 });
 
 const loadingKEGG = ref(true);
@@ -1282,6 +1176,7 @@ const getKEGG = (activeNames) => {
     const params = new FormData()
     params.append('genes', genesJson)
     params.append('gene_sets', 'Mouse_GO_2024.gmt')
+    params.append('id', 'route.params.id')
 
     fetch(config.apiUrl + 'enrichment.php', {
       method: 'POST',
@@ -1333,7 +1228,7 @@ const KEGGfilteredData = computed(() => {
     // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
     const lowerCaseFilter = filterKEGG.value.toLowerCase();
     const lowerCaseItemI = item.t.toLowerCase();
-    
+
 
     return lowerCaseItemI.includes(lowerCaseFilter);
   });
@@ -1388,7 +1283,7 @@ const KEGGsortedData = computed(() => {
     for (const path of sortPaths) {
       const valA = getNestedValue(a, path)
       const valB = getNestedValue(b, path)
-      
+
       let res = 0
       if (typeof valA === 'string' && typeof valB === 'string') {
         res = valA.localeCompare(valB)
@@ -1420,7 +1315,7 @@ function handleKEGGSortChange({ prop, order }) {
 //------------------------------------------------------//
 //保存kegg数据为CSV
 //------------------------------------------------------//
-const KEGGheaders = ['Term', 'Adjusted p-value', 'Odds Ratio','Combined Score','Genes'];
+const KEGGheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
 const KEGGdownload = () => {
   // 创建一个二维数组，每个元素都是表格的一行
   const dataForTable = KEGGfilteredData.value.map((item) => {
@@ -1434,7 +1329,7 @@ const KEGGdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-"+route.params.id+"-kegg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.id + "-kegg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1479,6 +1374,11 @@ onMounted(() => {
 const resizeMyChart = () => {
   Plotly.Plots.resize('myClusterChart');
   Plotly.Plots.resize('umap-plot');
+  if (isSearchgene.value === true) {
+    Plotly.Plots.resize('umap-chart-gene');
+    Plotly.Plots.resize('expressionHeatmap');
+  }
+
 };
 
 import { onUnmounted } from 'vue';
@@ -1493,8 +1393,8 @@ onUnmounted(() => {
 @import 'css/MainStyles.css';
 @import 'css/SCDStyles.css';
 
- /* ----------------------------------------------------------- */
-.scroller-wrapper{
-    height: 400px;
+/* ----------------------------------------------------------- */
+.scroller-wrapper {
+  height: 400px;
 }
 </style>
