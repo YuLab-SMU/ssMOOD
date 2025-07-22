@@ -34,11 +34,11 @@
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
                     :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
                     target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
@@ -110,25 +110,24 @@
 
             </div>
             <div class="information-second">
-                <!-- 🔔自定义图例，官方图例会影响图的比例 -->
-                <div class="legend-wrapper">
-                  <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
-                    class="select-all">
-                    全选
+              <!-- 🔔自定义图例，官方图例会影响图的比例 -->
+              <div class="legend-wrapper">
+                <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
+                  class="select-all">
+                  全选
+                </el-checkbox>
+                <el-checkbox-group v-model="visibleLabels" @change="onCheckboxChange" class="legend-group">
+                  <el-checkbox v-for="label in global_clusterLabels" :key="label" :label="label" class="checkbox-item">
+                    <span class="label-box" :style="{
+                      backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
+                      borderColor: colors[label],
+                      color: visibleLabels.includes(label) ? '#fff' : colors[label]
+                    }">
+                      {{ label }}
+                    </span>
                   </el-checkbox>
-                  <el-checkbox-group v-model="visibleLabels" @change="onCheckboxChange" class="legend-group">
-                    <el-checkbox v-for="label in global_clusterLabels" :key="label" :label="label"
-                      class="checkbox-item">
-                      <span class="label-box" :style="{
-                        backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
-                        borderColor: colors[label],
-                        color: visibleLabels.includes(label) ? '#fff' : colors[label]
-                      }">
-                        {{ label }}
-                      </span>
-                    </el-checkbox>
-                  </el-checkbox-group>
-                </div>
+                </el-checkbox-group>
+              </div>
               <div id="myClusterChart" style="width: auto; height: 100%;"></div>
               <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
 
@@ -157,7 +156,7 @@
                     </div>
                     <div class="cell-type">
                       <label>{{ $t('scd28') }}</label>
-                      <el-select v-model="cellType" placeholder="请选择" size="default">
+                      <el-select v-model="cellType" placeholder="" size="default">
                         <el-option v-for="type in cellTypes" :key="type" :label="type" :value="type" />
                       </el-select>
                     </div>
@@ -206,7 +205,7 @@
                     <el-input v-model="filterDEGGenes" :placeholder="$t('scd31')" clearable size="default" />
                     <!-- 表格 -->
                     <div class="table-container">
-                      <el-table :data="paginatedData" @sort-change="handleSortChange" style="width: 100%;"
+                      <el-table :data="paginatedData" v-loading="loadingDEG" @sort-change="handleSortChange" style="width: 100%;"
                         :default-sort="{ prop: sortProp, order: sortOrder }">
                         <el-table-column prop="i" :label="$t('scd33')" sortable="custom">
                           <template #default="{ row }">{{ row.i }}</template>
@@ -245,13 +244,14 @@
               </div>
 
 
-
+              <!--##################################################-->
+              <!--KEGG分析-->
               <el-card class="kegg-card" shadow="never">
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
                   <el-collapse-item :title="$t('scd42')" name="1">
                     <div class="search-container" style="margin-bottom: 12px;">
-                      <el-input v-model="filterKEGG" :placeholder="$t('scd31')" clearable prefix-icon="el-icon-search"
+                      <el-input v-model="filterKEGG" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
                     </div>
 
@@ -312,6 +312,212 @@
                   </el-table>
                 </el-dialog>
               </el-card>
+
+              <!--##################################################-->
+              <!--GO_BP分析-->
+              <el-card class="gobp-card" shadow="never">
+                <!-- 折叠面板头 -->
+                <el-collapse v-model="isenrichmentExpanded2" @change="getGO_BP" accordion>
+                  <el-collapse-item :title="$t('scd52')" name="1">
+                    <div class="search-container" style="margin-bottom: 12px;">
+                      <el-input v-model="filterGOBP" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
+                        size="default" />
+                    </div>
+
+                    <el-table :data="GOBPpaginatedData" v-loading="loadingGOBP" stripe size="default"
+                      style="width: 100%" :default-sort="{ prop: handleGOBPSortChange, order: handleGOBPPageChange }"
+                      @sort-change="handleGOBPSortChange">
+                      <el-table-column prop="t" :label="$t('scd44')" sortable="custom" min-width="400" />
+                      <el-table-column prop="p" :label="$t('scd45')" sortable="custom">
+                        <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="o" :label="$t('scd46')" sortable="custom">
+                        <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="c" :label="$t('scd47')" sortable="custom">
+                        <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column :label="$t('scd48')">
+                        <template #default="{ row }">
+                          <el-button size="mini" type="primary" @click="openGOBPModal(row.g)">
+                            {{ $t('scd49') }}
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <!-- 分页 -->
+                    <div class="pagination"
+                      style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                      <el-pagination background layout="prev, pager, next" :current-page="GOBPcurrentPage"
+                        :page-size="pageSize" :total="GOBPfilteredData.length" @current-change="handleGOBPPageChange"
+                        size="small" />
+                      <el-button size="default" type="primary" @click="GOBPdownload" class="downloadButton">
+                        {{ $t('scd32') }}
+                      </el-button>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
+
+                <!-- 模态框 -->
+                <el-dialog v-model="isGOBPModalOpen" width="50%" :title="$t('scd48')">
+                  <el-table :data="selectedGOBPGene" style="width: 100%" size="default">
+                    <el-table-column :label="$t('scd50')">
+                      <template #default="{ row }">
+                        {{ row }}
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column :label="$t('scd51')">
+                      <template #default="{ row }">
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                          UNIPROT🔗
+                        </el-button>
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                          GENECARDS🔗
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-dialog>
+              </el-card>
+              <!--##################################################-->
+              <!--GO_MF分析-->
+              <el-card class="gomf-card" shadow="never">
+                <!-- 折叠面板头 -->
+                <el-collapse v-model="isenrichmentExpanded3" @change="getGO_MF" accordion>
+                  <el-collapse-item :title="$t('scd54')" name="1">
+                    <div class="search-container" style="margin-bottom: 12px;">
+                      <el-input v-model="filterGOMF" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
+                        size="default" />
+                    </div>
+
+                    <el-table :data="GOMFpaginatedData" v-loading="loadingGOMF" stripe size="default"
+                      style="width: 100%" :default-sort="{ prop: handleGOMFSortChange, order: handleGOMFPageChange }"
+                      @sort-change="handleGOMFSortChange">
+                      <el-table-column prop="t" :label="$t('scd44')" sortable="custom" min-width="400" />
+                      <el-table-column prop="p" :label="$t('scd45')" sortable="custom">
+                        <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="o" :label="$t('scd46')" sortable="custom">
+                        <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="c" :label="$t('scd47')" sortable="custom">
+                        <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column :label="$t('scd48')">
+                        <template #default="{ row }">
+                          <el-button size="mini" type="primary" @click="openGOMFModal(row.g)">
+                            {{ $t('scd49') }}
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <!-- 分页 -->
+                    <div class="pagination"
+                      style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                      <el-pagination background layout="prev, pager, next" :current-page="GOMFcurrentPage"
+                        :page-size="pageSize" :total="GOMFfilteredData.length" @current-change="handleGOMFPageChange"
+                        size="small" />
+                      <el-button size="default" type="primary" @click="GOMFdownload" class="downloadButton">
+                        {{ $t('scd32') }}
+                      </el-button>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
+
+                <!-- 模态框 -->
+                <el-dialog v-model="isGOMFModalOpen" width="50%" :title="$t('scd48')">
+                  <el-table :data="selectedGOMFGene" style="width: 100%" size="default">
+                    <el-table-column :label="$t('scd50')">
+                      <template #default="{ row }">
+                        {{ row }}
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column :label="$t('scd51')">
+                      <template #default="{ row }">
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                          UNIPROT🔗
+                        </el-button>
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                          GENECARDS🔗
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-dialog>
+              </el-card>
+              <!--##################################################-->
+              <!--GO_CC分析-->
+              <el-card class="gocc-card" shadow="never">
+                <!-- 折叠面板头 -->
+                <el-collapse v-model="isenrichmentExpanded4" @change="getGO_CC" accordion>
+                  <el-collapse-item :title="$t('scd55')" name="1">
+                    <div class="search-container" style="margin-bottom: 12px;">
+                      <el-input v-model="filterGOCC" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
+                        size="default" />
+                    </div>
+
+                    <el-table :data="GOCCpaginatedData" v-loading="loadingGOCC" stripe size="default"
+                      style="width: 100%" :default-sort="{ prop: handleGOCCSortChange, order: handleGOCCPageChange }"
+                      @sort-change="handleGOCCSortChange">
+                      <el-table-column prop="t" :label="$t('scd44')" sortable="custom" min-width="400" />
+                      <el-table-column prop="p" :label="$t('scd45')" sortable="custom">
+                        <template #default="{ row }">{{ row.p.toExponential(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="o" :label="$t('scd46')" sortable="custom">
+                        <template #default="{ row }">{{ row.o.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column prop="c" :label="$t('scd47')" sortable="custom">
+                        <template #default="{ row }">{{ row.c.toFixed(3) }}</template>
+                      </el-table-column>
+                      <el-table-column :label="$t('scd48')">
+                        <template #default="{ row }">
+                          <el-button size="mini" type="primary" @click="openGOCCModal(row.g)">
+                            {{ $t('scd49') }}
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <!-- 分页 -->
+                    <div class="pagination"
+                      style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                      <el-pagination background layout="prev, pager, next" :current-page="GOCCcurrentPage"
+                        :page-size="pageSize" :total="GOCCfilteredData.length" @current-change="handleGOCCPageChange"
+                        size="small" />
+                      <el-button size="default" type="primary" @click="GOCCdownload" class="downloadButton">
+                        {{ $t('scd32') }}
+                      </el-button>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
+
+                <!-- 模态框 -->
+                <el-dialog v-model="isGOCCModalOpen" width="50%" :title="$t('scd48')">
+                  <el-table :data="selectedGOCCGene" style="width: 100%" size="default">
+                    <el-table-column :label="$t('scd50')">
+                      <template #default="{ row }">
+                        {{ row }}
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column :label="$t('scd51')">
+                      <template #default="{ row }">
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                          UNIPROT🔗
+                        </el-button>
+                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                          GENECARDS🔗
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-dialog>
+              </el-card>
+
             </div>
           </div>
 
@@ -436,39 +642,39 @@ watch(visibleLabels, (val) => {
 })
 
 const updateGenePlot = () => {
- if(isSearchgene.value===true){
-  const filteredArray = mergedGeneArray.value.filter(item =>
-    visibleLabels.value.includes(item.c)
-  );
+  if (isSearchgene.value === true) {
+    const filteredArray = mergedGeneArray.value.filter(item =>
+      visibleLabels.value.includes(item.c)
+    );
 
-  const categories = [...new Set(filteredArray.map(item => item.c))].sort();
+    const categories = [...new Set(filteredArray.map(item => item.c))].sort();
 
-  const traces = categories.map(category => {
-    const categoryPoints = filteredArray.filter(point => point.c === category);
-    const colors = categoryPoints.map(point => getColor(point.nc));
-    return {
-      x: categoryPoints.map(point => point.u1),
-      y: categoryPoints.map(point => point.u2),
-      mode: 'markers',
-      type: 'scattergl',
-      name: category,
-      marker: {
-        color: colors,
-        size: markerSize2.value,
-      },
-      text: categoryPoints.map(point => `${point.i}<br>${point.nc}`),
+    const traces = categories.map(category => {
+      const categoryPoints = filteredArray.filter(point => point.c === category);
+      const colors = categoryPoints.map(point => getColor(point.nc));
+      return {
+        x: categoryPoints.map(point => point.u1),
+        y: categoryPoints.map(point => point.u2),
+        mode: 'markers',
+        type: 'scattergl',
+        name: category,
+        marker: {
+          color: colors,
+          size: markerSize2.value,
+        },
+        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`),
+      };
+    });
+
+    const genelayout = {
+      showlegend: false,
+      autosize: true,
+      xaxis: { title: 'UMAP1' },
+      yaxis: { title: 'UMAP2' },
     };
-  });
 
-  const genelayout = {
-    showlegend: false,
-    autosize: true,
-    xaxis: { title: 'UMAP1' },
-    yaxis: { title: 'UMAP2' },
-  };
-
-  Plotly.react('umap-chart-gene', traces, genelayout);
- }
+    Plotly.react('umap-chart-gene', traces, genelayout);
+  }
 }
 
 const updatePlot = () => {
@@ -976,11 +1182,14 @@ const formattedPValue = computed(() => {
   return val < 0.001 ? `10^${Math.log10(val).toFixed(0)}` : val.toFixed(3)
 })
 
-
+const loadingDEG = ref(true);
 //----------------------------------
 //基因富集分析部分的变量
 const KEGGdata = ref([]);
 const isenrichmentExpanded1 = ref(false);
+const isenrichmentExpanded2 = ref(false);
+const isenrichmentExpanded3 = ref(false);
+const isenrichmentExpanded4 = ref(false);
 
 //----------------------------------
 
@@ -997,6 +1206,7 @@ onMounted(() => {
     .then((data) => {
       cellTypes.value = data;
       cellType.value = cellTypes.value[0];
+      loadingDEG.value = false;
     })
     .catch((error) => {
       console.error("Failed to load DEGs:", error);
@@ -1007,6 +1217,7 @@ onMounted(() => {
 //检测用户更换细胞类型
 //------------------------------------------------------//
 watch(cellType, async (newcellType) => {
+  loadingDEG.value = true;
   //获取差异数据
   const params = new URLSearchParams({
     id: route.params.id,
@@ -1018,6 +1229,7 @@ watch(cellType, async (newcellType) => {
       //console.log(data);
       DEGdata.value = data.data;
       currentPage.value = 1;//回到第一页
+      loadingDEG.value = false;
     })
     .catch((error) => {
       console.error("Failed to load DEGs:", error);
@@ -1061,6 +1273,12 @@ function handlePageChange(page) {
 watch(filteredData, () => {
   KEGGdata.value = [];
   isenrichmentExpanded1.value = false;
+  GOBPdata.value = [];
+  isenrichmentExpanded2.value = false;
+  GOMFdata.value = [];
+  isenrichmentExpanded3.value = false;
+  GOCCdata.value = [];
+  isenrichmentExpanded4.value = false;
 });
 
 /*
@@ -1141,9 +1359,9 @@ function handleSortChange({ prop, order }) {
   sortOrder.value = order
 }
 
-//###################################//
+//##########################################################################################//
 //KEGG分析
-//###################################//
+//##########################################################################################//
 
 
 //const isenrichmentExpanded1 = ref(false);定义在差异部分
@@ -1175,8 +1393,10 @@ const getKEGG = (activeNames) => {
     const genesJson = JSON.stringify(KeggGenes.value)
     const params = new FormData()
     params.append('genes', genesJson)
-    params.append('gene_sets', 'Mouse_GO_2024.gmt')
-    params.append('id', 'route.params.id')
+    if (dataset.species === "mouse") { params.append('gene_sets', 'KEGG_2019_Mouse.gmt') }
+    else { params.append('gene_sets', 'KEGG_2019_Human.gmt') }
+
+    params.append('id', route.params.id)
 
     fetch(config.apiUrl + 'enrichment.php', {
       method: 'POST',
@@ -1354,17 +1574,432 @@ const closeKeggModal = () => {
   isKeggModalOpen.value = false;
 };
 */
-const openLink = (gene, linkType) => {
-  let url;
-  if (linkType === 'link1') {
-    url = `https://www.uniprot.org/uniprotkb/?query=${gene}`; // 示例链接1
-  } else if (linkType === 'link2') {
-    url = `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${gene}`; // 示例链接2
+
+
+//###############################################################################################//
+// GO_BP 分析
+//###############################################################################################//
+
+const GOBPcurrentPage = ref(1);
+const GOitemsPerPage = ref(10);
+const filterGOBP = ref('');
+const loadingGOBP = ref(false);
+const GOBPdata = ref([]);
+
+const GOGenes = computed(() => {
+  return filteredData.value.map(item => item.i);
+});
+
+//------------------------------------------------------//
+// 向服务器请求 GO BP 数据
+//------------------------------------------------------//
+const getGO_BP = (activeNames) => {
+  const isOpen = activeNames.includes('1');
+  if (!isOpen) {
+    GOBPdata.value = [];
+    loadingGOBP.value = false;
+    return;
   }
-  window.open(url, '_blank'); // 在新标签页中打开链接
+
+  loadingGOBP.value = true;
+  GOBPdata.value = [];
+
+  const genesJson = JSON.stringify(GOGenes.value);
+  const params = new FormData();
+  params.append('genes', genesJson);
+  params.append('gene_sets', 'GO_BP_2018.gmt');
+
+  params.append('id', route.params.id);
+
+  fetch(config.apiUrl + 'enrichment.php', {
+    method: 'POST',
+    body: params
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    })
+    .then(data => {
+      GOBPdata.value = data;
+    })
+    .catch(err => {
+      console.error('Failed to load GO_BP:', err);
+    })
+    .finally(() => {
+      loadingGOBP.value = false;
+    });
+};
+
+//------------------------------------------------------//
+// 搜索过滤
+//------------------------------------------------------//
+const GOBPfilteredData = computed(() => {
+  //GOBPcurrentPage.value = 1;
+  const keyword = filterGOBP.value.toLowerCase();
+  return GOBPdata.value.filter(item => item.t.toLowerCase().includes(keyword));
+});
+
+//------------------------------------------------------//
+// 排序处理
+//------------------------------------------------------//
+const GOBPsortProp = ref('');
+const GOBPsortOrder = ref('');
+
+const GOBPsortedData = computed(() => {
+  if (!GOBPsortProp.value || !GOBPsortOrder.value) return GOBPfilteredData.value;
+
+  const sortPaths = GOBPsortProp.value.split(',').map(s => s.trim());
+  return [...GOBPfilteredData.value].sort((a, b) => {
+    for (const path of sortPaths) {
+      const valA = getNestedValue(a, path);
+      const valB = getNestedValue(b, path);
+      let res = 0;
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        res = valA.localeCompare(valB);
+      } else {
+        res = (valA ?? 0) - (valB ?? 0);
+      }
+      if (res !== 0) {
+        return GOBPsortOrder.value === 'ascending' ? res : -res;
+      }
+    }
+    return 0;
+  });
+});
+
+function handleGOBPSortChange({ prop, order }) {
+  GOBPcurrentPage.value = 1;
+  GOBPsortProp.value = prop;
+  GOBPsortOrder.value = order;
+}
+
+//------------------------------------------------------//
+// 分页
+//------------------------------------------------------//
+const GOBPpaginatedData = computed(() => {
+  const start = (GOBPcurrentPage.value - 1) * GOitemsPerPage.value;
+  const end = start + GOitemsPerPage.value;
+  return GOBPsortedData.value.slice(start, end);
+});
+
+function handleGOBPPageChange(page) {
+  GOBPcurrentPage.value = page;
+}
+
+//------------------------------------------------------//
+// 下载 CSV
+//------------------------------------------------------//
+const GOBPheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
+const GOBPdownload = () => {
+  const dataForTable = GOBPfilteredData.value.map(item => Object.values(item));
+  const csvContent = [GOBPheaders.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
+
+  const link = document.createElement("a");
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+  link.target = "_blank";
+  link.download = "ssMOOD-" + route.params.id + "-gobp.csv";
+  link.click();
+};
+
+//------------------------------------------------------//
+// 模态窗 - 显示基因列表
+//------------------------------------------------------//
+const isGOBPModalOpen = ref(false);
+const selectedGOBPGene = ref([]);
+
+const openGOBPModal = (gene) => {
+  selectedGOBPGene.value = gene.split(';');
+  isGOBPModalOpen.value = true;
 };
 
 
+
+//###############################################################################################//
+// GO_MF 分析
+//###############################################################################################//
+
+const GOMFcurrentPage = ref(1);
+const filterGOMF = ref('');
+const loadingGOMF = ref(false);
+const GOMFdata = ref([]);
+
+/*无需重复定义
+const GOGenes = computed(() => {
+  return filteredData.value.map(item => item.i);
+});
+*/
+//------------------------------------------------------//
+// 向服务器请求 GO MF 数据
+//------------------------------------------------------//
+const getGO_MF = (activeNames) => {
+  const isOpen = activeNames.includes('1');
+  if (!isOpen) {
+    GOMFdata.value = [];
+    loadingGOMF.value = false;
+    return;
+  }
+
+  loadingGOMF.value = true;
+  GOMFdata.value = [];
+
+  const genesJson = JSON.stringify(GOGenes.value);
+  const params = new FormData();
+  params.append('genes', genesJson);
+  params.append('gene_sets', 'GO_MF_2018.gmt');
+
+  params.append('id', route.params.id);
+
+  fetch(config.apiUrl + 'enrichment.php', {
+    method: 'POST',
+    body: params
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    })
+    .then(data => {
+      GOMFdata.value = data;
+    })
+    .catch(err => {
+      console.error('Failed to load GO_MF:', err);
+    })
+    .finally(() => {
+      loadingGOMF.value = false;
+    });
+};
+
+//------------------------------------------------------//
+// 搜索过滤
+//------------------------------------------------------//
+const GOMFfilteredData = computed(() => {
+  //GOMFcurrentPage.value = 1;
+  const keyword = filterGOMF.value.toLowerCase();
+  return GOMFdata.value.filter(item => item.t.toLowerCase().includes(keyword));
+});
+
+//------------------------------------------------------//
+// 排序处理
+//------------------------------------------------------//
+const GOMFsortProp = ref('');
+const GOMFsortOrder = ref('');
+
+const GOMFsortedData = computed(() => {
+  if (!GOMFsortProp.value || !GOMFsortOrder.value) return GOMFfilteredData.value;
+
+  const sortPaths = GOMFsortProp.value.split(',').map(s => s.trim());
+  return [...GOMFfilteredData.value].sort((a, b) => {
+    for (const path of sortPaths) {
+      const valA = getNestedValue(a, path);
+      const valB = getNestedValue(b, path);
+      let res = 0;
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        res = valA.localeCompare(valB);
+      } else {
+        res = (valA ?? 0) - (valB ?? 0);
+      }
+      if (res !== 0) {
+        return GOMFsortOrder.value === 'ascending' ? res : -res;
+      }
+    }
+    return 0;
+  });
+});
+
+function handleGOMFSortChange({ prop, order }) {
+  GOMFcurrentPage.value = 1;
+  GOMFsortProp.value = prop;
+  GOMFsortOrder.value = order;
+}
+
+//------------------------------------------------------//
+// 分页
+//------------------------------------------------------//
+const GOMFpaginatedData = computed(() => {
+  const start = (GOMFcurrentPage.value - 1) * GOitemsPerPage.value;
+  const end = start + GOitemsPerPage.value;
+  return GOMFsortedData.value.slice(start, end);
+});
+
+function handleGOMFPageChange(page) {
+  GOMFcurrentPage.value = page;
+}
+
+//------------------------------------------------------//
+// 下载 CSV
+//------------------------------------------------------//
+const GOMFheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
+const GOMFdownload = () => {
+  const dataForTable = GOMFfilteredData.value.map(item => Object.values(item));
+  const csvContent = [GOMFheaders.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
+
+  const link = document.createElement("a");
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+  link.target = "_blank";
+  link.download = "ssMOOD-" + route.params.id + "-goMF.csv";
+  link.click();
+};
+
+//------------------------------------------------------//
+// 模态窗 - 显示基因列表
+//------------------------------------------------------//
+const isGOMFModalOpen = ref(false);
+const selectedGOMFGene = ref([]);
+
+const openGOMFModal = (gene) => {
+  selectedGOMFGene.value = gene.split(';');
+  isGOMFModalOpen.value = true;
+};
+
+//###############################################################################################//
+// GO_CC 分析
+//###############################################################################################//
+
+const GOCCcurrentPage = ref(1);
+const filterGOCC = ref('');
+const loadingGOCC = ref(false);
+const GOCCdata = ref([]);
+
+/*无需重复定义
+const GOGenes = computed(() => {
+  return filteredData.value.map(item => item.i);
+});
+*/
+//------------------------------------------------------//
+// 向服务器请求 GO CC 数据
+//------------------------------------------------------//
+const getGO_CC = (activeNames) => {
+  const isOpen = activeNames.includes('1');
+  if (!isOpen) {
+    GOCCdata.value = [];
+    loadingGOCC.value = false;
+    return;
+  }
+
+  loadingGOCC.value = true;
+  GOCCdata.value = [];
+
+  const genesJson = JSON.stringify(GOGenes.value);
+  const params = new FormData();
+  params.append('genes', genesJson);
+  params.append('gene_sets', 'GO_CC_2018.gmt');
+
+  params.append('id', route.params.id);
+
+  fetch(config.apiUrl + 'enrichment.php', {
+    method: 'POST',
+    body: params
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    })
+    .then(data => {
+      GOCCdata.value = data;
+    })
+    .catch(err => {
+      console.error('Failed to load GO_CC:', err);
+    })
+    .finally(() => {
+      loadingGOCC.value = false;
+    });
+};
+
+//------------------------------------------------------//
+// 搜索过滤
+//------------------------------------------------------//
+const GOCCfilteredData = computed(() => {
+  //GOCCcurrentPage.value = 1;
+  const keyword = filterGOCC.value.toLowerCase();
+  return GOCCdata.value.filter(item => item.t.toLowerCase().includes(keyword));
+});
+
+//------------------------------------------------------//
+// 排序处理
+//------------------------------------------------------//
+const GOCCsortProp = ref('');
+const GOCCsortOrder = ref('');
+
+const GOCCsortedData = computed(() => {
+  if (!GOCCsortProp.value || !GOCCsortOrder.value) return GOCCfilteredData.value;
+
+  const sortPaths = GOCCsortProp.value.split(',').map(s => s.trim());
+  return [...GOCCfilteredData.value].sort((a, b) => {
+    for (const path of sortPaths) {
+      const valA = getNestedValue(a, path);
+      const valB = getNestedValue(b, path);
+      let res = 0;
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        res = valA.localeCompare(valB);
+      } else {
+        res = (valA ?? 0) - (valB ?? 0);
+      }
+      if (res !== 0) {
+        return GOCCsortOrder.value === 'ascending' ? res : -res;
+      }
+    }
+    return 0;
+  });
+});
+
+function handleGOCCSortChange({ prop, order }) {
+  GOCCcurrentPage.value = 1;
+  GOCCsortProp.value = prop;
+  GOCCsortOrder.value = order;
+}
+
+//------------------------------------------------------//
+// 分页
+//------------------------------------------------------//
+const GOCCpaginatedData = computed(() => {
+  const start = (GOCCcurrentPage.value - 1) * GOitemsPerPage.value;
+  const end = start + GOitemsPerPage.value;
+  return GOCCsortedData.value.slice(start, end);
+});
+
+function handleGOCCPageChange(page) {
+  GOCCcurrentPage.value = page;
+}
+
+//------------------------------------------------------//
+// 下载 CSV
+//------------------------------------------------------//
+const GOCCheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
+const GOCCdownload = () => {
+  const dataForTable = GOCCfilteredData.value.map(item => Object.values(item));
+  const csvContent = [GOCCheaders.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
+
+  const link = document.createElement("a");
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+  link.target = "_blank";
+  link.download = "ssMOOD-" + route.params.id + "-goCC.csv";
+  link.click();
+};
+
+//------------------------------------------------------//
+// 模态窗 - 显示基因列表
+//------------------------------------------------------//
+const isGOCCModalOpen = ref(false);
+const selectedGOCCGene = ref([]);
+
+const openGOCCModal = (gene) => {
+  selectedGOCCGene.value = gene.split(';');
+  isGOCCModalOpen.value = true;
+};
+
+
+
+
+
+//-------所有富集分析共用------------//
+const openLink = (gene, linkType) => {
+  let url;
+  if (linkType === 'link1') {
+    url = `https://www.uniprot.org/uniprotkb/?query=${gene}`;
+  } else if (linkType === 'link2') {
+    url = `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${gene}`;
+  }
+  window.open(url, '_blank');
+};
 
 
 //------

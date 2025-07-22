@@ -336,14 +336,14 @@
   overflow: auto;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
-.kegg-card {
+.kegg-card, .gobp-card, .gomf-card, .gocc-card{
   margin: 0;
-  padding: 20px ;
-  width: calc(90vw + 60px);
+  width: calc(90vw + 100px);
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 20px !important; 
+  margin-top: 20px;
 }
 
 .search-container {
@@ -682,8 +682,21 @@ label {
   
 }
 .legend-wrapper {
-  width: 85%;               /* 40% 页面宽度 */
+  width: 65vw;               /* 40% 页面宽度 */
   height: 40vh;              /* 30% 页面高度 */
 }
-    
+.information-deg-first {
+      display: flex;
+      flex-direction: column; /* 子元素垂直排列 */
+      justify-content: space-between; /* 子元素在主轴方向上分散对齐 */
+      flex-grow: 1; /* 内容区域填充剩余空间 */
+      gap: 20px;
+}
+  .de-analysis {
+  width: 80%;
+  height: 65vh;
+}
+.kegg-card, .gobp-card, .gomf-card, .gocc-card{
+  width: 100%;
+}
 }

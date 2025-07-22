@@ -1,54 +1,70 @@
 <?php
-
 include 'config.php';
 
-$genes = $_POST['genes'] ?? '';
 $gene_sets = $_POST['gene_sets'] ?? '';
-$id = _POST['id'] ?? '';
+$datasetId = $_POST['id'] ?? '';
 
-//'Mouse_GO_2024.gmt'
-
-if (empty($genes) || empty($gene_sets)) {
-    // 参数为空，输出错误消息并结束脚本
-    echo "Error: Both 'genes' and 'gene_sets' parameters are required.";
-    exit(); // 或者使用 die();
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
+    exit;
 }
+
+// 获取 significant_genes（根据你的业务逻辑）
+// 假设 POST 中的 genes 是 JSON 数组
+$significant_genes = json_decode($_POST['genes'] ?? '[]', true);
+
+// 获取背景基因
+$sql = "SELECT g.gene_id FROM genes g JOIN datasets d ON g.study_id = d.study WHERE d.dataset_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $datasetId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$background_genes = [];
+while ($row = $result->fetch_assoc()) {
+    $background_genes[] = $row['gene_id'];
+}
+$stmt->close();
+$conn->close();
+
+// 参数校验
+if (empty($significant_genes) || empty($gene_sets) || empty($background_genes)) {
+    echo "Error: Missing genes, gene_sets or background.";
+    exit();
+}
+
 // 构建JSON数据
-$data = json_encode(['significant_genes' => $genes, 'gene_sets' => $gene_sets]);
+$data = json_encode([
+    'significant_genes' => $significant_genes,
+    'background_genes' => $background_genes,
+    'gene_sets' => $gene_sets
+]);
 
-// 构建命令行命令
+// 运行 Python
 $command = "python3 enrichment.py";
-$descriptorspec = array(
-    0 => array("pipe", "r"),  // 标准输入
-    1 => array("pipe", "w"),  // 标准输出
-    2 => array("pipe", "w")   // 标准错误
-);
-
-// 执行命令
+$descriptorspec = [
+    0 => ["pipe", "r"],
+    1 => ["pipe", "w"],
+    2 => ["pipe", "w"]
+];
 $process = proc_open($command, $descriptorspec, $pipes);
 if (is_resource($process)) {
-    // 写入基因列表到标准输入
     fwrite($pipes[0], $data);
     fclose($pipes[0]);
 
-    // 读取标准输出
     $output = stream_get_contents($pipes[1]);
     fclose($pipes[1]);
 
-    // 读取标准错误
     $errors = stream_get_contents($pipes[2]);
     fclose($pipes[2]);
 
-    // 关闭进程
     proc_close($process);
 
-    // 检查是否有错误
     if ($errors) {
         echo "错误: $errors";
     } else {
-        // 解析并显示结果
-        $results = json_decode($output, true);
-        echo($output);
+        echo $output;
     }
 } else {
     echo "无法执行命令";
