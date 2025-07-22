@@ -30,7 +30,7 @@
     <!-- BA11 -->
     <div class="nav-overlay ba11">
       <span class="nav-label">BA11:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.S')">2Control</button>
+      <button class="nav-btn" @click="goToPage('study1.conditions.S')">22Control</button>
       <button class="nav-btn" @click="goToPage('study1.conditions.3MDD')">3MDD</button>
     </div>
   </div>

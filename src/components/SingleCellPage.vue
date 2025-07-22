@@ -1423,20 +1423,6 @@ const getKEGG = (activeNames) => {
 }
 
 
-//------------------------------------------------------//
-//展开或关闭kegg面板
-//------------------------------------------------------//
-/*
-const enrichment_expand_button1 =() => {
-    isenrichmentExpanded1.value = !isenrichmentExpanded1.value
-    
-    if(isenrichmentExpanded1.value == true){
-        getKEGG();
-    }else{
-        KEGGdata.value = [];
-    }
-}
-*/
 
 
 //------------------------------------------------------//
@@ -1456,13 +1442,6 @@ const KEGGfilteredData = computed(() => {
 //console.log(KEGGfilteredData.value);
 
 
-/*
-const KEGGtotalPages = computed(() => {
-  // 总页数基于筛选后的数据集计算
-  return Math.ceil(KEGGfilteredData.value.length / KEGGitemsPerPage.value);
-});
-*/
-
 const KEGGpaginatedData = computed(() => {
   // 分页应用于筛选后的数据集
   const start = (KEGGcurrentPage.value - 1) * KEGGitemsPerPage.value;
@@ -1470,22 +1449,9 @@ const KEGGpaginatedData = computed(() => {
   return KEGGsortedData.value.slice(start, end);
 });
 
-/*
-const KEGGprevPage = () => {
-  if (KEGGcurrentPage.value > 1) {
-    KEGGcurrentPage.value--;
-  }
-};
 
-const KEGGnextPage = () => {
-  if (KEGGcurrentPage.value < KEGGtotalPages.value) {
-    KEGGcurrentPage.value++;
-  }
-};
-*/
 function handleKEGGPageChange(page) {
-  KEGGcurrentPage.value = page
-  // 你可以在这里重新 slice 数据用于渲染当前页内容
+  KEGGcurrentPage.value = page;
 }
 
 const KEGGsortProp = ref('') // 当前排序字段

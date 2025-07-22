@@ -4,7 +4,6 @@ import 'nprogress/nprogress.css';  // 引入 NProgress 样式
 
 import HomeView from '../components/HomeView.vue';
 import AnalyzePage from '../components/AnalyzePage.vue'; 
-//import BrowsePage from '../components/BrowsePage.vue'; 
 
 
 import SingleCellList from '../components/SingleCellList.vue'; 
@@ -24,7 +23,6 @@ import VisitLogPage from '../components/VisitLogPage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView, meta: { requiresLoading: true } },
-  //{ path: '/browse', name: 'Browse', component: BrowsePage, meta: { requiresLoading: true } },
   { path: '/analyze', name: 'Analyze', component: AnalyzePage, meta: { requiresLoading: true } },
   { path: '/browse/SingleCell', name: 'SingleCellList', component: SingleCellList, meta: { requiresLoading: true } },
   { path: '/browse/SpatialTranscriptome', name: 'SpatialTranscriptomeList', component: STList, meta: { requiresLoading: true } },

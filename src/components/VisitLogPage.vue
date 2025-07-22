@@ -81,15 +81,14 @@ const fetchData = async () => {
   ]
 
   visitors.value = data.visitors
-
   data.mapPoints.forEach(p => {
-    L.circleMarker([p.lat, p.lon], { radius: 5, color: 'red' })
+    L.circleMarker([p.lat, p.lon], { radius: 3, color: 'red' })
       .bindPopup(p.label)
       .addTo(map.value)
   })
 }
 
-onMounted(() => {
+onMounted(async() => {
   map.value = L.map('map', {
   scrollWheelZoom: false
 }).setView([20, 0], 2)
@@ -111,9 +110,16 @@ onMounted(() => {
   }
   disclaimer.addTo(map.value)
 
-  fetchData()
+ await fetchData()
 })
+import { onUnmounted } from 'vue'
 
+onUnmounted(() => {
+  if (map.value) {
+    map.value.remove()
+    map.value = null
+  }
+})
 </script>
 
 <style scoped>

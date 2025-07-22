@@ -27,9 +27,11 @@
             </li>
           </ul>
         </li>
+        <!--
         <li class="nav-item" :class="{ 'active': $route.path === '/analyze' }">
-          <a href="#" @click.prevent="showModal">{{ $t('analyze') }}</a>
+          <router-link to="/analyze">{{ $t('analyze') }}</router-link>
         </li>
+      -->
         <li class="nav-item" :class="{ 'active': $route.path === '/download' }">
           <router-link to="/download">{{ $t('download') }}</router-link>
         </li>
@@ -73,13 +75,7 @@
         </el-select>
       </div>
     </nav>
-      <!-- 模态窗 -->
-<div v-if="isModalVisible" class="modal-overlay" @click="closeModal">
-  <div class="modal" @click.stop>
-    <button @click="closeModal">&times;</button>
-    <p>{{ $t('model') }}</p>
-  </div>
-</div>
+
   </header>
 
 </template>
@@ -138,18 +134,6 @@ const toggleMenu = () => {
 };
 
 
-// 定义模态窗的显示状态
-const isModalVisible = ref(false);
-
-// 显示模态窗的方法
-const showModal = () => {
-  isModalVisible.value = true;
-};
-
-// 关闭模态窗的方法
-const closeModal = () => {
-  isModalVisible.value = false;
-};
 </script>
 
 <style scoped>
@@ -192,7 +176,7 @@ header {
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 0 10px;
 }
 /* 添加active样式 */
 .nav-item.active {
@@ -225,7 +209,7 @@ a {
   padding: 0px;
   background-color: #fff;
   z-index: 2000;
-  top: 90%; /* 父菜单项高度的100% */
+  top: 100%; /* 父菜单项高度的100% */
   left: 0; /* 根据需要调整 */
   transition: opacity 0.3s, visibility 0.3s;
   border: 1px solid #eaeaea;

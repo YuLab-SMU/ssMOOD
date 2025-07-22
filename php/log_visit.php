@@ -37,29 +37,42 @@ function getMaskedIP() {
 
 
 
-// 获取 User-Agent 中的浏览器、设备、操作系统
 function parseUserAgent($ua) {
     $browser = 'Unknown';
     $device = 'Desktop';
     $os = 'Unknown';
 
-    if (preg_match('/Chrome/i', $ua)) $browser = 'Chrome';
+    // 浏览器判断
+    if (preg_match('/Edge/i', $ua)) $browser = 'Edge';
+    elseif (preg_match('/Chrome/i', $ua)) $browser = 'Chrome';
     elseif (preg_match('/Firefox/i', $ua)) $browser = 'Firefox';
     elseif (preg_match('/Safari/i', $ua)) $browser = 'Safari';
-    elseif (preg_match('/Edge/i', $ua)) $browser = 'Edge';
     elseif (preg_match('/MSIE|Trident/i', $ua)) $browser = 'IE';
 
-    if (preg_match('/Android|iPhone|iPad|Mobile/i', $ua)) $device = 'Mobile';
+    // 设备判断
+    if (preg_match('/Mobile|iPhone|Android/i', $ua)) $device = 'Mobile';
 
-    if (preg_match('/Windows NT 10/i', $ua)) $os = 'Windows 10';
-    elseif (preg_match('/Windows NT 6.1/i', $ua)) $os = 'Windows 7';
-    elseif (preg_match('/Mac OS X/i', $ua)) $os = 'macOS';
-    elseif (preg_match('/Android/i', $ua)) $os = 'Android';
-    elseif (preg_match('/iPhone|iPad/i', $ua)) $os = 'iOS';
-    elseif (preg_match('/Linux/i', $ua)) $os = 'Linux';
+    // 操作系统判断（顺序非常关键）
+    if (preg_match('/HarmonyOS/i', $ua)) {
+        $os = 'HarmonyOS';
+    } elseif (preg_match('/iPhone|iPad/i', $ua)) {
+        $os = 'iOS';
+    } elseif (preg_match('/Android/i', $ua)) {
+        $os = 'Android';
+    } elseif (preg_match('/Windows NT 10.0/i', $ua)) {
+        $os = 'Windows 10 / 11'; // 无法进一步区分
+    } elseif (preg_match('/Windows NT 6.1/i', $ua)) {
+        $os = 'Windows 7';
+    } elseif (preg_match('/Mac OS X/i', $ua)) {
+        $os = 'macOS';
+    } elseif (preg_match('/Linux/i', $ua)) {
+        $os = 'Linux';
+    }
 
     return [$browser, $device, $os];
 }
+
+
 
 // 获取地理信息（使用 ip-api.com 免费服务）
 // ⚠️更正部分地名的名称
