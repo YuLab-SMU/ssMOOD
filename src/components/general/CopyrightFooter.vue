@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <router-view />
 
     <!-- 左下角悬浮气泡 -->
     <el-tooltip
