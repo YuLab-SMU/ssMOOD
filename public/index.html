@@ -11,6 +11,8 @@
     <!--  <script src="./ace.js"></script> -->
     <!-- 在 public/index.html 中引入 Plotly -->
     <!--  <script src="./plotly-latest.min.js"></script> -->
+    <link rel="preload" as="image" href="/loading.gif" />
+    <link rel="preload" as="image" href="/ssmood.mov" />
     <style>
         html, body {
             overflow-y: hidden; /* 隐藏垂直滚动条 */
@@ -20,12 +22,60 @@
             padding: 0; /* 移除默认的内边距 */
         }
     </style>
+
   </head>
   <body>
+      <!-- 加载动画（在 Vue 挂载前显示） -->
+  <div id="app-loading">
+    <div class="loading-text">ssMOOD is loading</div>
+    <div class="loading-text2">Initial load may take longer on first use.</div>
+    <div class="loading-text2">This may take a few seconds...</div>
+    <div class="loader"></div>
+  </div>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <style>
+#app-loading {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column; /* 垂直布局 */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.loading-text {
+  font-size: 50px;
+  margin-bottom: 16px;
+  color: rgb(93,116,162);
+}
+.loading-text2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: rgb(93,116,162);
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #cfd0d1;
+  border-top-color: rgb(93,116,162);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+</style>
+
 </html>

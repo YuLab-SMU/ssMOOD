@@ -122,7 +122,23 @@
                       <span>{{ $t('hv6-1') }}</span>
                     </div>
                   </div>
-                  <div id="umap-plot" style="aspect-ratio: 1 / 1;height: auto; width: 95%; "></div>
+                  <!-- UMAP图的容器 -->
+                  <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
+                    <!-- 加载图 -->
+                    <img
+                      v-if="umapLoading"
+                      src="/loading.gif"
+                      alt="Loading"
+                      style="position: absolute; width: 100%; height: 100%; object-fit: contain; z-index: 1;"
+                    />
+
+                    <!-- Plotly 图表容器 -->
+                    <div
+                      id="umap-plot"
+                      :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }"
+                    ></div>
+                  </div>
+
                 </div>
               </el-col>
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
@@ -537,9 +553,10 @@ const renderUmapChart = (index) => {
 
   Plotly.newPlot('umap-plot', traces, layout);
 };
-
+const umapLoading = ref(true)
 // 加载数据
 onMounted(async () => {
+  umapLoading.value = true
   try {
     const response = await fetch(config.apiUrl + 'hv_umap.php');
     const arrayBuffer = await response.arrayBuffer();
@@ -556,6 +573,7 @@ onMounted(async () => {
     };
 
     renderUmapChart(3); // 默认渲染第0张表
+    umapLoading.value = false
   } catch (error) {
     console.error('Error fetching and decompressing UMAP data:', error);
   }

@@ -34,3 +34,7 @@ app.provide('eventBus', eventBus);
 app.use(ElementPlus)
 // 挂载应用
 app.mount('#app');
+window.addEventListener('DOMContentLoaded', () => {
+  const loader = document.getElementById('app-loading')
+  if (loader) loader.style.display = 'none'
+})
