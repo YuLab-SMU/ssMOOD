@@ -53,7 +53,10 @@ $response = json_encode(['umap_data' => $umap_data, 'cluster_labels' => $cluster
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 // 返回 JSON 数据
-header('Content-Type: application/json');
+header('Content-Type: application/octet-stream');
+    // 清除缓冲区并关闭输出缓冲
+ob_clean();
+flush();
 echo $compressed;
 //echo $response;
 ?>

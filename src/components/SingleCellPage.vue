@@ -34,11 +34,11 @@
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                }}</p>
+                  }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                }}</p>
+                  }}</p>
                 <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
                     :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
                     target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
@@ -76,7 +76,17 @@
                     controls-position="default" @change="updateUmap1" />
                 </div>
 
-                <div id="umap-plot" style="width: 100%; aspect-ratio: 1 / 1;"></div>
+                <!-- UMAP图的容器 -->
+                <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
+                  <!-- 加载图 -->
+                  <img v-if="umapLoading" src="/loading.gif" alt="Loading"
+                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
+
+                  <!-- Plotly 图表容器 -->
+                  <div id="umap-plot"
+                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }">
+                  </div>
+                </div>
               </div>
 
               <div class="information-right">
@@ -103,13 +113,22 @@
                   </div>
                 </div>
 
-                <div id="umap-chart-gene" style="width: 100%; aspect-ratio: 1 / 1;"></div>
 
+                <!-- UMAP基因表达量图的容器 -->
+                <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
+                  <!-- 加载图 -->
+                  <img v-if="umapGeneLoading" src="/loading.gif" alt="Loading"
+                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
 
+                  <!-- Plotly 图表容器 -->
+                  <div id="umap-chart-gene"
+                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapGeneLoading ? 'hidden' : 'visible' }">
+                  </div>
+                </div>
               </div>
 
             </div>
-            <div class="information-second">
+            <div class="information-second" id="heatmap-container">
               <!-- 🔔自定义图例，官方图例会影响图的比例 -->
               <div class="legend-wrapper">
                 <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
@@ -129,7 +148,7 @@
                 </el-checkbox-group>
               </div>
               <div id="myClusterChart" style="width: auto; height: 100%;"></div>
-              <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
+              <div id="expressionHeatmap" style="width: auto; height: auto;"></div>
 
             </div>
           </div>
@@ -170,12 +189,12 @@
                         show-tooltip tooltip-class="always-show-tooltip custom-tooltip" style="flex: 1;" />
 
                       <div style="
-                    width: 48px;
-                    text-align: right;
-                    font-size: 14px;
-                    font-weight: bold;
-                    color: #666;
-                  ">
+                        width: 48px;
+                        text-align: right;
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #666;
+                      ">
                         {{ log2fc.toFixed(1) }}
                       </div>
                     </div>
@@ -205,8 +224,8 @@
                     <el-input v-model="filterDEGGenes" :placeholder="$t('scd31')" clearable size="default" />
                     <!-- 表格 -->
                     <div class="table-container">
-                      <el-table :data="paginatedData" v-loading="loadingDEG" @sort-change="handleSortChange" style="width: 100%;"
-                        :default-sort="{ prop: sortProp, order: sortOrder }">
+                      <el-table :data="paginatedData" v-loading="loadingDEG" @sort-change="handleSortChange"
+                        style="width: 100%;" :default-sort="{ prop: sortProp, order: sortOrder }">
                         <el-table-column prop="i" :label="$t('scd33')" sortable="custom">
                           <template #default="{ row }">{{ row.i }}</template>
                         </el-table-column>
@@ -614,6 +633,8 @@ const colors = ref({})
 const isIndeterminate = ref(false)
 const checkAllFlag = ref(true)
 
+const umapLoading = ref(true)
+
 // 全选/全不选
 const toggleAll = () => {
   if (checkAllFlag.value) {
@@ -720,6 +741,7 @@ const updatePlot = () => {
 }
 
 onMounted(() => {
+  umapLoading.value = true
   const params = new URLSearchParams({
     id: route.params.id
   });
@@ -810,6 +832,7 @@ onMounted(() => {
 
 
       Plotly.newPlot('umap-plot', traces, layout);
+      umapLoading.value = false;
 
     })
     .catch(error => console.error('Error fetching UMAP data:', error));
@@ -856,7 +879,7 @@ onMounted(async () => {
 
       // 创建布局
       const layout = {
-        title: 'Num of Cluster',
+        title: 'Cell Counts per Cluster',
         xaxis: {
           title: '',
           tickangle: 45, // 将标签旋转45度
@@ -910,7 +933,9 @@ onMounted(async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
+    const compressed = await response.arrayBuffer();
+    const jsonStr = pako.inflate(new Uint8Array(compressed), { to: 'string' });
+    const data = JSON.parse(jsonStr);
     if (!data || !Array.isArray(data.genes)) {
       throw new Error('Invalid data structure received');
     }
@@ -918,12 +943,8 @@ onMounted(async () => {
       id: index, // 使用数组索引作为 id
       content: gene
     }));
-    //filteredGenes.value = [...genes.value];
-    //virtualItem.value = genes.value.slice(0,genePageSize );
-    //geneCurrentPage.value = 0;
   } catch (error) {
     console.error('Failed to load genes:', error);
-    // 可以在这里处理错误，例如显示错误消息或设置错误状态
   }
 });
 
@@ -966,7 +987,6 @@ const handleBlur = () => {
 
 //-------------------------------------------------------------
 //颜色
-//⚠️修改为渐变色
 //-------------------------------------------------------------
 const maxNc = ref(0)
 
@@ -982,7 +1002,10 @@ const getColor = (value) => {
 
 const isSearchgene = ref(false);
 const mergedGeneArray = ref([]);
+
+const umapGeneLoading = ref(false)
 const searchgene = async () => {
+  umapGeneLoading.value = true
 
   // 请求参数
   const params = new URLSearchParams({
@@ -1034,7 +1057,6 @@ const searchgene = async () => {
     const minLogNC = Math.log10(Math.min(...ncValues));
     const maxLogNC = Math.log10(Math.max(...ncValues));
     const numBins = 11;
-
     const heatmapData = Array.from({ length: numBins }, () =>
       Array(categories.length).fill(0)
     );
@@ -1044,16 +1066,17 @@ const searchgene = async () => {
       if (categoryIndex !== -1 && item.nc > 0) {
         const logNC = Math.log10(item.nc);
 
-        // 修正逻辑：不要 * numBins - 1，而是 * numBins
+        // 归一化
         const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
-        const expressionIndex = Math.floor(normLogNC * numBins);
+        const expressionIndex = Math.floor(normLogNC * (numBins - 1));  // ✅ 修复这里
 
-        // 保证 expressionIndex 落在 0 到 numBins - 1 范围
+        // 边界保护
         const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
 
         heatmapData[safeIndex][categoryIndex]++;
       }
     });
+
 
 
 
@@ -1089,45 +1112,47 @@ const searchgene = async () => {
       },
     };
     Plotly.newPlot('umap-chart-gene', traces, genelayout);
+    umapGeneLoading.value = false;
 
     //-----------绘制热图------------------------
-    const zmax = Math.max(...heatmapData.flat());
-
-    // 绘制热图
+    //各类细胞在不同表达量区间的细胞数量热图
     const layout = {
-
-      title: 'Gene expression heat map(The z axis is the number of cells)',
+      autosize: true,
+      title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
       xaxis: {
         title: '',
+        showgrid: false,
         tickangle: 45, // 将标签旋转45度
         tickmode: 'linear', // 确保标签均匀分布
         tickfont: { size: 6 }, // 调整字体大小
-        tickvals: categories.map((category, index) => index),
+        tickvals: categories.map((index) => index),
         ticktext: categories,
-        scaleanchor: 'y',
       },
       yaxis: {
+        range: [0, numBins - 1],
+        type: 'linear',
+        showgrid: false,
         title: 'Gene expression (log10 scale)',
         tickvals: Array.from({ length: numBins }, (_, i) => i),
         ticktext: Array.from({ length: numBins }, (_, i) => {
           const logVal = minLogNC + (i / (numBins - 1)) * (maxLogNC - minLogNC)
           return Math.pow(10, logVal).toFixed(2)  // 显示原始值
         })
-      }
-
+      },
     };
 
     const trace = {
+      zauto: false,
       x: categories,
-      y: Array.from({ length: 11 }, (_, i) => i),
+      y: Array.from({ length: numBins }, (_, i) => i),
       z: heatmapData,
       type: 'heatmap',
       colorscale: [
-        [0, 'rgb(255, 255, 255)'],   // 对应值为0时的颜色（#5D74A2）
-        [1, 'rgb(93, 116, 162)']     // 对应值为1时的颜色（#FF6347，番茄红）
+        [0.0, 'rgba(220, 220, 220, 0.1)'],  
+        [1.0, 'rgb(93, 116, 162)']           
       ],
       zmin: 0,  // 设置热图颜色的最小值
-      zmax: zmax,  // 设置热图颜色的最大值（对应于最大表达量）
+      zmax: Math.max(...heatmapData.flat()),
     };
 
     Plotly.newPlot('expressionHeatmap', [trace], layout);
@@ -1224,10 +1249,12 @@ watch(cellType, async (newcellType) => {
     cluster: newcellType
   });
   fetch(config.apiUrl + `scd_getDEG_ByCluster.php?${params}`)
-    .then((response) => response.json())
+    .then((response) => response.arrayBuffer())
     .then((data) => {
       //console.log(data);
-      DEGdata.value = data.data;
+      const jsonStr = pako.inflate(new Uint8Array(data), { to: 'string' });
+      const unompressedData = JSON.parse(jsonStr);
+      DEGdata.value = unompressedData.data;
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })
@@ -1454,8 +1481,8 @@ function handleKEGGPageChange(page) {
   KEGGcurrentPage.value = page;
 }
 
-const KEGGsortProp = ref('') // 当前排序字段
-const KEGGsortOrder = ref('') // asc / desc
+const KEGGsortProp = ref('')
+const KEGGsortOrder = ref('')
 
 // 排序计算属性
 const KEGGsortedData = computed(() => {
@@ -1463,7 +1490,7 @@ const KEGGsortedData = computed(() => {
     return KEGGfilteredData.value
   }
 
-  const sortPaths = KEGGsortProp.value.split(',').map(s => s.trim()) // 支持多个排序字段（如 'go_a.go_b, go_c'）
+  const sortPaths = KEGGsortProp.value.split(',').map(s => s.trim())
 
   return [...KEGGfilteredData.value].sort((a, b) => {
     for (const path of sortPaths) {
@@ -1663,7 +1690,7 @@ const GOBPdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-gobp.csv";
+  link.download = "ssMOOD-" + route.params.id + "-goBP.csv";
   link.click();
 };
 
@@ -1825,7 +1852,7 @@ const filterGOCC = ref('');
 const loadingGOCC = ref(false);
 const GOCCdata = ref([]);
 
-/*无需重复定义
+/*无需重复定义，基因列表共用
 const GOGenes = computed(() => {
   return filteredData.value.map(item => item.i);
 });
@@ -1968,7 +1995,7 @@ const openLink = (gene, linkType) => {
 };
 
 
-//------
+//------检测页面的宽度变化------------//
 onMounted(() => {
   window.addEventListener('resize', resizeMyChart);
 });

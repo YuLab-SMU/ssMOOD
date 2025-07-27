@@ -33,7 +33,13 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
-// 将数组编码为JSON格式
-header('Content-Type: application/json');
-echo json_encode(array('genes' => $genes));
+
+$compressed = zlib_encode(json_encode(array('genes' => $genes)), ZLIB_ENCODING_GZIP);
+
+    // 设置适当的 HTTP 头
+header('Content-Type: application/octet-stream');
+    // 清除缓冲区并关闭输出缓冲
+ob_clean();
+flush();
+echo $compressed;
 ?>

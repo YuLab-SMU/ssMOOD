@@ -2,10 +2,12 @@ const path = require('path');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin();
 const webpack = require('webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
     configureWebpack: {
         plugins: [
+            new BundleAnalyzerPlugin(),
                 new GitRevisionPlugin(),
                 new webpack.DefinePlugin({
                 'process.env.VERSION': JSON.stringify(gitRevisionPlugin.version()), // 获取版本号

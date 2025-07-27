@@ -63,7 +63,12 @@ $conn->close();
 // 将数据转换为 JSON 格式
 $response = json_encode(['data' => $deg_data]);
 
+$compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 // 返回 JSON 数据
-header('Content-Type: application/json');
-echo $response;
+    // 设置适当的 HTTP 头
+header('Content-Type: application/octet-stream');
+    // 清除缓冲区并关闭输出缓冲
+ob_clean();
+flush();
+echo $compressed;
 ?>

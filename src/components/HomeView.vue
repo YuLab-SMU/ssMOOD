@@ -125,18 +125,13 @@
                   <!-- UMAP图的容器 -->
                   <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                     <!-- 加载图 -->
-                    <img
-                      v-if="umapLoading"
-                      src="/loading.gif"
-                      alt="Loading"
-                      style="position: absolute; width: 100%; height: 100%; object-fit: contain; z-index: 1;"
-                    />
+                    <img v-if="umapLoading" src="/loading.gif" alt="Loading"
+                      style="position: absolute;inset: 0;margin: auto;width: 80% ;height: 80% ;object-fit: contain;z-index: 1;" />
 
                     <!-- Plotly 图表容器 -->
-                    <div
-                      id="umap-plot"
-                      :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }"
-                    ></div>
+                    <div id="hv-umap-plot"
+                      :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }">
+                    </div>
                   </div>
 
                 </div>
@@ -551,7 +546,7 @@ const renderUmapChart = (index) => {
     plot_bgcolor: 'rgba(0,0,0,0)',
   };
 
-  Plotly.newPlot('umap-plot', traces, layout);
+  Plotly.newPlot('hv-umap-plot', traces, layout);
 };
 const umapLoading = ref(true)
 // 加载数据
@@ -587,7 +582,7 @@ const resizeMyChart = () => {
   Plotly.Plots.resize('myClusterChart');
   Plotly.Plots.resize('genderChart');
   Plotly.Plots.resize('genderChart2');
-  Plotly.Plots.resize('umap-plot');
+  Plotly.Plots.resize('hv-umap-plot');
 };
 
 import { onUnmounted } from 'vue';
