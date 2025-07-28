@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import { createI18n } from 'vue-i18n'; 
+import { createI18n } from 'vue-i18n';
 import en from './locales/en.json';
 import zhCn from './locales/zh-cn.json';
 import zhTw from './locales/zh-tw.json';
@@ -14,7 +14,9 @@ import './styles/element-theme.css'
 
 // 创建国际化实例
 const i18n = createI18n({
-  locale: 'zh1', // 设置默认语言，注意这里的键应该是字符串
+  locale: 'zh1',
+  legacy: false,
+  globalInjection: true,
   messages: {
     en,
     'zh1': zhCn,

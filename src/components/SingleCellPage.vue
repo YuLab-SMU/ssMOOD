@@ -73,7 +73,7 @@
                 <div class="marker-size-control">
                   <span class="label">{{ $t('scd22') }}:</span>
                   <el-input-number v-model="markerSize1" :min="1" :max="100" :step="1" size="small"
-                    controls-position="default" @change="updateUmap1" />
+                    controls-position="" @change="updateUmap1" />
                 </div>
 
                 <!-- UMAP图的容器 -->
@@ -92,7 +92,7 @@
               <div class="information-right">
                 <h1>{{ $t('scd23') }}</h1>
                 <div class="gene-search-con">
-                  <el-input v-model="searchQuery" :placeholder="$t('scd24')" @input="filterGenes"
+                  <el-input v-model="searchQuery" :placeholder="$t('scd24')"
                     @focus="showScroller = true" @blur="handleBlur" class="search-gene-input" clearable size="default">
                     <template #append>
                       <el-button @click="searchgene" type="primary">
@@ -109,7 +109,7 @@
                   <div class="marker-size-control">
                     <span class="label">{{ $t('scd22') }}:</span>
                     <el-input-number v-model="markerSize2" :min="1" :max="100" :step="1" size="small"
-                      controls-position="default" @change="updateUmap2" />
+                      controls-position="" @change="updateUmap2" />
                   </div>
                 </div>
 
@@ -128,7 +128,7 @@
               </div>
 
             </div>
-            <div class="information-second" id="heatmap-container">
+            <div class="information-second">
               <!-- 🔔自定义图例，官方图例会影响图的比例 -->
               <div class="legend-wrapper">
                 <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
@@ -136,7 +136,7 @@
                   全选
                 </el-checkbox>
                 <el-checkbox-group v-model="visibleLabels" @change="onCheckboxChange" class="legend-group">
-                  <el-checkbox v-for="label in global_clusterLabels" :key="label" :label="label" class="checkbox-item">
+                  <el-checkbox v-for="label in global_clusterLabels" :key="label" :value="label" class="checkbox-item">
                     <span class="label-box" :style="{
                       backgroundColor: visibleLabels.includes(label) ? colors[label] : 'transparent',
                       borderColor: colors[label],
@@ -210,9 +210,9 @@
                       <label class="font-semibold text-gray-700 mr-4">{{ $t('scd30-1') }}</label>
 
                       <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
-                        <el-radio-button label="all">All</el-radio-button>
-                        <el-radio-button label="up">UP</el-radio-button>
-                        <el-radio-button label="down">Down</el-radio-button>
+                        <el-radio-button value="all">All</el-radio-button>
+                        <el-radio-button value="up">UP</el-radio-button>
+                        <el-radio-button value="down">Down</el-radio-button>
                       </el-radio-group>
                     </div>
                   </div>
@@ -250,7 +250,7 @@
                         <!-- 翻页 -->
                         <div class="left-section">
                           <el-pagination layout="prev, pager, next" :current-page="currentPage" :page-size="pageSize"
-                            :total="filteredData.length" @current-change="handlePageChange" small background
+                            :total="filteredData.length" @current-change="handlePageChange" size="small" background
                             class="page-pagination" />
                         </div>
 
@@ -289,7 +289,7 @@
                       </el-table-column>
                       <el-table-column :label="$t('scd48')">
                         <template #default="{ row }">
-                          <el-button size="mini" type="primary" @click="openKeggModal(row.g)">
+                          <el-button size="small" type="primary" @click="openKeggModal(row.g)">
                             {{ $t('scd49') }}
                           </el-button>
                         </template>
@@ -358,7 +358,7 @@
                       </el-table-column>
                       <el-table-column :label="$t('scd48')">
                         <template #default="{ row }">
-                          <el-button size="mini" type="primary" @click="openGOBPModal(row.g)">
+                          <el-button size="small" type="primary" @click="openGOBPModal(row.g)">
                             {{ $t('scd49') }}
                           </el-button>
                         </template>
@@ -426,7 +426,7 @@
                       </el-table-column>
                       <el-table-column :label="$t('scd48')">
                         <template #default="{ row }">
-                          <el-button size="mini" type="primary" @click="openGOMFModal(row.g)">
+                          <el-button size="small" type="primary" @click="openGOMFModal(row.g)">
                             {{ $t('scd49') }}
                           </el-button>
                         </template>
@@ -494,7 +494,7 @@
                       </el-table-column>
                       <el-table-column :label="$t('scd48')">
                         <template #default="{ row }">
-                          <el-button size="mini" type="primary" @click="openGOCCModal(row.g)">
+                          <el-button size="small" type="primary" @click="openGOCCModal(row.g)">
                             {{ $t('scd49') }}
                           </el-button>
                         </template>
@@ -999,11 +999,14 @@ const getColor = (value) => {
   return `hsl(${h}, ${s}%, ${l}%)`;
 };
 
-
+//-------------------------------------------------------------
+//获取基因表达量
+//-------------------------------------------------------------
 const isSearchgene = ref(false);
 const mergedGeneArray = ref([]);
 
 const umapGeneLoading = ref(false)
+
 const searchgene = async () => {
   umapGeneLoading.value = true
 
@@ -1024,8 +1027,6 @@ const searchgene = async () => {
     const data = new TextDecoder('utf-8').decode(decompressed);
     const jsonData = JSON.parse(data);
     isSearchgene.value = true;
-    visibleLabels.value = [...global_clusterLabels.value];
-    updatePlot();
     // 合并数据
     const ncMap = jsonData.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
@@ -1043,8 +1044,11 @@ const searchgene = async () => {
     const categories = [...new Set(mergedArray.map(item => item.c))];
     categories.sort();
 
-    // 1. 计算最大值
-    maxNc.value = Math.max(...mergedArray.map(item => item.nc));
+    // 安全计算最大值
+    maxNc.value = mergedArray.reduce(
+      (max, item) => (item.nc > max ? item.nc : max),
+      -Infinity
+    );
     //-----------创建热图信息------------------------
     /*
     const numCategories = categories.length;
@@ -1179,6 +1183,8 @@ const group = ref('cellTypeSpecificGenes');
 const cellTypes = ref([]);
 const cellType = ref('');
 const log2fc = ref(0);
+
+const pageSize = ref(10);
 //const pvalue = ref(5);
 const selectedDirection = ref('all');
 
@@ -1211,10 +1217,10 @@ const loadingDEG = ref(true);
 //----------------------------------
 //基因富集分析部分的变量
 const KEGGdata = ref([]);
-const isenrichmentExpanded1 = ref(false);
-const isenrichmentExpanded2 = ref(false);
-const isenrichmentExpanded3 = ref(false);
-const isenrichmentExpanded4 = ref(false);
+const isenrichmentExpanded1 = ref("");
+const isenrichmentExpanded2 = ref("");
+const isenrichmentExpanded3 = ref("");
+const isenrichmentExpanded4 = ref("");
 
 //----------------------------------
 
@@ -1299,13 +1305,13 @@ function handlePageChange(page) {
 //------------------------------------------------------
 watch(filteredData, () => {
   KEGGdata.value = [];
-  isenrichmentExpanded1.value = false;
+  isenrichmentExpanded1.value = "";
   GOBPdata.value = [];
-  isenrichmentExpanded2.value = false;
+  isenrichmentExpanded2.value = "";
   GOMFdata.value = [];
-  isenrichmentExpanded3.value = false;
+  isenrichmentExpanded3.value = "";
   GOCCdata.value = [];
-  isenrichmentExpanded4.value = false;
+  isenrichmentExpanded4.value = "";
 });
 
 /*

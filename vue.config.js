@@ -7,9 +7,14 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 module.exports = {
     configureWebpack: {
         plugins: [
+            new webpack.DefinePlugin({
+                __VUE_OPTIONS_API__: JSON.stringify(true),
+                __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+                __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
+            }),
             new BundleAnalyzerPlugin(),
-                new GitRevisionPlugin(),
-                new webpack.DefinePlugin({
+            new GitRevisionPlugin(),
+            new webpack.DefinePlugin({
                 'process.env.VERSION': JSON.stringify(gitRevisionPlugin.version()), // 获取版本号
                 'process.env.COMMITHASH': JSON.stringify(gitRevisionPlugin.commithash()), // 获取提交哈希
                 'process.env.BRANCH': JSON.stringify(gitRevisionPlugin.branch()), // 获取分支名
@@ -18,7 +23,7 @@ module.exports = {
     },
     parallel: false,
     transpileDependencies: [
-            'vuetify'
+        'vuetify'
     ],
     chainWebpack: (config) => {
         config.resolve.alias.set('vue', 'vue');
@@ -26,10 +31,10 @@ module.exports = {
             .rule('vue')
             .use('vue-loader')
             .tap((options) => {
-            return {
+                return {
                     ...options,
-            };
-        });
+                };
+            });
     },
     publicPath: "./",
 };

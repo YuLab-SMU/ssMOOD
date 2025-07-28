@@ -13,7 +13,6 @@ header('Content-Type: application/json');
 $servername = "localhost";
 
 
-
 /*
 /etc/ssmood/db.php示例：
 <?php
