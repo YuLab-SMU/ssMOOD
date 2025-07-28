@@ -34,11 +34,11 @@
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
                     :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
                     target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
@@ -72,8 +72,8 @@
 
                 <div class="marker-size-control">
                   <span class="label">{{ $t('scd22') }}:</span>
-                  <el-input-number v-model="markerSize1" :min="1" :max="100" :step="1" size="small"
-                    controls-position="" @change="updateUmap1" />
+                  <el-input-number v-model="markerSize1" :min="1" :max="100" :step="1" size="small" controls-position=""
+                    @change="updateUmap1" />
                 </div>
 
                 <!-- UMAP图的容器 -->
@@ -92,8 +92,8 @@
               <div class="information-right">
                 <h1>{{ $t('scd23') }}</h1>
                 <div class="gene-search-con">
-                  <el-input v-model="searchQuery" :placeholder="$t('scd24')"
-                    @focus="showScroller = true" @blur="handleBlur" class="search-gene-input" clearable size="default">
+                  <el-input v-model="searchQuery" :placeholder="$t('scd24')" @focus="showScroller = true"
+                    @blur="handleBlur" class="search-gene-input" clearable size="default">
                     <template #append>
                       <el-button @click="searchgene" type="primary">
                         {{ $t('scd21button') }}
@@ -1008,162 +1008,165 @@ const mergedGeneArray = ref([]);
 const umapGeneLoading = ref(false)
 
 const searchgene = async () => {
-  umapGeneLoading.value = true
+  if (umapLoading.value === false) {
+    umapGeneLoading.value = true
 
-  // 请求参数
-  const params = new URLSearchParams({
-    id: route.params.id,
-    gene: searchQuery.value
-  });
-
-  try {
-    const response = await fetch(config.apiUrl + `scd_getGeneExpression_bin.php?${params}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const compressed = new Uint8Array(await response.arrayBuffer());
-    const decompressed = pako.ungzip(compressed); // 使用pako解压
-
-    const data = new TextDecoder('utf-8').decode(decompressed);
-    const jsonData = JSON.parse(data);
-    isSearchgene.value = true;
-    // 合并数据
-    const ncMap = jsonData.reduce((acc, item) => {
-      acc[item.i] = parseFloat(item.nc) || 0;
-      return acc;
-    }, {});
-
-    // 合并数组
-    const mergedArray = umapData.value.map(item => {
-      item.nc = ncMap[item.i] || 0;
-      return item;
+    // 请求参数
+    const params = new URLSearchParams({
+      id: route.params.id,
+      gene: searchQuery.value
     });
-    mergedGeneArray.value = mergedArray;
-    //console.log(mergedGeneArray.value);
-    // 分类信息
-    const categories = [...new Set(mergedArray.map(item => item.c))];
-    categories.sort();
 
-    // 安全计算最大值
-    maxNc.value = mergedArray.reduce(
-      (max, item) => (item.nc > max ? item.nc : max),
-      -Infinity
-    );
-    //-----------创建热图信息------------------------
-    /*
-    const numCategories = categories.length;
-
-    const heatmapData = Array.from({ length: 11 }, () =>
-      Array.from({ length: numCategories }, () => 0)
-    );
-    */
-    const ncValues = mergedArray.map(item => item.nc).filter(n => n > 0);
-    const minLogNC = Math.log10(Math.min(...ncValues));
-    const maxLogNC = Math.log10(Math.max(...ncValues));
-    const numBins = 11;
-    const heatmapData = Array.from({ length: numBins }, () =>
-      Array(categories.length).fill(0)
-    );
-
-    mergedArray.forEach(item => {
-      const categoryIndex = categories.indexOf(item.c);
-      if (categoryIndex !== -1 && item.nc > 0) {
-        const logNC = Math.log10(item.nc);
-
-        // 归一化
-        const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
-        const expressionIndex = Math.floor(normLogNC * (numBins - 1));  // ✅ 修复这里
-
-        // 边界保护
-        const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
-
-        heatmapData[safeIndex][categoryIndex]++;
+    try {
+      const response = await fetch(config.apiUrl + `scd_getGeneExpression_bin.php?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    });
+      const compressed = new Uint8Array(await response.arrayBuffer());
+      const decompressed = pako.ungzip(compressed); // 使用pako解压
+
+      const data = new TextDecoder('utf-8').decode(decompressed);
+      const jsonData = JSON.parse(data);
+      isSearchgene.value = true;
+      // 合并数据
+      const ncMap = jsonData.reduce((acc, item) => {
+        acc[item.i] = parseFloat(item.nc) || 0;
+        return acc;
+      }, {});
+
+      // 合并数组
+      const mergedArray = umapData.value.map(item => {
+        item.nc = ncMap[item.i] || 0;
+        return item;
+      });
+      mergedGeneArray.value = mergedArray;
+      //console.log(mergedGeneArray.value);
+      // 分类信息
+      const categories = [...new Set(mergedArray.map(item => item.c))];
+      categories.sort();
+
+      // 安全计算最大值
+      maxNc.value = mergedArray.reduce(
+        (max, item) => (item.nc > max ? item.nc : max),
+        -Infinity
+      );
+      //-----------创建热图信息------------------------
+      /*
+      const numCategories = categories.length;
+  
+      const heatmapData = Array.from({ length: 11 }, () =>
+        Array.from({ length: numCategories }, () => 0)
+      );
+      */
+      const ncValues = mergedArray.map(item => item.nc).filter(n => n > 0);
+      const minLogNC = Math.log10(Math.min(...ncValues));
+      const maxLogNC = Math.log10(Math.max(...ncValues));
+      const numBins = 11;
+      const heatmapData = Array.from({ length: numBins }, () =>
+        Array(categories.length).fill(0)
+      );
+
+      mergedArray.forEach(item => {
+        const categoryIndex = categories.indexOf(item.c);
+        if (categoryIndex !== -1 && item.nc > 0) {
+          const logNC = Math.log10(item.nc);
+
+          // 归一化
+          const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
+          const expressionIndex = Math.floor(normLogNC * (numBins - 1));  // ✅ 修复这里
+
+          // 边界保护
+          const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
+
+          heatmapData[safeIndex][categoryIndex]++;
+        }
+      });
 
 
 
 
-    //------------------------------------------------------
-    //‼️ 按分类信息创建轨迹
-    //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅😊。
-    //------------------------------------------------------
-    const traces = categories.map(category => {
-      const categoryPoints = mergedArray.filter(point => point.c === category);
+      //------------------------------------------------------
+      //‼️ 按分类信息创建轨迹
+      //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅😊。
+      //------------------------------------------------------
+      const traces = categories.map(category => {
+        const categoryPoints = mergedArray.filter(point => point.c === category);
 
-      const colors = categoryPoints.map(point => getColor(point.nc));
-      return {
-        x: categoryPoints.map(point => point.u1),
-        y: categoryPoints.map(point => point.u2),
-        mode: 'markers',
-        type: 'scattergl',
-        name: category,
-        marker: {
-          color: colors,
-          size: markerSize2.value,
+        const colors = categoryPoints.map(point => getColor(point.nc));
+        return {
+          x: categoryPoints.map(point => point.u1),
+          y: categoryPoints.map(point => point.u2),
+          mode: 'markers',
+          type: 'scattergl',
+          name: category,
+          marker: {
+            color: colors,
+            size: markerSize2.value,
+          },
+          text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
+        };
+      });
+      const genelayout = {
+        showlegend: false,
+        autosize: true, // 自动适配容器大小
+        xaxis: {
+          title: 'UMAP1',
         },
-        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
+        yaxis: {
+          title: 'UMAP2',
+        },
       };
-    });
-    const genelayout = {
-      showlegend: false,
-      autosize: true, // 自动适配容器大小
-      xaxis: {
-        title: 'UMAP1',
-      },
-      yaxis: {
-        title: 'UMAP2',
-      },
-    };
-    Plotly.newPlot('umap-chart-gene', traces, genelayout);
-    umapGeneLoading.value = false;
+      Plotly.newPlot('umap-chart-gene', traces, genelayout);
+      umapGeneLoading.value = false;
 
-    //-----------绘制热图------------------------
-    //各类细胞在不同表达量区间的细胞数量热图
-    const layout = {
-      autosize: true,
-      title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
-      xaxis: {
-        title: '',
-        showgrid: false,
-        tickangle: 45, // 将标签旋转45度
-        tickmode: 'linear', // 确保标签均匀分布
-        tickfont: { size: 6 }, // 调整字体大小
-        tickvals: categories.map((index) => index),
-        ticktext: categories,
-      },
-      yaxis: {
-        range: [0, numBins - 1],
-        type: 'linear',
-        showgrid: false,
-        title: 'Gene expression (log10 scale)',
-        tickvals: Array.from({ length: numBins }, (_, i) => i),
-        ticktext: Array.from({ length: numBins }, (_, i) => {
-          const logVal = minLogNC + (i / (numBins - 1)) * (maxLogNC - minLogNC)
-          return Math.pow(10, logVal).toFixed(2)  // 显示原始值
-        })
-      },
-    };
+      //-----------绘制热图------------------------
+      //各类细胞在不同表达量区间的细胞数量热图
+      const layout = {
+        autosize: true,
+        title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
+        xaxis: {
+          title: '',
+          showgrid: false,
+          tickangle: 45, // 将标签旋转45度
+          tickmode: 'linear', // 确保标签均匀分布
+          tickfont: { size: 6 }, // 调整字体大小
+          tickvals: categories.map((index) => index),
+          ticktext: categories,
+        },
+        yaxis: {
+          range: [0, numBins - 1],
+          type: 'linear',
+          showgrid: false,
+          title: 'Gene expression (log10 scale)',
+          tickvals: Array.from({ length: numBins }, (_, i) => i),
+          ticktext: Array.from({ length: numBins }, (_, i) => {
+            const logVal = minLogNC + (i / (numBins - 1)) * (maxLogNC - minLogNC)
+            return Math.pow(10, logVal).toFixed(2)  // 显示原始值
+          })
+        },
+      };
 
-    const trace = {
-      zauto: false,
-      x: categories,
-      y: Array.from({ length: numBins }, (_, i) => i),
-      z: heatmapData,
-      type: 'heatmap',
-      colorscale: [
-        [0.0, 'rgba(220, 220, 220, 0.1)'],  
-        [1.0, 'rgb(93, 116, 162)']           
-      ],
-      zmin: 0,  // 设置热图颜色的最小值
-      zmax: Math.max(...heatmapData.flat()),
-    };
+      const trace = {
+        zauto: false,
+        x: categories,
+        y: Array.from({ length: numBins }, (_, i) => i),
+        z: heatmapData,
+        type: 'heatmap',
+        colorscale: [
+          [0.0, 'rgba(220, 220, 220, 0.1)'],
+          [1.0, 'rgb(93, 116, 162)']
+        ],
+        zmin: 0,  // 设置热图颜色的最小值
+        zmax: Math.max(...heatmapData.flat()),
+      };
 
-    Plotly.newPlot('expressionHeatmap', [trace], layout);
+      Plotly.newPlot('expressionHeatmap', [trace], layout);
 
-  } catch (error) {
-    console.error('Failed to load genes:', error);
+    } catch (error) {
+      console.error('Failed to load genes:', error);
+    }
   }
+
 
 };
 
@@ -2018,8 +2021,14 @@ const resizeMyChart = () => {
 import { onUnmounted } from 'vue';
 onUnmounted(() => {
   window.removeEventListener('resize', resizeMyChart);
+  genes.value = [];
+  umapData.value = [];
+  mergedGeneArray.value = [];
+  KEGGdata.value = [];
+  GOBPdata.value = [];
+  GOMFdata.value = [];
+  GOCCdata.value = [];
 });
-
 
 </script>
 
