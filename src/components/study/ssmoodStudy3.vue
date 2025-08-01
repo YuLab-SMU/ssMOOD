@@ -9,29 +9,29 @@
     <!-- BA9 -->
     <div class="nav-overlay ba9">
       <span class="nav-label">BA9:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.C')">16Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.17MDD')">17MDD</button>
+      <button class="nav-btn" @click="goToPage('study3.BA9.Control')">16Control</button>
+      <button class="nav-btn" @click="goToPage('study3.BA9.MDD')">17MDD</button>
     </div>
 
     <!-- BA46 -->
     <div class="nav-overlay ba46">
       <span class="nav-label">BA46:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.3D')">2Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.2MDD')">2MDD</button>
+      <button class="nav-btn" @click="goToPage('study3.BA46.Control')">2Control</button>
+      <button class="nav-btn" @click="goToPage('study3.BA46.MDD')">2MDD</button>
     </div>
 
     <!-- BA12 -->
     <div class="nav-overlay ba12">
       <span class="nav-label">BA12:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.7D')">2Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.2MDD')">2MDD</button>
+      <button class="nav-btn" @click="goToPage('study3.BA12.Control')">2Control</button>
+      <button class="nav-btn" @click="goToPage('study3.BA12.MDD')">2MDD</button>
     </div>
 
     <!-- BA11 -->
     <div class="nav-overlay ba11">
       <span class="nav-label">BA11:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.S')">22Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.3MDD')">3MDD</button>
+      <button class="nav-btn" @click="goToPage('study3.BA11.Control')">22Control</button>
+      <button class="nav-btn" @click="goToPage('study3.BA11.MDD')">3MDD</button>
     </div>
   </div>
 </template>

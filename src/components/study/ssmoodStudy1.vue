@@ -3,7 +3,7 @@
     <div class="image-container">
       <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
       <!-- 按钮 1 -->
-      <button class="navigation-button button-1" @click="goToPage('study1.conditions.C')">
+      <button class="navigation-button button-1" @click="goToPage('study1.conditions.0D')">
         0Day(Control)
       </button>
       <!-- 按钮 2 -->
@@ -24,23 +24,23 @@
       </button>
       
         <!-- 按钮 6 -->
-      <button class="navigation-button button-6" @click="goToPage('mPFC')">
+      <button class="navigation-button button-6" @click="goToPage('study1.area.I')">
         I
       </button>
         <!-- 按钮 7 -->
-      <button class="navigation-button button-7" @click="goToPage('Stri')">
+      <button class="navigation-button button-7" @click="goToPage('study1.area.II')">
         II
       </button>
         <!-- 按钮 8 -->
-      <button class="navigation-button button-8" @click="goToPage('HIP')">
+      <button class="navigation-button button-8" @click="goToPage('study1.area.III')">
         III
       </button>
         <!-- 按钮 9 -->
-      <button class="navigation-button button-9" @click="goToPage('VTA')">
+      <button class="navigation-button button-9" @click="goToPage('study1.area.IV')">
         IV
       </button>
         <!-- 按钮 10 -->
-      <button class="navigation-button button-10" @click="goToPage('DRN')">
+      <button class="navigation-button button-10" @click="goToPage('study1.area.V')">
         V
       </button>
     </div>

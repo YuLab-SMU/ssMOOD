@@ -104,7 +104,7 @@
               <div class="legend-wrapper">
                 <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
                   class="select-all">
-                  全选
+                  {{ $t('scd22-1') }}
                 </el-checkbox>
                 <el-checkbox-group v-model="visibleLabels" @change="onCheckboxChange" class="legend-group">
                   <el-checkbox v-for="label in global_clusterLabels" :key="label" :value="label" class="checkbox-item">
@@ -294,10 +294,10 @@
 
                     <el-table-column :label="$t('scd51')">
                       <template #default="{ row }">
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link1')">
                           UNIPROT🔗
                         </el-button>
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link2')">
                           GENECARDS🔗
                         </el-button>
                       </template>
@@ -363,10 +363,10 @@
 
                     <el-table-column :label="$t('scd51')">
                       <template #default="{ row }">
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link1')">
                           UNIPROT🔗
                         </el-button>
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link2')">
                           GENECARDS🔗
                         </el-button>
                       </template>
@@ -431,10 +431,10 @@
 
                     <el-table-column :label="$t('scd51')">
                       <template #default="{ row }">
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link1')">
                           UNIPROT🔗
                         </el-button>
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link2')">
                           GENECARDS🔗
                         </el-button>
                       </template>
@@ -499,10 +499,10 @@
 
                     <el-table-column :label="$t('scd51')">
                       <template #default="{ row }">
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link1')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link1')">
                           UNIPROT🔗
                         </el-button>
-                        <el-button type="text" size="small" @click="openLink(row.name, 'link2')">
+                        <el-button type="text" size="small" @click="openLink(row, 'link2')">
                           GENECARDS🔗
                         </el-button>
                       </template>
