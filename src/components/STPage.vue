@@ -205,7 +205,7 @@
                         </el-table-column>
 
                         <el-table-column prop="f" :label="$t('scd34')" sortable="custom" min-width="100">
-                          <template #default="{ row }">{{ row.f.toFixed(6) }}</template>
+                          <template #default="{ row }">{{ row.fc.toFixed(6) }}</template>
                         </el-table-column>
 
                         <el-table-column prop="t1" :label="$t('scd35')" sortable="custom">
@@ -1180,10 +1180,11 @@ watch(cellType, async (newcellType) => {
   });
   fetch(config.apiUrl + `std_getDEG_ByCluster.php?${params}`)
     .then((response) => response.arrayBuffer())
-    .then((data) => {
-      const jsonStr = pako.inflate(new Uint8Array(data), { to: 'string' });
-      const unompressedData = JSON.parse(jsonStr);
-      DEGdata.value = unompressedData.data;
+    .then((arrayBuffer) => {
+      const compressed = new Uint8Array(arrayBuffer);
+      const decompressed = pako.ungzip(compressed); // 使用 pako 解压
+      const jsonString = new TextDecoder('utf-8').decode(decompressed);
+      DEGdata.value = JSON.parse(jsonString); 
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })
@@ -1200,7 +1201,7 @@ watch(cellType, async (newcellType) => {
 const filteredData = computed(() => {
   return DEGdata.value.filter(item => {
     currentPage.value = 1;
-    const logFoldChange = parseFloat(item.f);
+    const logFoldChange = parseFloat(item.fc);
     const adjustedPvalue = parseFloat(item.a);
     // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
     const lowerCaseFilter = filterDEGGenes.value.toLowerCase();

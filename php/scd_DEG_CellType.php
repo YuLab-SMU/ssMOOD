@@ -20,9 +20,9 @@ if (empty($datasetId)) {
     exit;
 }
 
-$sql = "SELECT DISTINCT cluster_label
-        FROM sc_deg
-        WHERE dataset_id = ?;";
+$sql = "SELECT DISTINCT group_type
+        FROM sc_deg_bin
+        WHERE dataset_id = ? AND deg_group='cluster';";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -38,7 +38,7 @@ $result = $stmt->get_result();
 
 $cluster_labels = [];
 while ($row = $result->fetch_assoc()) {
-    $cluster_labels[] = $row['cluster_label'];
+    $cluster_labels[] = $row['group_type'];
 }
 header('Content-Type: application/json');
 // 将数组转换为 JSON 格式

@@ -20,10 +20,9 @@ if (empty($datasetId)) {
     exit;
 }
 
-$sql = "SELECT gene_id, p_value, fold_change ,pct1,pct2,p_value_adj
-FROM st_deg
-WHERE dataset_id = ? and cluster_label = ?
-ORDER BY gene_id ASC;
+$sql = "SELECT bin_data
+FROM st_deg_bin
+WHERE dataset_id = ? and group_type = ? and deg_group='cluster'
 ";
 
 $stmt = $conn->prepare($sql);
@@ -38,37 +37,23 @@ $stmt->bind_param("ss", $datasetId,$cell_cluster);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// 创建数组来存储 UMAP 数据
-$deg_data = array();
-
+// 检查是否有结果
 if ($result->num_rows > 0) {
-    // 将数据存入数组
-    while ($row = $result->fetch_assoc()) {
-        $deg_data[] = array(
-            'i' => $row['gene_id'],
-            'a' => $row['p_value_adj'],
-            'f' => $row['fold_change'],
-            't1' => $row['pct1'],
-            't2' => $row['pct2']
-        );
-    }
+    // 获取第一行数据
+    $row = $result->fetch_assoc();
+    
+    // 设置适当的 HTTP 头
+    header('Content-Type: application/octet-stream');
+    
+    // 清除缓冲区并关闭输出缓冲
+    ob_clean();
+    flush();
+    
+    // 输出二进制数据
+    echo $row['bin_data'];
 } else {
-    echo json_encode(['error' => '0 results']);
-    $conn->close();
-    exit;
+    echo 'error';
 }
 
-$conn->close();
-
-// 将数据转换为 JSON 格式
-$response = json_encode(['data' => $deg_data]);
-
-$compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
-// 返回 JSON 数据
-    // 设置适当的 HTTP 头
-header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
-ob_clean();
-flush();
-echo $compressed;
+$stmt->close();
 ?>
