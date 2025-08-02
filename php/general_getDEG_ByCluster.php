@@ -21,7 +21,7 @@ if (empty($datasetId)) {
 }
 
 $sql = "SELECT bin_data
-FROM sc_deg_bin
+FROM deg_bin
 WHERE dataset_id = ? and group_type = ? and deg_group='cluster'
 ";
 

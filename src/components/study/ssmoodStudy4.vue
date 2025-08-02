@@ -10,15 +10,15 @@
     <!-- BA46 -->
     <div class="nav-overlay ba46">
       <span class="nav-label">BA46:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.3D')">2Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.2MDD')">2MDD</button>
+      <button class="nav-btn" @click="goToPage('study4.BA46.Control')">2Control</button>
+      <button class="nav-btn" @click="goToPage('study4.BA46.MDD')">2MDD</button>
     </div>
 
     <!-- BA12 -->
     <div class="nav-overlay ba12">
       <span class="nav-label">BA12:</span>
-      <button class="nav-btn" @click="goToPage('study1.conditions.7D')">2Control</button>
-      <button class="nav-btn" @click="goToPage('study1.conditions.2MDD')">2MDD</button>
+      <button class="nav-btn" @click="goToPage('study4.BA12.Control')">2Control</button>
+      <button class="nav-btn" @click="goToPage('study4.BA12.MDD')">2MDD</button>
     </div>
 
   </div>
@@ -30,7 +30,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const goToPage = (study) => {
-  router.push({ name: 'scsDetail', params: { study: study } });
+  router.push({ name: 'stStudy', params: { study: study } });
 };
 </script>
 

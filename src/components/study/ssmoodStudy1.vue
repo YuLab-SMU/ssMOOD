@@ -53,7 +53,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const goToPage = (study) => {
-  router.push({ name: 'scsDetail', params: { study: study } });
+  router.push({ name: 'scStudy', params: { study: study } });
 };
 </script>
 

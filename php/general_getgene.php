@@ -13,16 +13,23 @@ if ($conn->connect_error) {
 // 定义batch值
 $datasetId = $_GET['id'] ?? '';
 
-$sql = "SELECT g.gene_id
-FROM genes g
-JOIN datasets d ON g.study_id = d.study
-WHERE d.dataset_id = ?";
+if (strpos($datasetId, 'study') !== false) {
+    // 解析study部分
+    $study = explode('.', $datasetId)[0];
+    $sql = "SELECT gene_id FROM genes WHERE study_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $study);
+} else {
+    $sql = "SELECT g.gene_id
+    FROM genes g
+    JOIN datasets d ON g.study_id = d.study
+    WHERE d.dataset_id = ?";
+    $stmt = $conn->prepare($sql);
+    stmt->bind_param("s", $datasetId);
+}
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $datasetId);
 $stmt->execute();
 $result = $stmt->get_result();
-
 // 获取查询结果并存储在数组中
 $genes = array();
 while ($row = $result->fetch_assoc()) {

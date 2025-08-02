@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavigationBar></NavigationBar>
-    <main>
+    <main ref="pageSection">
       <section class="page-section">
         <div class="main-container">
           <!--##################################################-->
@@ -9,30 +9,48 @@
           <div class="information-container">
             <div class="title-bar">
               <div class="title-bar-header">
-                <h1>{{ $t('std1') }}</h1>
+                <h1>{{ $t('scd1') }}</h1>
               </div>
             </div>
             <div class="information-content">
               <div class="information-left">
-                <h1>{{ $t('std2') }}</h1>
+                <h1>{{ $t('scd2') }}</h1>
 
-                <p><span class="bold-black">{{ $t('std3') }}</span>: {{ dataset.dataset_id }}</p>
-                <p><span class="bold-black">{{ $t('std4') }}</span>: {{ dataset.species }}</p>
-                <p><span class="bold-black">{{ $t('std5') }}</span>: {{ dataset.area }}</p>
-                <p><span class="bold-black">{{ $t('std6') }}</span>: {{ dataset.conditions }}</p>
-                <p><span class="bold-black">{{ $t('std7') }}</span>: {{ dataset.sex }}</p>
-                <p><span class="bold-black">{{ $t('std8') }}</span>: {{ dataset.age }}</p>
+                <p><span class="bold-black">{{ $t('scd3') }}</span>: {{ dataset.study_id }}</p>
+                <p><span class="bold-black">{{ $t('scd4') }}</span>: {{ dataset.species }}</p>
+                <p><span class="bold-black">{{ $t('scd5') }}</span>: {{ dataset.area }}</p>
+                <p><span class="bold-black">{{ $t('scd6') }}</span>: {{ dataset.conditions }}</p>
+                <p><span class="bold-black">{{ $t('scd7') }}</span>: {{ dataset.sex }}</p>
+                <p><span class="bold-black">{{ $t('scd8') }}</span>: {{ dataset.age }}</p>
+                <h2>{{ $t('scd9') }}</h2>
 
+                <p><span class="bold-black">{{ $t('scd10') }}</span>: {{
+                  dataset.cells }}</p>
+                <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
+                  dataset.clusters }}</p>
               </div>
               <div class="information-right">
-                <h1>{{ $t('std9') }}</h1>
-                <p><span class="bold-black">{{ $t('std10') }}</span>: {{ dataset.information.Publication.Title }}</p>
-                <p><span class="bold-black">{{ $t('std11') }}</span>: {{ dataset.information.Publication.DatePublished
-                }}</p>
-                <p><span class="bold-black">{{ $t('std12') }}</span>: {{ dataset.information.Publication.Protocol }}</p>
-                <p><span class="bold-black">{{ $t('std13') }}</span>: {{ dataset.information.Publication.DataSource }}
-                </p>
+                <h2>{{ $t('scd12') }}</h2>
 
+                <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
+                <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
+                  }}</p>
+                <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
+                </p>
+                <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
+                  }}</p>
+                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
+                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
+                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
+
+                </p>
+                <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
+                    :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
+                      dataset.information.DatasetSource1.DOI }}</a>
+
+                </p>
+                <p><span class="bold-black">{{ $t('scd19') }}</span>: {{ dataset.information.DatasetSource1.Statement }}
+                </p>
               </div>
             </div>
           </div>
@@ -40,34 +58,42 @@
           <!--##################################################-->
           <!--细胞分类容器-->
           <div class="information-container">
+
             <div class="title-bar">
               <div class="title-bar-header">
-                <h1>{{ $t('std14') }}</h1>
+                <h1>{{ $t('scd20') }}</h1>
               </div>
             </div>
             <div class="information-content">
+
               <div class="information-left">
-                <h1>{{ $t('std17') }}</h1>
-                <div class="marker-size-controller">
-                  <span class="label">{{ $t('std16') }}:</span>
+
+                <h1>{{ $t('scd21') }}</h1>
+
+                <div class="marker-size-control">
+                  <span class="label">{{ $t('scd22') }}:</span>
                   <el-input-number v-model="markerSize1" :min="1" :max="100" :step="1" size="small" controls-position=""
                     @change="updateUmap1" />
                 </div>
-                <!-- coord_chart的容器 -->
+
+                <!-- UMAP图的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="coord_chartLoading" src="/loading.gif" alt="Loading"
+                  <img v-if="umapLoading" src="/loading.gif" alt="Loading"
                     style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
-                  <div id="coord_chart"
-                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: coord_chartLoading ? 'hidden' : 'visible' }">
+
+                  <!-- Plotly 图表容器 -->
+                  <div id="umap-plot"
+                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }">
                   </div>
                 </div>
               </div>
+
               <div class="information-right">
-                <h1>{{ $t('std19') }}</h1>
+                <h1>{{ $t('scd23') }}</h1>
                 <div class="gene-search-con">
                   <el-input v-model="searchQuery" :placeholder="$t('scd24')" @focus="showScroller = true"
-                    @blur="handleBlur" class="search-gene-input" clearable size="">
+                    @blur="handleBlur" class="search-gene-input" clearable size="default">
                     <template #append>
                       <el-button @click="searchgene" type="primary">
                         {{ $t('scd21button') }}
@@ -86,18 +112,21 @@
                       controls-position="" @change="updateUmap2" />
                   </div>
                 </div>
-                <!-- 空间基因表达量图的容器 -->
+
+
+                <!-- UMAP基因表达量图的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="coord_chartGeneLoading" src="/loading.gif" alt="Loading"
+                  <img v-if="umapGeneLoading" src="/loading.gif" alt="Loading"
                     style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
 
                   <!-- Plotly 图表容器 -->
-                  <div id="coord_chart_gene"
-                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: coord_chartGeneLoading ? 'hidden' : 'visible' }">
+                  <div id="umap-chart-gene"
+                    :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapGeneLoading ? 'hidden' : 'visible' }">
                   </div>
                 </div>
               </div>
+
             </div>
             <div class="information-second">
               <!-- 🔔自定义图例，官方图例会影响图的比例 -->
@@ -119,11 +148,8 @@
                 </el-checkbox-group>
               </div>
               <div id="myClusterChart" style="width: auto; height: 100%;"></div>
-            </div>
-            <!-- ################################ -->
-            <!-- 第二列 -->
-            <div class="information-second">
-              <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
+              <div id="expressionHeatmap" style="width: auto; height: auto;"></div>
+
             </div>
           </div>
           <!--##################################################-->
@@ -518,17 +544,20 @@
         </div>
       </section>
     </main>
-    <back-to-top></back-to-top>
+    <BackToTop></BackToTop>
   </div>
 </template>
 
 <script setup>
 import Plotly from 'plotly.js-dist-min';
+//import { RecycleScroller } from 'vue3-virtual-scroller';
+//import VirtualList from 'vue-virtual-scroll-list';
 import VirtualListItem from './general/VirtualListItem.vue';
 import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
-import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
+//import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
 //import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
@@ -536,76 +565,79 @@ import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';
+
+
+
 const route = useRoute();
 
-//------------------------------------------------------
+
+//###################################//
 //加载数据集详细信息
-//------------------------------------------------------
+//###################################//
 const dataset = ref({
-  dataset_id: '',
+  study_id: '',
   species: '',
   area: '',
   condition: '',
   sex: '',
   age: '',
+  clusters: '',
+  cells: '',
   information: {
-    Publication: {
-      Title: '',
-      Authors: '',
-      DatePublished: '',
-      DateAdded: '',
-      Journal: '',
-      DOI: '',
-      Protocol: '',
-      DataSource: ''
+    DatasetInformation: {
+      NumberOfCells: null,
+      NumberOfIdentifiedCellTypes: null
     },
-    StudyDesign: {
-      Species: '',
-      NumberOfSamples: null,
-      Region: {
-        Mouse: '',
-        Human: ''
-      }
-    }
+    DatasetSource1: {
+      Title: "",
+      Methodology: "",
+      Protocol: "",
+      PublicDataID: "",
+      Pubmed: null,
+      DOI: "",
+      Statement: ""
+    },
   }
 });
+
 onMounted(() => {
+  console.log(route.params.study);
   const params = new URLSearchParams({
-    id: route.params.id // 使用 route.params 获取路由参数
+    id: route.params.study
   });
 
-  fetch(`${config.apiUrl}std_getSTDatasetDetail.php?${params}`)
+  fetch(config.apiUrl + `study_getDatasetDetail.php?${params}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json(); // 直接解析为 JSON，而不是 text
+      return response.json();
     })
-    .then(dataArray => {
-      if (dataArray && dataArray.length > 0 && dataArray[0].information) {
-        const parsedData = JSON.parse(dataArray[0].information);
-        dataset.value = { ...dataArray[0], information: parsedData }; // 使用 ref 的 value 更新数据
+    .then(data => {
+      if (data && data.length > 0 && data[0].information) {
+        dataset.value = data[0];
+        dataset.value.information = JSON.parse(data[0].information);
       }
-
-      //console.log(dataset.value); // 打印更新后的 dataset
     })
     .catch(error => {
       console.error('Error fetching dataset details:', error);
     });
 });
 
-//------------------------------------------------------
-//加载空间位置图
-//------------------------------------------------------
-const coordinate_data = ref([]);
-const markerSize1 = ref(2);
+
+
+//###################################//
+//加载Umap图
+//###################################//
+const umapData = ref([]);
 const global_clusterLabels = ref([])
 const visibleLabels = ref([])
 const colors = ref({})
 const isIndeterminate = ref(false)
 const checkAllFlag = ref(true)
 
-const coord_chartLoading = ref(true)
+const umapLoading = ref(true)
+
 // 全选/全不选
 const toggleAll = () => {
   if (checkAllFlag.value) {
@@ -645,8 +677,8 @@ const updateGenePlot = () => {
       const categoryPoints = filteredArray.filter(point => point.c === category);
       const colors = categoryPoints.map(point => getColor(point.nc));
       return {
-        x: categoryPoints.map(point => point.x),
-        y: categoryPoints.map(point => point.y),
+        x: categoryPoints.map(point => point.u1),
+        y: categoryPoints.map(point => point.u2),
         mode: 'markers',
         type: 'scattergl',
         name: category,
@@ -665,15 +697,15 @@ const updateGenePlot = () => {
       yaxis: { title: 'UMAP2' },
     };
 
-    Plotly.react('coord_chart_gene', traces, genelayout);
+    Plotly.react('umap-chart-gene', traces, genelayout);
   }
 }
 
 const updatePlot = () => {
-  const umap1 = coordinate_data.value.map(d => parseFloat(d.x));
-  const umap2 = coordinate_data.value.map(d => parseFloat(d.y));
-  const cellIds = coordinate_data.value.map(d => d.i);
-  const clusterLabelsData = coordinate_data.value.map(d => d.c);
+  const umap1 = umapData.value.map(d => parseFloat(d.u1));
+  const umap2 = umapData.value.map(d => parseFloat(d.u2));
+  const cellIds = umapData.value.map(d => d.i);
+  const clusterLabelsData = umapData.value.map(d => d.c);
 
   const traces = global_clusterLabels.value.map((label) => {
     const show = visibleLabels.value.includes(label)
@@ -700,37 +732,36 @@ const updatePlot = () => {
   })
 
   const layout = {
-    title: '',
-    xaxis: { title: 'coords_X' },
-    yaxis: { title: 'coords_Y' },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
+    responsive: true,
     showlegend: false,
-  };
+    xaxis: { title: 'UMAP1' },
+    yaxis: { title: 'UMAP2' },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)'
+  }
 
-  Plotly.react('coord_chart', traces, layout)
+  Plotly.react('umap-plot', traces, layout)
 }
 
-
-
 onMounted(() => {
-  coord_chartLoading.value = true;
+  umapLoading.value = true
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
-
-  fetch(`${config.apiUrl}std_getCoordinate.php?${params}`)
+  fetch(config.apiUrl + `ssc_getumapdata.php?${params}`)
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => {
+
       const compressed = new Uint8Array(arrayBuffer);
-      const decompressed = pako.ungzip(compressed); // 使用 pako 解压
+      const decompressed = pako.ungzip(compressed); // 使用pako解压
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
-      const data = JSON.parse(jsonString); // 解析 JSON 字符串
+      const data = JSON.parse(jsonString); // 解析JSON字符串
 
-      coordinate_data.value = data.coordinate_data;
+      //console.log(data);
+      umapData.value = data.umap_data;
       const clusterLabels = data.cluster_labels;
-      const labelMap = new Map();
 
+      const labelMap = new Map();
       clusterLabels.forEach((label, index) => {
         labelMap.set(label, index);
       });
@@ -752,18 +783,20 @@ onMounted(() => {
           return a.localeCompare(b);
         }
       });
-      global_clusterLabels.value = clusterLabels;
+      global_clusterLabels.value = [...clusterLabels];
       visibleLabels.value = [...clusterLabels];
-      const umap1 = coordinate_data.value.map(d => parseFloat(d.x));
-      const umap2 = coordinate_data.value.map(d => parseFloat(d.y));
-      const cellIds = coordinate_data.value.map(d => d.i);
-      const clusterLabelsData = coordinate_data.value.map(d => d.c);
+      //console.log(clusterLabels);
+      const umap1 = umapData.value.map(d => parseFloat(d.u1));
+      const umap2 = umapData.value.map(d => parseFloat(d.u2));
+      const cellIds = umapData.value.map(d => d.i);
+      const clusterLabelsData = umapData.value.map(d => d.c);
+
 
       colors.value = clusterLabels.reduce((acc, label) => {
         acc[label] = colorMap[label] || 'rgb(128,128,128)'; // 如果没有找到对应的颜色，则使用默认颜色 #000
         return acc;
       }, {});
-
+      //console.log(colors);
       const traces = clusterLabels.map((label) => {
         const x = umap1.filter((_, i) => clusterLabelsData[i] === label);
         const y = umap2.filter((_, i) => clusterLabelsData[i] === label);
@@ -778,39 +811,55 @@ onMounted(() => {
           text: text,
           marker: {
             size: markerSize1.value,
-            color: colors[label]
+            color: colors.value[label]
           }
         };
       });
 
+
       const layout = {
-        showlegend: false,
         title: '',
-        xaxis: { title: 'coords_X' },
-        yaxis: { title: 'coords_Y' },
+        responsive: true,
+        showlegend: false,
+        autosize: true, // 自动适配容器大小
+        xaxis: {
+          title: 'UMAP1',
+        },
+        yaxis: {
+          title: 'UMAP2',
+        },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
+
       };
 
-      Plotly.newPlot('coord_chart', traces, layout);
-      coord_chartLoading.value = false;
+
+      Plotly.newPlot('umap-plot', traces, layout);
+      umapLoading.value = false;
+
     })
     .catch(error => console.error('Error fetching UMAP data:', error));
 });
-// 更新 UMAP 图表的方法
+
+
+//更新点大小
+const markerSize1 = ref(3); // 默认点大小
+
+
+// 更新 UMAP 图1 的点大小
 const updateUmap1 = () => {
-  Plotly.restyle('coord_chart', 'marker.size', [markerSize1.value]);
+  Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
 };
 
-//------------------------------------------------------
+//###################################//
 //分类表
-//------------------------------------------------------
+//###################################//
 onMounted(async () => {
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
   // 绘制各数据集分布
-  fetch(config.apiUrl + `std_getNumberOfCluster.php?${params}`)
+  fetch(config.apiUrl + `ssc_getNumberOfCluster.php?${params}`)
     .then(response => response.json())
     .then(dataFromPhp => {
       // 提取标签和细胞数量
@@ -853,16 +902,17 @@ onMounted(async () => {
     .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
 });
 
-//------------------------------------------------------
+
+
+//###################################//
 //基因搜索框
-//------------------------------------------------------
+//###################################//
 
 
 const genes = ref([]);
-//const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
-const markerSize2 = ref(2); // 默认点大小
+const markerSize2 = ref(3); // 默认点大小
 
 
 const filteredGenes = computed(() => {
@@ -879,7 +929,7 @@ const filteredGenes = computed(() => {
 //加载基因
 onMounted(async () => {
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
   try {
     const response = await fetch(config.apiUrl + `general_getgene.php?${params}`);
@@ -896,11 +946,12 @@ onMounted(async () => {
       id: index, // 使用数组索引作为 id
       content: gene
     }));
-
   } catch (error) {
     console.error('Failed to load genes:', error);
   }
 });
+
+
 
 
 //-------------------------------------------------------------
@@ -923,6 +974,8 @@ const handleSelectItem = (item) => {
   showScroller.value = false;
 };
 
+
+
 // 处理失去焦点时的方法
 const handleBlur = () => {
   setTimeout(() => {
@@ -931,6 +984,8 @@ const handleBlur = () => {
     }
   }, 100);
 };
+
+
 
 
 //-------------------------------------------------------------
@@ -946,46 +1001,75 @@ const getColor = (value) => {
   const l = 80 - 35 * t;          // 80% → 45%
   return `hsl(${h}, ${s}%, ${l}%)`;
 };
+
+//-------------------------------------------------------------
+//获取基因表达量
+//-------------------------------------------------------------
 const isSearchgene = ref(false);
 const mergedGeneArray = ref([]);
-const coord_chartGeneLoading = ref(false);
+
+const umapGeneLoading = ref(false)
 
 const searchgene = async () => {
-  if (coord_chartLoading.value === false) {
-    coord_chartGeneLoading.value = true;
+  if (umapLoading.value === false) {
+    umapGeneLoading.value = true
+
     // 请求参数
     const params = new URLSearchParams({
-      id: route.params.id,
+      id: route.params.study,
       gene: searchQuery.value
     });
 
     try {
-      const response = await fetch(config.apiUrl + `std_getGeneExpression_bin.php?${params}`);
+      const response = await fetch(config.apiUrl + `ssc_getGeneExpression_bin.php?${params}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const compressed = new Uint8Array(await response.arrayBuffer());
-      const decompressed = pako.ungzip(compressed); // 使用pako解压
+      const arrayBuffer = await response.arrayBuffer();
+      const dataView = new DataView(arrayBuffer);
+      let offset = 0; // 当前解析位置
+      const expressionData = [];
 
-      const data = new TextDecoder('utf-8').decode(decompressed);
-      const jsonData = JSON.parse(data);
+      // 解析每个数据块
+      while (offset < arrayBuffer.byteLength) {
+        // 读取数据块长度（4字节无符号整数）
+        const length = dataView.getUint32(offset, false); 
+        offset += 4; // 移动到数据块内容
+
+        // 读取数据块内容
+        const binData = new Uint8Array(arrayBuffer, offset, length);
+        offset += length; // 移动到下一个数据块
+
+        // 解压数据块
+        const decompressed = pako.ungzip(binData);
+
+        // 解码为字符串
+        const text = new TextDecoder('utf-8').decode(decompressed);
+        
+
+        // 将解析后的数据添加到数组
+              const jsonData = JSON.parse(text);
+      for (const key in jsonData) {
+        expressionData[key] = jsonData[key];
+      }
+      }
+      //console.log(expressionData);
       isSearchgene.value = true;
       // 合并数据
-      const ncMap = jsonData.reduce((acc, item) => {
+      const ncMap = expressionData.reduce((acc, item) => {
         acc[item.i] = parseFloat(item.nc) || 0;
         return acc;
       }, {});
 
       // 合并数组
-      const mergedArray = coordinate_data.value.map(item => {
+      const mergedArray = umapData.value.map(item => {
         item.nc = ncMap[item.i] || 0;
         return item;
       });
-
       mergedGeneArray.value = mergedArray;
+      //console.log(mergedGeneArray.value);
       // 分类信息
       const categories = [...new Set(mergedArray.map(item => item.c))];
-
       categories.sort();
 
       // 安全计算最大值
@@ -994,7 +1078,13 @@ const searchgene = async () => {
         -Infinity
       );
       //-----------创建热图信息------------------------
-
+      /*
+      const numCategories = categories.length;
+  
+      const heatmapData = Array.from({ length: 11 }, () =>
+        Array.from({ length: numCategories }, () => 0)
+      );
+      */
       const ncValues = mergedArray.map(item => item.nc).filter(n => n > 0);
       const minLogNC = Math.log10(Math.min(...ncValues));
       const maxLogNC = Math.log10(Math.max(...ncValues));
@@ -1010,7 +1100,7 @@ const searchgene = async () => {
 
           // 归一化
           const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
-          const expressionIndex = Math.floor(normLogNC * (numBins - 1));
+          const expressionIndex = Math.floor(normLogNC * (numBins - 1));  // ✅ 修复这里
 
           // 边界保护
           const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
@@ -1019,15 +1109,20 @@ const searchgene = async () => {
         }
       });
 
-      //---------------------------------------
-      // 按分类信息创建轨迹
+
+
+
+      //------------------------------------------------------
+      //‼️ 按分类信息创建轨迹
+      //按分类创建轨道,可以大幅度提高图表渲染速度和交互流畅😊。
+      //------------------------------------------------------
       const traces = categories.map(category => {
         const categoryPoints = mergedArray.filter(point => point.c === category);
 
         const colors = categoryPoints.map(point => getColor(point.nc));
         return {
-          x: categoryPoints.map(point => point.x),
-          y: categoryPoints.map(point => point.y),
+          x: categoryPoints.map(point => point.u1),
+          y: categoryPoints.map(point => point.u2),
           mode: 'markers',
           type: 'scattergl',
           name: category,
@@ -1038,9 +1133,18 @@ const searchgene = async () => {
           text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
         };
       });
-
-      Plotly.newPlot('coord_chart_gene', traces, { showlegend: false, });
-
+      const genelayout = {
+        showlegend: false,
+        autosize: true, // 自动适配容器大小
+        xaxis: {
+          title: 'UMAP1',
+        },
+        yaxis: {
+          title: 'UMAP2',
+        },
+      };
+      Plotly.newPlot('umap-chart-gene', traces, genelayout);
+      umapGeneLoading.value = false;
 
       //-----------绘制热图------------------------
       //各类细胞在不同表达量区间的细胞数量热图
@@ -1084,7 +1188,7 @@ const searchgene = async () => {
       };
 
       Plotly.newPlot('expressionHeatmap', [trace], layout);
-      coord_chartGeneLoading.value = false;
+
     } catch (error) {
       console.error('Failed to load genes:', error);
     }
@@ -1095,7 +1199,9 @@ const searchgene = async () => {
 
 // 更新 UMAP 图2 的点大小
 const updateUmap2 = () => {
-  Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
+  if (isSearchgene.value === true) {
+    Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
+  }
 };
 
 
@@ -1154,7 +1260,7 @@ const isenrichmentExpanded4 = ref("");
 //------------------------------------------------------//
 onMounted(() => {
   const params = new URLSearchParams({
-    id: route.params.id,
+    id: route.params.study,
   });
   fetch(config.apiUrl + `general_DEG_CellType.php?${params}`)
     .then((response) => response.json())
@@ -1175,16 +1281,17 @@ watch(cellType, async (newcellType) => {
   loadingDEG.value = true;
   //获取差异数据
   const params = new URLSearchParams({
-    id: route.params.id,
+    id: route.params.study,
     cluster: newcellType
   });
   fetch(config.apiUrl + `general_getDEG_ByCluster.php?${params}`)
     .then((response) => response.arrayBuffer())
     .then((arrayBuffer) => {
+      //console.log(data);
       const compressed = new Uint8Array(arrayBuffer);
       const decompressed = pako.ungzip(compressed); // 使用 pako 解压
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
-      DEGdata.value = JSON.parse(jsonString); 
+      DEGdata.value = JSON.parse(jsonString);
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })
@@ -1278,7 +1385,7 @@ const download = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-deg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-deg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1350,10 +1457,10 @@ const getKEGG = (activeNames) => {
     const genesJson = JSON.stringify(KeggGenes.value)
     const params = new FormData()
     params.append('genes', genesJson)
-    if (dataset.species === "mouse") { params.append('gene_sets', 'KEGG_2019_Mouse.gmt') }
+    if (dataset.value.species === "mouse") { params.append('gene_sets', 'KEGG_2019_Mouse.gmt') }
     else { params.append('gene_sets', 'KEGG_2019_Human.gmt') }
 
-    params.append('id', route.params.id)
+    params.append('id', route.params.study)
 
     fetch(config.apiUrl + 'enrichment.php', {
       method: 'POST',
@@ -1472,7 +1579,7 @@ const KEGGdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-kegg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-kegg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1532,7 +1639,7 @@ const getGO_BP = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_BP_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1620,7 +1727,7 @@ const GOBPdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goBP.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goBP.csv";
   link.click();
 };
 
@@ -1670,7 +1777,7 @@ const getGO_MF = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_MF_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1758,7 +1865,7 @@ const GOMFdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goMF.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goMF.csv";
   link.click();
 };
 
@@ -1806,7 +1913,7 @@ const getGO_CC = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_CC_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1894,7 +2001,7 @@ const GOCCdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goCC.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goCC.csv";
   link.click();
 };
 
@@ -1931,66 +2038,34 @@ onMounted(() => {
 });
 const resizeMyChart = () => {
   Plotly.Plots.resize('myClusterChart');
-  Plotly.Plots.resize('coord_chart');
+  Plotly.Plots.resize('umap-plot');
   if (isSearchgene.value === true) {
-    Plotly.Plots.resize('coord_chart_gene');
+    Plotly.Plots.resize('umap-chart-gene');
     Plotly.Plots.resize('expressionHeatmap');
   }
 
 };
 
-//import { onUnmounted } from 'vue';
+import { onUnmounted } from 'vue';
 onUnmounted(() => {
   window.removeEventListener('resize', resizeMyChart);
   genes.value = [];
-  coordinate_data.value = [];
+  umapData.value = [];
   mergedGeneArray.value = [];
   KEGGdata.value = [];
   GOBPdata.value = [];
   GOMFdata.value = [];
   GOCCdata.value = [];
 });
+
 </script>
 
 <style scoped>
 @import 'css/MainStyles.css';
 @import 'css/SCDStyles.css';
 
-
 /* ----------------------------------------------------------- */
-/* 差异表达分析右容器表格,避免影响全局样式 */
-.table-container {
-  max-width: 100%;
-  overflow-x: auto;
+.scroller-wrapper {
+  height: 400px;
 }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.pagination {
-  margin-top: 10px;
-}
-
-button {
-  margin: 0 5px;
-}
-
-.st-coord-content {
-  display: flex;
-  flex-direction: column;
-  /* 子元素垂直排列 */
-  flex: 1;
-  gap: 30px;
-}
-
-/* ----------------------------------------------------------- */
 </style>

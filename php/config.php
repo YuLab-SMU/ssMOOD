@@ -12,7 +12,6 @@ header('Content-Type: application/json');
 // 数据库配置
 $servername = "localhost";
 
-
 /*
 /etc/ssmood/db.php示例：
 <?php

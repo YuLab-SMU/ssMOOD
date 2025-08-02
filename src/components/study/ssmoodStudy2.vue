@@ -3,44 +3,44 @@
     <div class="image-container">
       <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
       <!-- 按钮 1 -->
-      <button class="navigation-button button-1" @click="goToPage('study1.conditions.C')">
+      <button class="navigation-button button-1" @click="goToPage('study2.conditions.C')">
         0Day(Control)
       </button>
       <!-- 按钮 2 -->
-      <button class="navigation-button button-2" @click="goToPage('study1.conditions.3D')">
+      <button class="navigation-button button-2" @click="goToPage('study2.conditions.3D')">
         3Day
       </button>
       <!-- 按钮 3  7D -->
-      <button class="navigation-button button-3" @click="goToPage('study1.conditions.7D')">
+      <button class="navigation-button button-3" @click="goToPage('study2.conditions.7D')">
         7Day
       </button>
     <!-- 按钮 4 -->
-      <button class="navigation-button button-4" @click="goToPage('study1.conditions.S')">
+      <button class="navigation-button button-4" @click="goToPage('study2.conditions.S')">
         Sus
       </button>
           <!-- 按钮 5 -->
-      <button class="navigation-button button-5" @click="goToPage('study1.conditions.R')">
+      <button class="navigation-button button-5" @click="goToPage('study2.conditions.R')">
         Res
       </button>
       
         <!-- 按钮 6 -->
-      <button class="navigation-button button-6" @click="goToPage('mPFC')">
+      <button class="navigation-button button-6" @click="goToPage('study1.area.I')">
         I
       </button>
         <!-- 按钮 7 -->
-      <button class="navigation-button button-7" @click="goToPage('Stri')">
+      <button class="navigation-button button-7" @click="goToPage('study1.area.II')">
         II
       </button>
         <!-- 按钮 8 -->
-      <button class="navigation-button button-8" @click="goToPage('HIP')">
+      <button class="navigation-button button-8" @click="goToPage('study1.area.III')">
         III
       </button>
         <!-- 按钮 9 -->
-      <button class="navigation-button button-9" @click="goToPage('VTA')">
+      <button class="navigation-button button-9" @click="goToPage('study1.area.IV')">
         IV
       </button>
         <!-- 按钮 10 -->
-      <button class="navigation-button button-10" @click="goToPage('DRN')">
+      <button class="navigation-button button-10" @click="goToPage('study1.area.V')">
         V
       </button>
     </div>
@@ -53,7 +53,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const goToPage = (study) => {
-  router.push({ name: 'scsDetail', params: { study: study } });
+  router.push({ name: 'stStudy', params: { study: study } });
 };
 </script>
 

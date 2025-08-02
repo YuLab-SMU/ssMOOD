@@ -2,6 +2,7 @@
 include 'config.php';
 // 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
+
 // 检查连接
 if ($conn->connect_error) {
     http_response_code(500);
@@ -12,7 +13,6 @@ if ($conn->connect_error) {
 
 // 定义 datasetId 值
 $datasetId = $_GET['id'] ?? '';
-$cell_cluster = $_GET['cluster'] ?? '';
 
 if (empty($datasetId)) {
     http_response_code(400);
@@ -20,10 +20,9 @@ if (empty($datasetId)) {
     exit;
 }
 
-$sql = "SELECT bin_data
-FROM st_deg_bin
-WHERE dataset_id = ? and group_type = ? and deg_group='cluster'
-";
+$sql = "SELECT DISTINCT group_type
+        FROM deg_bin
+        WHERE dataset_id = ? AND deg_group='cluster';";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -33,27 +32,18 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("ss", $datasetId,$cell_cluster);
+$stmt->bind_param("s", $datasetId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// 检查是否有结果
-if ($result->num_rows > 0) {
-    // 获取第一行数据
-    $row = $result->fetch_assoc();
-    
-    // 设置适当的 HTTP 头
-    header('Content-Type: application/octet-stream');
-    
-    // 清除缓冲区并关闭输出缓冲
-    ob_clean();
-    flush();
-    
-    // 输出二进制数据
-    echo $row['bin_data'];
-} else {
-    echo 'error';
+$cluster_labels = [];
+while ($row = $result->fetch_assoc()) {
+    $cluster_labels[] = $row['group_type'];
 }
+header('Content-Type: application/json');
+// 将数组转换为 JSON 格式
+echo json_encode($cluster_labels);
 
-$stmt->close();
+$conn->close();
+
 ?>

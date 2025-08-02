@@ -8,11 +8,12 @@ import AnalyzePage from '../components/AnalyzePage.vue';
 
 import SingleCellList from '../components/SingleCellList.vue'; 
 import SingleCellPage from '../components/SingleCellPage.vue'; 
-import scsDetailPage from '../components/scsDetailPage.vue'; 
+
+import studySingleCellPage from '../components/studySingleCellPage.vue'; 
 
 import STList from '../components/STList.vue'; 
 import STPage from '../components/STPage.vue'; 
-
+import studySTPage from '../components/studySTPage.vue'; 
 
 //import SearchPage from '../components/SearchPage.vue'; 
 import DownloadPage from '../components/DownloadPage.vue'; 
@@ -30,7 +31,8 @@ const routes = [
   { path: '/download', name: 'Download', component: DownloadPage, meta: { requiresLoading: true } },
   { path: '/about', name: 'About', component: AboutPage, meta: { requiresLoading: true } },
   { path: '/browse/SingleCell/:id', name: 'SingleCellPage', component: SingleCellPage, meta: { requiresLoading: true } },
-  { path: '/browse/singlecellstudy/:study', name: 'scsDetail', component: scsDetailPage, meta: { requiresLoading: true } },
+  { path: '/browse/singleCellStudy/:study', name: 'scStudy', component: studySingleCellPage, meta: { requiresLoading: true } },
+  { path: '/browse/stStudy/:study', name: 'stStudy', component: studySTPage, meta: { requiresLoading: true } },
   { path: '/browse/SpatialTranscriptome/:id', name: 'STPage', component: STPage, meta: { requiresLoading: true } },
   { path: '/about/VisitLogPage', name: 'VisitLogPage', component: VisitLogPage, meta: { requiresLoading: true } }
 ];

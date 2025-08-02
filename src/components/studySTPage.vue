@@ -16,7 +16,7 @@
               <div class="information-left">
                 <h1>{{ $t('std2') }}</h1>
 
-                <p><span class="bold-black">{{ $t('std3') }}</span>: {{ dataset.dataset_id }}</p>
+                <p><span class="bold-black">{{ $t('std3') }}</span>: {{ dataset.study_id }}</p>
                 <p><span class="bold-black">{{ $t('std4') }}</span>: {{ dataset.species }}</p>
                 <p><span class="bold-black">{{ $t('std5') }}</span>: {{ dataset.area }}</p>
                 <p><span class="bold-black">{{ $t('std6') }}</span>: {{ dataset.conditions }}</p>
@@ -28,7 +28,7 @@
                 <h1>{{ $t('std9') }}</h1>
                 <p><span class="bold-black">{{ $t('std10') }}</span>: {{ dataset.information.Publication.Title }}</p>
                 <p><span class="bold-black">{{ $t('std11') }}</span>: {{ dataset.information.Publication.DatePublished
-                }}</p>
+                  }}</p>
                 <p><span class="bold-black">{{ $t('std12') }}</span>: {{ dataset.information.Publication.Protocol }}</p>
                 <p><span class="bold-black">{{ $t('std13') }}</span>: {{ dataset.information.Publication.DataSource }}
                 </p>
@@ -542,12 +542,14 @@ const route = useRoute();
 //加载数据集详细信息
 //------------------------------------------------------
 const dataset = ref({
-  dataset_id: '',
+  study_id: '',
   species: '',
   area: '',
   condition: '',
   sex: '',
   age: '',
+  cells: '',
+  clusters: '',
   information: {
     Publication: {
       Title: '',
@@ -571,10 +573,10 @@ const dataset = ref({
 });
 onMounted(() => {
   const params = new URLSearchParams({
-    id: route.params.id // 使用 route.params 获取路由参数
+    id: route.params.study // 使用 route.params 获取路由参数
   });
 
-  fetch(`${config.apiUrl}std_getSTDatasetDetail.php?${params}`)
+  fetch(`${config.apiUrl}study_getDatasetDetail.php?${params}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -716,10 +718,10 @@ const updatePlot = () => {
 onMounted(() => {
   coord_chartLoading.value = true;
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
 
-  fetch(`${config.apiUrl}std_getCoordinate.php?${params}`)
+  fetch(`${config.apiUrl}sst_getCoordinate.php?${params}`)
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => {
       const compressed = new Uint8Array(arrayBuffer);
@@ -807,10 +809,10 @@ const updateUmap1 = () => {
 //------------------------------------------------------
 onMounted(async () => {
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
   // 绘制各数据集分布
-  fetch(config.apiUrl + `std_getNumberOfCluster.php?${params}`)
+  fetch(config.apiUrl + `sst_getNumberOfCluster.php?${params}`)
     .then(response => response.json())
     .then(dataFromPhp => {
       // 提取标签和细胞数量
@@ -879,7 +881,7 @@ const filteredGenes = computed(() => {
 //加载基因
 onMounted(async () => {
   const params = new URLSearchParams({
-    id: route.params.id
+    id: route.params.study
   });
   try {
     const response = await fetch(config.apiUrl + `general_getgene.php?${params}`);
@@ -955,23 +957,46 @@ const searchgene = async () => {
     coord_chartGeneLoading.value = true;
     // 请求参数
     const params = new URLSearchParams({
-      id: route.params.id,
+      id: route.params.study,
       gene: searchQuery.value
     });
 
     try {
-      const response = await fetch(config.apiUrl + `std_getGeneExpression_bin.php?${params}`);
+      const response = await fetch(config.apiUrl + `sst_getGeneExpression_bin.php?${params}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const compressed = new Uint8Array(await response.arrayBuffer());
-      const decompressed = pako.ungzip(compressed); // 使用pako解压
+      const arrayBuffer = await response.arrayBuffer();
+      const dataView = new DataView(arrayBuffer);
+      let offset = 0; // 当前解析位置
+      const expressionData = [];
 
-      const data = new TextDecoder('utf-8').decode(decompressed);
-      const jsonData = JSON.parse(data);
+      // 解析每个数据块
+      while (offset < arrayBuffer.byteLength) {
+        // 读取数据块长度（4字节无符号整数）
+        const length = dataView.getUint32(offset, false);
+        offset += 4; // 移动到数据块内容
+
+        // 读取数据块内容
+        const binData = new Uint8Array(arrayBuffer, offset, length);
+        offset += length; // 移动到下一个数据块
+
+        // 解压数据块
+        const decompressed = pako.ungzip(binData);
+
+        // 解码为字符串
+        const text = new TextDecoder('utf-8').decode(decompressed);
+
+
+        // 将解析后的数据添加到数组
+        const jsonData = JSON.parse(text);
+        for (const key in jsonData) {
+          expressionData[key] = jsonData[key];
+        }
+      }
       isSearchgene.value = true;
       // 合并数据
-      const ncMap = jsonData.reduce((acc, item) => {
+      const ncMap = expressionData.reduce((acc, item) => {
         acc[item.i] = parseFloat(item.nc) || 0;
         return acc;
       }, {});
@@ -1154,7 +1179,7 @@ const isenrichmentExpanded4 = ref("");
 //------------------------------------------------------//
 onMounted(() => {
   const params = new URLSearchParams({
-    id: route.params.id,
+    id: route.params.study,
   });
   fetch(config.apiUrl + `general_DEG_CellType.php?${params}`)
     .then((response) => response.json())
@@ -1175,7 +1200,7 @@ watch(cellType, async (newcellType) => {
   loadingDEG.value = true;
   //获取差异数据
   const params = new URLSearchParams({
-    id: route.params.id,
+    id: route.params.study,
     cluster: newcellType
   });
   fetch(config.apiUrl + `general_getDEG_ByCluster.php?${params}`)
@@ -1184,7 +1209,7 @@ watch(cellType, async (newcellType) => {
       const compressed = new Uint8Array(arrayBuffer);
       const decompressed = pako.ungzip(compressed); // 使用 pako 解压
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
-      DEGdata.value = JSON.parse(jsonString); 
+      DEGdata.value = JSON.parse(jsonString);
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })
@@ -1278,7 +1303,7 @@ const download = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-deg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-deg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1353,7 +1378,7 @@ const getKEGG = (activeNames) => {
     if (dataset.species === "mouse") { params.append('gene_sets', 'KEGG_2019_Mouse.gmt') }
     else { params.append('gene_sets', 'KEGG_2019_Human.gmt') }
 
-    params.append('id', route.params.id)
+    params.append('id', route.params.study)
 
     fetch(config.apiUrl + 'enrichment.php', {
       method: 'POST',
@@ -1472,7 +1497,7 @@ const KEGGdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-kegg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-kegg.csv"; // 指定下载的文件名
   link.click();
 };
 
@@ -1532,7 +1557,7 @@ const getGO_BP = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_BP_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1620,7 +1645,7 @@ const GOBPdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goBP.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goBP.csv";
   link.click();
 };
 
@@ -1670,7 +1695,7 @@ const getGO_MF = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_MF_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1758,7 +1783,7 @@ const GOMFdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goMF.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goMF.csv";
   link.click();
 };
 
@@ -1806,7 +1831,7 @@ const getGO_CC = (activeNames) => {
   params.append('genes', genesJson);
   params.append('gene_sets', 'GO_CC_2018.gmt');
 
-  params.append('id', route.params.id);
+  params.append('id', route.params.study);
 
   fetch(config.apiUrl + 'enrichment.php', {
     method: 'POST',
@@ -1894,7 +1919,7 @@ const GOCCdownload = () => {
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.id + "-goCC.csv";
+  link.download = "ssMOOD-" + route.params.study + "-goCC.csv";
   link.click();
 };
 

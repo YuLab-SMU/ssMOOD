@@ -14,13 +14,20 @@ if ($conn->connect_error) {
 // 假设 POST 中的 genes 是 JSON 数组
 $significant_genes = json_decode($_POST['genes'] ?? '[]', true);
 
-// 获取背景基因
-$sql = "SELECT g.gene_id FROM genes g JOIN datasets d ON g.study_id = d.study WHERE d.dataset_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $datasetId);
+if (strpos($datasetId, 'study') !== false) {
+    // 解析study部分
+    $study = explode('.', $datasetId)[0];
+    $sql = "SELECT gene_id FROM genes WHERE study_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $study);
+} else {
+    // 获取背景基因
+    $sql = "SELECT g.gene_id FROM genes g JOIN datasets d ON g.study_id = d.study WHERE d.dataset_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $datasetId);
+}
 $stmt->execute();
 $result = $stmt->get_result();
-
 $background_genes = [];
 while ($row = $result->fetch_assoc()) {
     $background_genes[] = $row['gene_id'];
