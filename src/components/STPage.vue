@@ -1038,8 +1038,16 @@ const searchgene = async () => {
           text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
         };
       });
-
-      Plotly.newPlot('coord_chart_gene', traces, { showlegend: false, });
+      const genelayout = {
+        showlegend: false,
+        xaxis: {
+        },
+        yaxis: {
+        },
+        paper_bgcolor: 'rgba(0,0,0,0)', // 可选：设置背景透明
+        plot_bgcolor: 'rgba(0,0,0,0)',
+      };
+      Plotly.newPlot('coord_chart_gene', traces, genelayout);
 
 
       //-----------绘制热图------------------------
@@ -1184,7 +1192,7 @@ watch(cellType, async (newcellType) => {
       const compressed = new Uint8Array(arrayBuffer);
       const decompressed = pako.ungzip(compressed); // 使用 pako 解压
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
-      DEGdata.value = JSON.parse(jsonString); 
+      DEGdata.value = JSON.parse(jsonString);
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })

@@ -20,12 +20,12 @@ if (strpos($datasetId, 'study') !== false) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $study);
 } else {
-    $sql = "SELECT g.gene_id
+    $sql = "SELECT g.gene_id,d.study
     FROM genes g
     JOIN datasets d ON g.study_id = d.study
     WHERE d.dataset_id = ?";
     $stmt = $conn->prepare($sql);
-    stmt->bind_param("s", $datasetId);
+    $stmt->bind_param("s", $datasetId);
 }
 
 $stmt->execute();

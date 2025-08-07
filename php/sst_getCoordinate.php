@@ -46,7 +46,7 @@ if ($row) {
         if ($result->num_rows > 0) {
             // 将数据存入数组
             while ($row = $result->fetch_assoc()) {
-                $umap_data[] = array(
+                $umap_data[$dataset_id][] = array(
                     'i' => $row['spatial_cell_id'],
                     'x' => $row['x_coordinate'],
                     'y' => $row['y_coordinate'],

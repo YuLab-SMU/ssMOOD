@@ -1,6 +1,6 @@
 <?php
 include 'config.php';
-
+ini_set('memory_limit', '512M');
 // 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 

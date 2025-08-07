@@ -24,23 +24,23 @@
       </button>
       
         <!-- 按钮 6 -->
-      <button class="navigation-button button-6" @click="goToPage('study1.area.I')">
+      <button class="navigation-button button-6" @click="goToPage('study2.area.I')">
         I
       </button>
         <!-- 按钮 7 -->
-      <button class="navigation-button button-7" @click="goToPage('study1.area.II')">
+      <button class="navigation-button button-7" @click="goToPage('study2.area.II')">
         II
       </button>
         <!-- 按钮 8 -->
-      <button class="navigation-button button-8" @click="goToPage('study1.area.III')">
+      <button class="navigation-button button-8" @click="goToPage('study2.area.III')">
         III
       </button>
         <!-- 按钮 9 -->
-      <button class="navigation-button button-9" @click="goToPage('study1.area.IV')">
+      <button class="navigation-button button-9" @click="goToPage('study2.area.IV')">
         IV
       </button>
         <!-- 按钮 10 -->
-      <button class="navigation-button button-10" @click="goToPage('study1.area.V')">
+      <button class="navigation-button button-10" @click="goToPage('study2.area.V')">
         V
       </button>
     </div>

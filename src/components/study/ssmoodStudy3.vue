@@ -1,10 +1,6 @@
 <template>
   <div class="navigation-container">
-    <img
-      src="@/assets/Human-MDD.png"
-      alt="Navigation Image"
-      class="navigation-image"
-    />
+    <img src="@/assets/Human-MDD.png" alt="Navigation Image" class="navigation-image" />
 
     <!-- BA9 -->
     <div class="nav-overlay ba9">
@@ -33,6 +29,9 @@
       <button class="nav-btn" @click="goToPage('study3.BA11.Control')">22Control</button>
       <button class="nav-btn" @click="goToPage('study3.BA11.MDD')">3MDD</button>
     </div>
+    <button class="navigation-button button-11" @click="goToPage('study3.all')">
+      All
+    </button>
   </div>
 </template>
 
@@ -49,12 +48,14 @@ const goToPage = (study) => {
 <style scoped>
 .navigation-container {
   position: relative;
-  display: inline-block;   /* 让容器大小跟随图片 */
+  display: inline-block;
+  /* 让容器大小跟随图片 */
 }
 
 .navigation-image {
   display: block;
-  width: 100%;             /* 或者固定宽高 */
+  width: 100%;
+  /* 或者固定宽高 */
   height: auto;
 }
 
@@ -63,32 +64,78 @@ const goToPage = (study) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.65); /* 半透明底，防止图片干扰文字 */
+  background: rgba(255, 255, 255, 0.65);
+  /* 半透明底，防止图片干扰文字 */
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
-  white-space: nowrap;     /* 防止换行 */
+  white-space: nowrap;
+  /* 防止换行 */
 }
 
 /* 根据脑区在图上的实际位置微调 left / top */
-.ba9   { top: 10%; left: 35%; }
-.ba46  { top: 30%; left: 35%; }
-.ba12  { top: 50%; left: 35%; }
-.ba11  { top: 70%; left: 35%; }
+.ba9 {
+  top: 10%;
+  left: 35%;
+}
+
+.ba46 {
+  top: 30%;
+  left: 35%;
+}
+
+.ba12 {
+  top: 50%;
+  left: 35%;
+}
+
+.ba11 {
+  top: 70%;
+  left: 35%;
+}
 
 
 .nav-btn {
   padding: 5px 10px;
-  background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* 半透明背景 */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
+
 /* 鼠标悬浮时的效果 */
 .nav-btn:hover {
-  background-color: rgba(0, 0, 0, 0.6); /* 悬浮时背景颜色加深 */
-  transform: scale(1.1); /* 放大按钮 */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加阴影 */
+  background-color: rgba(0, 0, 0, 0.6);
+  /* 悬浮时背景颜色加深 */
+  transform: scale(1.1);
+  /* 放大按钮 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* 添加阴影 */
+}
+.button-11{
+  bottom: 90px;
+  left: 45px;
+}
+.navigation-button {
+  position: absolute;
+  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.4);
+  /* 半透明背景 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* 鼠标悬浮时的效果 */
+.navigation-button:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  /* 悬浮时背景颜色加深 */
+  transform: scale(1.1);
+  /* 放大按钮 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* 添加阴影 */
 }
 </style>
