@@ -92,12 +92,12 @@ onMounted(async() => {
   map.value = L.map('map', {
   scrollWheelZoom: false
 }).setView([20, 0], 2)
-  // 替换底图为无边界灰白图
+  // 无边界灰白图
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map.value)
 
-  // 添加英文免责声明
+  // 英文免责声明
   const disclaimer = L.control({ position: 'bottomright' })
   disclaimer.onAdd = function () {
     const div = L.DomUtil.create('div', 'map-disclaimer')

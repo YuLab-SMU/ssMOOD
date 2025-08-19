@@ -9,7 +9,7 @@ if ($conn->connect_error) {
 }
 $datasetId = $_GET['id'] ?? '';
 // SQL 查询
-$sql = "SELECT dataset_id, species, age, sex, conditions, area, cells, detail, scorst, information FROM datasets WHERE dataset_id = '$datasetId' AND scorst = 'st'";
+$sql = "SELECT dataset_id, species, age, sex, conditions, area, cells, clusters,detail, scorst, information FROM datasets WHERE dataset_id = '$datasetId' AND scorst = 'st'";
 
 // 执行查询
 $result = $conn->query($sql);

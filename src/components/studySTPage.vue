@@ -22,17 +22,33 @@
                 <p><span class="bold-black">{{ $t('std6') }}</span>: {{ dataset.conditions }}</p>
                 <p><span class="bold-black">{{ $t('std7') }}</span>: {{ dataset.sex }}</p>
                 <p><span class="bold-black">{{ $t('std8') }}</span>: {{ dataset.age }}</p>
-
+                <p><span class="bold-black">{{ $t('scd10') }}</span>: {{
+                  dataset.cells }}</p>
+                <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
+                  dataset.clusters }}</p>
               </div>
               <div class="information-right">
-                <h1>{{ $t('std9') }}</h1>
-                <p><span class="bold-black">{{ $t('std10') }}</span>: {{ dataset.information.Publication.Title }}</p>
-                <p><span class="bold-black">{{ $t('std11') }}</span>: {{ dataset.information.Publication.DatePublished
-                  }}</p>
-                <p><span class="bold-black">{{ $t('std12') }}</span>: {{ dataset.information.Publication.Protocol }}</p>
-                <p><span class="bold-black">{{ $t('std13') }}</span>: {{ dataset.information.Publication.DataSource }}
-                </p>
+                <h2>{{ $t('scd12') }}</h2>
 
+                <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
+                <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
+                }}</p>
+                <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
+                </p>
+                <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
+                }}</p>
+                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
+                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
+                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
+
+                </p>
+                <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
+                    :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
+                      dataset.information.DatasetSource1.DOI }}</a>
+
+                </p>
+                <p><span class="bold-black">{{ $t('scd19') }}</span>: {{ dataset.information.DatasetSource1.Statement }}
+                </p>
               </div>
             </div>
           </div>
@@ -550,33 +566,24 @@ const route = useRoute();
 //加载数据集详细信息
 //------------------------------------------------------
 const dataset = ref({
-  study_id: '',
+  dataset_id: '',
   species: '',
   area: '',
   condition: '',
   sex: '',
   age: '',
   cells: '',
-  clusters: '',
+  clusters:'',
   information: {
-    Publication: {
-      Title: '',
-      Authors: '',
-      DatePublished: '',
-      DateAdded: '',
-      Journal: '',
-      DOI: '',
-      Protocol: '',
-      DataSource: ''
+    DatasetSource1: {
+      Title: "",
+      Methodology: "",
+      Protocol: "",
+      PublicDataID: "",
+      Pubmed: null,
+      DOI: "",
+      Statement: ""
     },
-    StudyDesign: {
-      Species: '',
-      NumberOfSamples: null,
-      Region: {
-        Mouse: '',
-        Human: ''
-      }
-    }
   }
 });
 onMounted(() => {

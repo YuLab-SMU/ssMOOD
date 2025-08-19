@@ -5,7 +5,6 @@ import { createI18n } from 'vue-i18n';
 import en from './locales/en.json';
 import zhCn from './locales/zh-cn.json';
 import zhTw from './locales/zh-tw.json';
-import es from './locales/es.json';
 import mitt from 'mitt';
 import { createTerminal } from 'vue-web-terminal';
 import ElementPlus from 'element-plus'
@@ -21,7 +20,6 @@ const i18n = createI18n({
     en,
     'zh1': zhCn,
     'zh2': zhTw,
-    es
   }
 });
 const eventBus = mitt();

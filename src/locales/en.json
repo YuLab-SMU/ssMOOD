@@ -101,9 +101,12 @@
     "ap6":"Save to file",
     "ap7":"Load",
     "zs06.1": "---------------------(AnalyzePage.vue-Node)---------------------------",
-    "apn-sn1":"Start Node"
-
-
-
-
+    "apn-sn1":"Start Node",
+    "zs07": "########################(联系页面)#############################",
+    "acu01":"Cao Xiong",
+    "acu02":"Yu Guangchuang",
+    "acu03":"Wang Qianwen",
+    "acu04":"Li Jinchen",
+    "acu05":"7th Floor, Guangdong-Hong Kong-Macao Greater Bay Area Center for Brain Science and Brain-Inspired Intelligence, Department of Neurobiology, Southern Medical University, 1023 Shatainan Road, Guangzhou.",
+    "acu06":"10th Floor, Life Science Building, Department of Bioinformatics, School of Basic Medical Sciences, Southern Medical University, 1023 Shatainan Road, Guangzhou."
 }

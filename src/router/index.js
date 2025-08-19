@@ -18,8 +18,9 @@ import studySTPage from '../components/studySTPage.vue';
 //import SearchPage from '../components/SearchPage.vue'; 
 import DownloadPage from '../components/DownloadPage.vue'; 
 import AboutPage from '../components/AboutPage.vue';
-
 import VisitLogPage from '../components/VisitLogPage.vue';
+
+import ContactUsPage from '../components/ContactUsPage.vue';
 
 
 const routes = [
@@ -34,7 +35,8 @@ const routes = [
   { path: '/browse/singleCellStudy/:study', name: 'scStudy', component: studySingleCellPage, meta: { requiresLoading: true } },
   { path: '/browse/stStudy/:study', name: 'stStudy', component: studySTPage, meta: { requiresLoading: true } },
   { path: '/browse/SpatialTranscriptome/:id', name: 'STPage', component: STPage, meta: { requiresLoading: true } },
-  { path: '/about/VisitLogPage', name: 'VisitLogPage', component: VisitLogPage, meta: { requiresLoading: true } }
+  { path: '/about/VisitLog', name: 'VisitLogPage', component: VisitLogPage, meta: { requiresLoading: true } },
+  { path: '/about/ContactUs', name: 'ContactUsPage', component: ContactUsPage, meta: { requiresLoading: true } }
 ];
 
 const router = createRouter({

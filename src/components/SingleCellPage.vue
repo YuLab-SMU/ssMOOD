@@ -25,9 +25,9 @@
                 <h2>{{ $t('scd9') }}</h2>
 
                 <p><span class="bold-black">{{ $t('scd10') }}</span>: {{
-                  dataset.information.DatasetInformation.NumberOfCells }}</p>
+                  dataset.cells }}</p>
                 <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
-                  dataset.information.DatasetInformation.NumberOfIdentifiedCellTypes }}</p>
+                  dataset.clusters }}</p>
               </div>
               <div class="information-right">
                 <h2>{{ $t('scd12') }}</h2>
@@ -581,11 +581,9 @@ const dataset = ref({
   condition: '',
   sex: '',
   age: '',
+  cells: '',
+  clusters:'',
   information: {
-    DatasetInformation: {
-      NumberOfCells: null,
-      NumberOfIdentifiedCellTypes: null
-    },
     DatasetSource1: {
       Title: "",
       Methodology: "",

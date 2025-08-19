@@ -9,18 +9,22 @@
 
     <!-- BA46 -->
     <div class="nav-overlay ba46">
-      <span class="nav-label">BA46:</span>
+      <button class="nav-btn" @click="goToPage('study4.BA46')">BA46</button>
+      <span class="nav-label">:</span>
       <button class="nav-btn" @click="goToPage('study4.BA46.Control')">2Control</button>
       <button class="nav-btn" @click="goToPage('study4.BA46.MDD')">2MDD</button>
     </div>
 
     <!-- BA12 -->
     <div class="nav-overlay ba12">
-      <span class="nav-label">BA12:</span>
+      <button class="nav-btn" @click="goToPage('study4.BA12')">BA12</button>
+      <span class="nav-label">:</span>
       <button class="nav-btn" @click="goToPage('study4.BA12.Control')">2Control</button>
       <button class="nav-btn" @click="goToPage('study4.BA12.MDD')">2MDD</button>
     </div>
-
+    <button class="navigation-button button-11" @click="goToPage('study4.all')">
+      All
+    </button>
   </div>
 </template>
 
@@ -61,8 +65,28 @@ const goToPage = (study) => {
 /* 根据脑区在图上的实际位置微调 left / top */
 .ba46  { top: 30%; left: 35%; }
 .ba12  { top: 50%; left: 35%; }
-
-
+.button-11{
+  bottom: 90px;
+  left: 45px;
+}
+.navigation-button {
+  position: absolute;
+  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.4);
+  /* 半透明背景 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.navigation-button:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  /* 悬浮时背景颜色加深 */
+  transform: scale(1.1);
+  /* 放大按钮 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* 添加阴影 */
+}
 
 .nav-btn {
   padding: 5px 10px;

@@ -11,12 +11,8 @@
         <li class="nav-item" :class="{ 'active': $route.path === '/' }">
           <router-link to="/">{{ $t('home') }}</router-link>
         </li>
-        <li
-          @mouseover="showSubMenu = true"
-          @mouseleave="showSubMenu = false"
-          class="nav-item has-submenu"
-          :class="{ 'active': $route.path.startsWith('/browse') }"
-        >
+        <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="nav-item has-submenu"
+          :class="{ 'active': $route.path.startsWith('/browse') }">
           <a>{{ $t('browse') }}</a>
           <ul v-if="showSubMenu" class="submenu">
             <li>
@@ -35,25 +31,30 @@
         <li class="nav-item" :class="{ 'active': $route.path === '/download' }">
           <router-link to="/download">{{ $t('download') }}</router-link>
         </li>
-        <li 
-        @mouseover="showSubMenu1 = true"
-          @mouseleave="showSubMenu1 = false"
-          class="nav-item has-submenu"
-          :class="{ 'active': $route.path.startsWith('/about') }"
-          >
-        <a>{{ $t('about') }}</a>
+        <li @mouseover="showSubMenu1 = true" @mouseleave="showSubMenu1 = false" class="nav-item has-submenu"
+          :class="{ 'active': $route.path.startsWith('/about') }">
+          <a>{{ $t('about') }}</a>
           <ul v-if="showSubMenu1" class="submenu">
             <li>
-              <router-link to="/about/Methods">{{ $t('Methods') }}</router-link>
+              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/Methods.md" target="_blank"
+                rel="noopener noreferrer">
+                {{ $t('Methods') }}
+              </a>
             </li>
             <li>
-              <router-link to="/about/Usage">{{ $t('Usage') }}</router-link>
+              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/Usage.md" target="_blank"
+                rel="noopener noreferrer">
+                {{ $t('Usage') }}
+              </a>
             </li>
             <li>
-              <router-link to="/about/FAQ">{{ $t('FAQ') }}</router-link>
+              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/FAQ.md" target="_blank"
+                rel="noopener noreferrer">
+                {{ $t('FAQ') }}
+              </a>
             </li>
             <li>
-              <router-link to="/about/VisitLogPage">{{ $t('AccessAnalytics') }}</router-link>
+              <router-link to="/about/VisitLog">{{ $t('AccessAnalytics') }}</router-link>
             </li>
             <li>
               <router-link to="/about/ContactUs">{{ $t('ContactUs') }}</router-link>
@@ -63,12 +64,7 @@
       </ul>
       <div class="language-switcher-container">
         <span>Language</span>
-        <el-select
-          v-model="selectedLanguage"
-          @change="switchLanguage"
-          placeholder="Select Language"
-          size="default"
-        >
+        <el-select v-model="selectedLanguage" @change="switchLanguage" placeholder="Select Language" size="default">
           <el-option label="简体中文" value="zh1" />
           <el-option label="繁體中文" value="zh2" />
           <el-option label="English" value="en" />
@@ -178,10 +174,12 @@ header {
   align-items: center;
   padding: 0 10px;
 }
+
 /* 添加active样式 */
 .nav-item.active {
   background: rgba(255, 255, 255, 0.3);
 }
+
 .nav-item:hover {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -205,16 +203,18 @@ a {
 }
 
 .submenu {
-  position: absolute; 
+  position: absolute;
   padding: 0px;
   background-color: #fff;
   z-index: 2000;
-  top: 100%; /* 父菜单项高度的100% */
-  left: 0; /* 根据需要调整 */
+  top: 100%;
+  /* 父菜单项高度的100% */
+  left: 0;
+  /* 根据需要调整 */
   transition: opacity 0.3s, visibility 0.3s;
   border: 1px solid #eaeaea;
   border-radius: 8px;
-  box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.3);
 
 }
 
@@ -232,16 +232,19 @@ a {
 }
 
 .submenu li:hover {
-    background-color: rgba(093, 116, 162, 0.3);
+  background-color: rgba(093, 116, 162, 0.3);
 }
+
 .submenu a {
-    text-decoration: none;
-    white-space: nowrap; /* 禁止文字换行 */
-    /* 移除下划线 */
-    color: black;
-    display: block;
-    transition: background 0.3s, color 0.3s;
+  text-decoration: none;
+  white-space: nowrap;
+  /* 禁止文字换行 */
+  /* 移除下划线 */
+  color: black;
+  display: block;
+  transition: background 0.3s, color 0.3s;
 }
+
 .language-switcher-container {
   padding: 5px;
   margin-right: 80px;
@@ -250,18 +253,23 @@ a {
   margin-left: auto;
 
   /* 不使用flex，改用inline-block水平排列 */
-  white-space: nowrap; /* 防止换行 */
-  text-align: right;   /* 内容右对齐 */
+  white-space: nowrap;
+  /* 防止换行 */
+  text-align: right;
+  /* 内容右对齐 */
 }
 
-.language-switcher-container > * {
+.language-switcher-container>* {
   display: inline-block;
-  vertical-align: middle; /* 让元素垂直居中 */
-  margin-left: 8px;       /* 控制间距 */
+  vertical-align: middle;
+  /* 让元素垂直居中 */
+  margin-left: 8px;
+  /* 控制间距 */
 }
 
-.language-switcher-container > *:first-child {
-  margin-left: 0;         /* 第一个元素左边距去掉 */
+.language-switcher-container>*:first-child {
+  margin-left: 0;
+  /* 第一个元素左边距去掉 */
 }
 
 .language-switcher-container a {
@@ -288,20 +296,23 @@ a {
 }
 
 .modal {
-  background-color: rgba(255, 255, 255, 0.6); /* 半透明白色背景 */
+  background-color: rgba(255, 255, 255, 0.6);
+  /* 半透明白色背景 */
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
-  backdrop-filter: blur(5px); /* 添加毛玻璃效果，模糊半径为 5px */
-  -webkit-backdrop-filter: blur(5px); /* Safari 支持 */
+  backdrop-filter: blur(5px);
+  /* 添加毛玻璃效果，模糊半径为 5px */
+  -webkit-backdrop-filter: blur(5px);
+  /* Safari 支持 */
   position: relative;
 }
 
 .modal p {
   margin-top: 20px;
   margin-bottom: 10px;
-  color:black;
+  color: black;
 }
 
 .modal button {
@@ -312,10 +323,11 @@ a {
   border: none;
   background-color: rgba(255, 255, 255, 0);
   cursor: pointer;
-  right:0px;
+  right: 0px;
   position: absolute;
   top: 0px;
 }
+
 .modal button:hover,
 .modal button:focus {
   color: black;
@@ -324,17 +336,19 @@ a {
 }
 
 @media (max-width: 768px) {
-    
-.logo {
-  padding: 10px 0;
-}
-.logo img {
-  height: 3vh;
-}
+
+  .logo {
+    padding: 10px 0;
+  }
+
+  .logo img {
+    height: 3vh;
+  }
+
   .toggle-button {
     align-items: center;
   }
-  
+
   .nav-menu {
     position: fixed;
     top: 60px;
@@ -348,64 +362,66 @@ a {
     transition: max-height 0.3s ease;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   }
-  
+
   .nav-menu.nav-menu-collapsed {
-    max-height: 500px; /* 足够容纳所有菜单项的高度 */
+    max-height: 500px;
+    /* 足够容纳所有菜单项的高度 */
   }
-  
+
   .nav-item {
     width: 100%;
     height: auto;
     padding: 10px 0;
   }
-.submenu {
-  position: absolute; 
-  padding: 0px;
-  background-color: #fff;
-  z-index: 2000;
-  top: auto; /* 父菜单项高度的100% */
-  bottom: 0%;
-  left: 50%; /* 根据需要调整 */
-  transition: opacity 0.3s, visibility 0.3s;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.3);
-}
-.submenu li {
-  padding: 0;
-  text-decoration: none;
-  display: block;
-  color: black;
-  border-radius: 5px;
-}
-  
+
+  .submenu {
+    position: absolute;
+    padding: 0px;
+    background-color: #fff;
+    z-index: 2000;
+    top: auto;
+    /* 父菜单项高度的100% */
+    bottom: 0%;
+    left: 50%;
+    /* 根据需要调整 */
+    transition: opacity 0.3s, visibility 0.3s;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.3);
+  }
+
+  .submenu li {
+    padding: 0;
+    text-decoration: none;
+    display: block;
+    color: black;
+    border-radius: 5px;
+  }
+
   a {
     padding: 12px 20px;
     width: 100%;
   }
-.language-switcher-container {
-  display: flex;
-  align-items: center;
-  border: 1px solid #5d72a2;
-  border-radius: 4px;
-}
 
-.language-switcher-container a {
+  .language-switcher-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #5d72a2;
+    border-radius: 4px;
+  }
+
+  .language-switcher-container a {
     font-size: 14px;
-  color: white;
-  text-decoration: none;
-  padding: 0px 0px;
+    color: white;
+    text-decoration: none;
+    padding: 0px 0px;
+  }
+
+  .language-switcher {
+    padding: 5px 10px;
+    font-size: 14px;
+
+  }
+
 }
-
-.language-switcher {
-  padding: 5px 10px;
-  font-size: 14px;
-
-}
-  
-}
-
-
-
-
 </style>
