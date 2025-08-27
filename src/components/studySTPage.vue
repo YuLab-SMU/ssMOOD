@@ -26,7 +26,16 @@
                   dataset.cells }}</p>
                 <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
                   dataset.clusters }}</p>
+
+
+              <h1>{{ $t('scd2-1') }}</h1>
+              <p>
+                <span v-for="(ds, index) in datasetList" :key="ds" class="dataset-link" @click="goToDataset(ds)">
+                  {{ ds }}<span v-if="index < datasetList.length - 1">, </span>
+                </span>
+              </p>
               </div>
+
               <div class="information-right">
                 <h2>{{ $t('scd12') }}</h2>
 
@@ -37,11 +46,6 @@
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
                 }}</p>
-                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
-                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
-                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
-
-                </p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
@@ -552,7 +556,7 @@ import VirtualListItem from './general/VirtualListItem.vue';
 import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
 import { ref, onMounted, computed, watch, onUnmounted, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 //import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
@@ -561,6 +565,7 @@ import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';
 const route = useRoute();
+const router = useRouter();
 
 //------------------------------------------------------
 //加载数据集详细信息
@@ -573,7 +578,8 @@ const dataset = ref({
   sex: '',
   age: '',
   cells: '',
-  clusters:'',
+  clusters: '',
+  datasets: '',
   information: {
     DatasetSource1: {
       Title: "",
@@ -586,6 +592,10 @@ const dataset = ref({
     },
   }
 });
+function goToDataset(id) {
+  router.push(`/browse/SpatialTranscriptome/${id}`);
+}
+const datasetList = ref([])
 onMounted(() => {
   const params = new URLSearchParams({
     id: route.params.study // 使用 route.params 获取路由参数
@@ -602,6 +612,7 @@ onMounted(() => {
       if (dataArray && dataArray.length > 0 && dataArray[0].information) {
         const parsedData = JSON.parse(dataArray[0].information);
         dataset.value = { ...dataArray[0], information: parsedData }; // 使用 ref 的 value 更新数据
+        datasetList.value = dataset.value.datasets.split(',');
       }
 
       //console.log(dataset.value); // 打印更新后的 dataset
@@ -697,8 +708,8 @@ const updateGenePlot = () => {
   const genelayout = {
     showlegend: false,
     autosize: true,
-    xaxis: { title: 'coords_X' },
-    yaxis: { title: 'coords_Y', scaleanchor: 'x' },
+    xaxis: { title: 'coords_X', zeroline: false, showline: false, },
+    yaxis: { title: 'coords_Y', scaleanchor: 'x', zeroline: false, showline: false, },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
   };
@@ -762,8 +773,8 @@ const updatePlot = () => {
 
   const layout = {
     title: '',
-    xaxis: { title: 'coords_X' },
-    yaxis: { title: 'coords_Y', scaleanchor: 'x' },
+    xaxis: { title: 'coords_X', zeroline: false, showline: false, },
+    yaxis: { title: 'coords_Y', scaleanchor: 'x', zeroline: false, showline: false, },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     margin: { l: 40, r: 40, b: 40, t: 50 },
@@ -1230,7 +1241,7 @@ const searchgene = async () => {
       };
 
       const layout = {
-        title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
+        title: 'Heatmap of Cell Counts Across Expression Levels and Clusters',
         xaxis: {
           tickangle: 45,
           tickfont: { size: 6 },
@@ -1288,7 +1299,7 @@ const filterDEGGenes = ref('');
 
 const pValueSliderIndex = ref(5)  // 默认 0.05
 // 定义 slider 的值及 label
-const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 1]
+const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5]
 const pValueMarks = {
   0: '10⁻⁶',
   1: '10⁻⁵',
@@ -1297,7 +1308,7 @@ const pValueMarks = {
   4: '0.01',
   5: '0.05',
   6: '0.1',
-  7: '1',
+  7: '0.5',
 }
 
 const formattedPValue = computed(() => {

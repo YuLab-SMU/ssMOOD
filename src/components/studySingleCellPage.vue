@@ -28,28 +28,54 @@
                   dataset.cells }}</p>
                 <p><span class="bold-black">{{ $t('scd11') }}</span>: {{
                   dataset.clusters }}</p>
+
+
+                <h1>{{ $t('scd2-1') }}</h1>
+                <p>
+                  <span v-for="(ds, index) in datasetList" :key="ds" class="dataset-link" @click="goToDataset(ds)">
+                    {{ ds }}<span v-if="index < datasetList.length - 1">, </span>
+                  </span>
+                </p>
+
+
               </div>
               <div class="information-right">
                 <h2>{{ $t('scd12') }}</h2>
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                  }}</p>
-                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
-                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
-                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
-
-                </p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
 
                 </p>
                 <p><span class="bold-black">{{ $t('scd19') }}</span>: {{ dataset.information.DatasetSource1.Statement }}
+                </p>
+                <h2 v-if="dataset.information.DatasetSource2.Title != ''">{{ $t('scd12-1') }}</h2>
+
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd13')
+                    }}</span>: {{ dataset.information.DatasetSource2.Title }}</p>
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd14')
+                    }}</span>: {{ dataset.information.DatasetSource2.Methodology
+                    }}</p>
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd15')
+                    }}</span>: {{ dataset.information.DatasetSource2.Protocol }}
+                </p>
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd16')
+                    }}</span>: {{ dataset.information.DatasetSource2.PublicDataID
+                    }}</p>
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd18')
+                    }}</span>: <a :href="'http://doi.org/' + dataset.information.DatasetSource2.DOI" target="_blank">{{
+                      dataset.information.DatasetSource2.DOI }}</a>
+
+                </p>
+                <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd19')
+                    }}</span>: {{ dataset.information.DatasetSource2.Statement }}
                 </p>
               </div>
             </div>
@@ -556,7 +582,7 @@ import VirtualListItem from './general/VirtualListItem.vue';
 import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
 import { ref, onMounted, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 //import VueVirtualScrollGrid from 'vue-virtual-scroll-grid';
 //import debounce from 'lodash.debounce';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
@@ -565,11 +591,11 @@ import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';
-
+import _merge from "lodash/merge";
 
 
 const route = useRoute();
-
+const router = useRouter();
 
 //###################################//
 //加载数据集详细信息
@@ -583,6 +609,7 @@ const dataset = ref({
   age: '',
   clusters: '',
   cells: '',
+  datasets: '',
   information: {
     DatasetInformation: {
       NumberOfCells: null,
@@ -597,9 +624,22 @@ const dataset = ref({
       DOI: "",
       Statement: ""
     },
+    DatasetSource2: {
+      Title: "",
+      Methodology: "",
+      Protocol: "",
+      PublicDataID: "",
+      Pubmed: null,
+      DOI: "",
+      Statement: ""
+    },
   }
 });
-
+// 点击跳转函数
+function goToDataset(id) {
+  router.push(`/browse/SingleCell/${id}`);
+}
+const datasetList = ref([])
 onMounted(() => {
   console.log(route.params.study);
   const params = new URLSearchParams({
@@ -615,8 +655,18 @@ onMounted(() => {
     })
     .then(data => {
       if (data && data.length > 0 && data[0].information) {
-        dataset.value = data[0];
-        dataset.value.information = JSON.parse(data[0].information);
+        const raw = { ...dataset.value, ...data[0] };
+
+        // 处理 information 字段，如果是字符串先解析
+        if (data[0].information) {
+          try {
+            raw.information = JSON.parse(data[0].information);
+          } catch (e) {
+            raw.information = {};
+          }
+        }
+        dataset.value = _merge({}, dataset.value, raw);
+        datasetList.value = dataset.value.datasets.split(',');
       }
     })
     .catch(error => {
@@ -1033,7 +1083,7 @@ const searchgene = async () => {
       // 解析每个数据块
       while (offset < arrayBuffer.byteLength) {
         // 读取数据块长度（4字节无符号整数）
-        const length = dataView.getUint32(offset, false); 
+        const length = dataView.getUint32(offset, false);
         offset += 4; // 移动到数据块内容
 
         // 读取数据块内容
@@ -1045,13 +1095,13 @@ const searchgene = async () => {
 
         // 解码为字符串
         const text = new TextDecoder('utf-8').decode(decompressed);
-        
+
 
         // 将解析后的数据添加到数组
-              const jsonData = JSON.parse(text);
-      for (const key in jsonData) {
-        expressionData[key] = jsonData[key];
-      }
+        const jsonData = JSON.parse(text);
+        for (const key in jsonData) {
+          expressionData[key] = jsonData[key];
+        }
       }
       //console.log(expressionData);
       isSearchgene.value = true;
@@ -1150,7 +1200,7 @@ const searchgene = async () => {
       //各类细胞在不同表达量区间的细胞数量热图
       const layout = {
         autosize: true,
-        title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
+        title: 'Heatmap of Cell Counts Across Expression Levels and Clusters',
         xaxis: {
           title: '',
           showgrid: false,
@@ -1226,7 +1276,7 @@ const filterDEGGenes = ref('');
 
 const pValueSliderIndex = ref(5)  // 默认 0.05
 // 定义 slider 的值及 label
-const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 1]
+const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5]
 const pValueMarks = {
   0: '10⁻⁶',
   1: '10⁻⁵',
@@ -1235,7 +1285,7 @@ const pValueMarks = {
   4: '0.01',
   5: '0.05',
   6: '0.1',
-  7: '1',
+  7: '0.5',
 }
 
 const formattedPValue = computed(() => {

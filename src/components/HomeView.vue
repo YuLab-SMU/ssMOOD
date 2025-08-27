@@ -12,7 +12,7 @@
               <el-col :span="24">
                 <div class="test">
                   <video ref="video" src="/ssmood.mov" muted autoplay playsinline loop :playbackRate="0.8"
-                    @ended="handleEnded" @loadedmetadata="handleLoaded" style="width: 80%;"></video>
+                    @ended="handleEnded" @loadedmetadata="handleLoaded" style="width: 80%;" preload="auto"></video>
                 </div>
               </el-col>
             </el-row>
@@ -98,7 +98,15 @@
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="text">
                   <h2>{{ $t('hv9') }}</h2>
-                  <p>{{ $t('hv10') }}</p>
+                  <ul>
+                    <li>{{ $t('hv10-1') }}</li>
+                  </ul>
+                  <ul>
+                    <li>{{ $t('hv10-2') }}</li>
+                  </ul>
+                  <ul>
+                    <li>{{ $t('hv10-3') }}</li>
+                  </ul>
                 </div>
               </el-col>
               <!-- 图像和图表切换部分 -->
@@ -144,7 +152,7 @@
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="image">
-                  <div id="volcanoChart"></div>
+                  <img src="@/assets/demo1.png" width="80%" />
                 </div>
               </el-col>
               <!-- 文本部分 -->

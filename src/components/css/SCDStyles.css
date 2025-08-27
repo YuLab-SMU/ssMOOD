@@ -13,6 +13,17 @@
   flex:1;
   
 }
+.dataset-link {
+  font-size: 0.85rem;       /* 调小字体 */
+  color: var(--el-color-primary);           /* 链接蓝色 */
+  cursor: pointer;          /* 鼠标变手型 */
+  transition: color 0.2s;
+}
+
+.dataset-link:hover {
+  color: var(--el-color-primary-light-7);           /* 悬停变亮 */
+}
+
 .sc-cluster-content {
       display: flex;
     flex-direction: column; /* 子元素垂直排列 */
@@ -664,6 +675,12 @@ label {
   color: #333;
 }
 
+.help-icon {
+  color: var( --el-color-primary-light-5) !important;    /* Element Plus 主色蓝 */
+  margin-left: 6px;  /* 和 radio group 保持间距 */
+  cursor: pointer;   /* 鼠标悬停小手形 */
+  vertical-align: middle;
+}
 
 
 

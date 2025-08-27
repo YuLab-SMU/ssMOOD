@@ -39,11 +39,6 @@
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
                 }}</p>
-                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
-                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
-                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
-
-                </p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
@@ -208,12 +203,17 @@
                     </div>
                     <div class="DEdirection" style="margin-top: 1rem;">
                       <label class="font-semibold text-gray-700 mr-4">{{ $t('scd30-1') }}</label>
-
                       <el-radio-group v-model="selectedDirection" size="small" class="custom-radio-group">
                         <el-radio-button value="all">All</el-radio-button>
                         <el-radio-button value="up">UP</el-radio-button>
                         <el-radio-button value="down">Down</el-radio-button>
                       </el-radio-group>
+                      <el-tooltip :content="$t('scd30-help')" placement="top">
+                        <el-icon class="help-icon">
+                          <QuestionFilled />
+                        </el-icon>
+                      </el-tooltip>
+
                     </div>
                   </div>
                 </div>
@@ -234,13 +234,34 @@
                           <template #default="{ row }">{{ row.fc.toFixed(6) }}</template>
                         </el-table-column>
 
-                        <el-table-column prop="t1" :label="$t('scd35')" sortable="custom">
-                          <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
+                        <el-table-column prop="t1" sortable="custom">
+                          <template #header>
+                            {{ $t('scd35') }}
+                            <el-tooltip :content="$t('scd35-help')" placement="top">
+                              <el-icon class="help-icon">
+                                <QuestionFilled />
+                              </el-icon>
+                            </el-tooltip>
+                          </template>
+                          <template #default="{ row }">
+                            {{ row.t1.toFixed(3) }}
+                          </template>
                         </el-table-column>
 
-                        <el-table-column prop="t2" :label="$t('scd36')" sortable="custom">
-                          <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
+                        <el-table-column prop="t2" sortable="custom">
+                          <template #header>
+                            {{ $t('scd36') }}
+                            <el-tooltip :content="$t('scd36-help')" placement="top">
+                              <el-icon class="help-icon">
+                                <QuestionFilled />
+                              </el-icon>
+                            </el-tooltip>
+                          </template>
+                          <template #default="{ row }">
+                            {{ row.t2.toFixed(3) }}
+                          </template>
                         </el-table-column>
+
 
                         <el-table-column prop="a" :label="$t('scd37')" sortable="custom" min-width="100">
                           <template #default="{ row }">{{ row.a.toExponential(3) }}</template>
@@ -269,6 +290,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
                   <el-collapse-item :title="$t('scd42')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterKEGG" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -338,6 +360,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded2" @change="getGO_BP" accordion>
                   <el-collapse-item :title="$t('scd52')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOBP" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -406,6 +429,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded3" @change="getGO_MF" accordion>
                   <el-collapse-item :title="$t('scd54')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOMF" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -474,6 +498,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded4" @change="getGO_CC" accordion>
                   <el-collapse-item :title="$t('scd55')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOCC" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -565,7 +590,7 @@ import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';
-
+import { QuestionFilled } from '@element-plus/icons-vue'
 
 
 const route = useRoute();
@@ -582,7 +607,7 @@ const dataset = ref({
   sex: '',
   age: '',
   cells: '',
-  clusters:'',
+  clusters: '',
   information: {
     DatasetSource1: {
       Title: "",
@@ -1121,7 +1146,7 @@ const searchgene = async () => {
       //各类细胞在不同表达量区间的细胞数量热图
       const layout = {
         autosize: true,
-        title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
+        title: 'Heatmap of Cell Counts Across Expression Levels and Clusters',
         xaxis: {
           title: '',
           showgrid: false,
@@ -1197,7 +1222,7 @@ const filterDEGGenes = ref('');
 
 const pValueSliderIndex = ref(5)  // 默认 0.05
 // 定义 slider 的值及 label
-const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 1]
+const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5]
 const pValueMarks = {
   0: '10⁻⁶',
   1: '10⁻⁵',
@@ -1206,7 +1231,7 @@ const pValueMarks = {
   4: '0.01',
   5: '0.05',
   6: '0.1',
-  7: '1',
+  7: '0.5',
 }
 
 const formattedPValue = computed(() => {
@@ -1262,7 +1287,7 @@ watch(cellType, async (newcellType) => {
       const compressed = new Uint8Array(arrayBuffer);
       const decompressed = pako.ungzip(compressed); // 使用 pako 解压
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
-      DEGdata.value = JSON.parse(jsonString); 
+      DEGdata.value = JSON.parse(jsonString);
       currentPage.value = 1;//回到第一页
       loadingDEG.value = false;
     })

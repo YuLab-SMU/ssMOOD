@@ -96,3 +96,29 @@ ST
 UPDATE `datasets`
 SET `information` = ''
 WHERE `scorst` = 'st';
+
+
+
+
+
+study.all
+{
+    "DatasetSource1": {
+        "Title": "Single-nucleus transcriptomic profiling of human orbitofrontal cortex reveals convergent effects of aging and psychiatric disease",
+        "Methodology": "Single-nucleus RNA-seq",
+        "Protocol": "10x Genomics",
+        "PublicDataID": "GSE254569 (NCBI)",
+        "DOI": "10.1038/s41593-024-01742-z",
+        "Pubmed": 0,
+        "Statement": "We downloaded the raw count matrices GSE254569 and re-analyzed them in this study. We performed unified quality control and integrated the data with our in‑house dataset using a consistent pipeline."
+    },
+    "DatasetSource2": {
+        "Title": "Spatiotemporally Single-cell Atlas Revealing Molecular Dynamics of Major Depression Disorder Across Brain Regions During Disease Progression",
+        "Methodology": "Single-nucleus RNA-seq",
+        "Protocol": "Singleron GEXSCOPE",
+        "PublicDataID": "Public release upon publication",
+        "Pubmed": 0,
+        "DOI": "Public release upon publication",
+        "Statement": "reviewer private link at submission; public upon publication."
+    }
+}

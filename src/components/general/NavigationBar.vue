@@ -36,19 +36,19 @@
           <a>{{ $t('about') }}</a>
           <ul v-if="showSubMenu1" class="submenu">
             <li>
-              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/Methods.md" target="_blank"
+              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/Methods.md'" target="_blank"
                 rel="noopener noreferrer">
                 {{ $t('Methods') }}
               </a>
             </li>
             <li>
-              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/Usage.md" target="_blank"
+              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/Usage.md'" target="_blank"
                 rel="noopener noreferrer">
                 {{ $t('Usage') }}
               </a>
             </li>
             <li>
-              <a href="https://github.com/goldmorningsmart/ssMOOD/tree/master/doc/FAQ.md" target="_blank"
+              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/FAQ.md'" target="_blank"
                 rel="noopener noreferrer">
                 {{ $t('FAQ') }}
               </a>
@@ -80,7 +80,8 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 //import { useRoute } from 'vue-router';
-
+const BaseURL = "goldmorningsmart";
+const BRANCH = process.env.BRANCH;
 const { locale } = useI18n();
 //onst route = useRoute();
 const showSubMenu = ref(false);

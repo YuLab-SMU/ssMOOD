@@ -39,11 +39,6 @@
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
                   }}</p>
-                <p><span class="bold-black">{{ $t('scd17') }}</span>: <a
-                    :href="'http://www.ncbi.nlm.nih.gov/pubmed/' + dataset.information.DatasetSource1.Pubmed"
-                    target="_blank">{{ dataset.information.DatasetSource1.Pubmed }}</a>
-
-                </p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
@@ -673,7 +668,7 @@ const updateGenePlot = () => {
       showlegend: false,
       autosize: true,
       xaxis: { title: 'UMAP1' },
-      yaxis: { title: 'UMAP2' },
+      yaxis: { title: 'UMAP2' , scaleanchor: "x"},
     };
 
     Plotly.react('coord_chart_gene', traces, genelayout);
@@ -713,7 +708,7 @@ const updatePlot = () => {
   const layout = {
     title: '',
     xaxis: { title: 'coords_X' },
-    yaxis: { title: 'coords_Y' },
+    yaxis: { title: 'coords_Y' , scaleanchor: "x"},
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     showlegend: false,
@@ -798,7 +793,7 @@ onMounted(() => {
         showlegend: false,
         title: '',
         xaxis: { title: 'coords_X' },
-        yaxis: { title: 'coords_Y' },
+        yaxis: { title: 'coords_Y' , scaleanchor: "x"},
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
       };
@@ -1065,7 +1060,7 @@ const searchgene = async () => {
       //各类细胞在不同表达量区间的细胞数量热图
       const layout = {
         autosize: true,
-        title: 'Heatmap of Cell Counts Across Expression Levels and Cell Types',
+        title: 'Heatmap of Cell Counts Across Expression Levels and Clusters',
         xaxis: {
           title: '',
           showgrid: false,
@@ -1139,7 +1134,7 @@ const filterDEGGenes = ref('');
 
 const pValueSliderIndex = ref(5)  // 默认 0.05
 // 定义 slider 的值及 label
-const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 1]
+const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5]
 const pValueMarks = {
   0: '10⁻⁶',
   1: '10⁻⁵',
@@ -1148,7 +1143,7 @@ const pValueMarks = {
   4: '0.01',
   5: '0.05',
   6: '0.1',
-  7: '1',
+  7: '0.5',
 }
 
 const formattedPValue = computed(() => {

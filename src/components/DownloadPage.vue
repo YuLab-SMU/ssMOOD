@@ -52,6 +52,7 @@
                                 size="large"
                                 @click="openBioData"
                                 class="download-btn"
+                                :disabled="true"
                         >
                             <el-icon><Download /></el-icon>
                             {{ $t('dp07') }}

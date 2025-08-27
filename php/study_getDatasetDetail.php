@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 $study_id = $_GET['id'] ?? '';
 // SQL 查询
-$sql = "SELECT study_id, species, age, sex, conditions, area, cells, clusters,information FROM study WHERE study_id = '$study_id'";
+$sql = "SELECT study_id, species, age, sex, conditions, area, cells, clusters,information,datasets FROM study WHERE study_id = '$study_id'";
 
 // 执行查询
 $result = $conn->query($sql);

@@ -2,7 +2,8 @@ const path = require('path');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin();
 const webpack = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     configureWebpack: {
@@ -15,11 +16,30 @@ module.exports = {
             new BundleAnalyzerPlugin(),
             new GitRevisionPlugin(),
             new webpack.DefinePlugin({
-                'process.env.VERSION': JSON.stringify(gitRevisionPlugin.version()), // 获取版本号
-                'process.env.COMMITHASH': JSON.stringify(gitRevisionPlugin.commithash()), // 获取提交哈希
-                'process.env.BRANCH': JSON.stringify(gitRevisionPlugin.branch()), // 获取分支名
+                'process.env': {
+                    VERSION: JSON.stringify(gitRevisionPlugin.version()),
+                    COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
+                    BRANCH: JSON.stringify(gitRevisionPlugin.branch())
+                }
             })
-        ]
+        ],
+        optimization: {
+            minimize: true,
+            minimizer: [
+                new TerserPlugin({
+                    terserOptions: {
+                        compress: {
+                            drop_console: true,   // 删除 console.log
+                            drop_debugger: true   // 删除 debugger
+                        },
+                        format: {
+                            comments: false       // 删除注释
+                        }
+                    },
+                    extractComments: false
+                })
+            ]
+        }
     },
     parallel: false,
     transpileDependencies: [
