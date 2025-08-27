@@ -201,6 +201,11 @@
                         <el-radio-button value="up">UP</el-radio-button>
                         <el-radio-button value="down">Down</el-radio-button>
                       </el-radio-group>
+                      <el-tooltip :content="$t('scd30-help')" placement="top">
+                        <el-icon class="help-icon">
+                          <QuestionFilled />
+                        </el-icon>
+                      </el-tooltip>
                     </div>
                   </div>
                 </div>
@@ -221,12 +226,32 @@
                           <template #default="{ row }">{{ row.fc.toFixed(6) }}</template>
                         </el-table-column>
 
-                        <el-table-column prop="t1" :label="$t('scd35')" sortable="custom">
-                          <template #default="{ row }">{{ row.t1.toFixed(3) }}</template>
+                        <el-table-column prop="t1" sortable="custom">
+                          <template #header>
+                            {{ $t('scd35') }}
+                            <el-tooltip :content="$t('scd35-help')" placement="top">
+                              <el-icon class="help-icon">
+                                <QuestionFilled />
+                              </el-icon>
+                            </el-tooltip>
+                          </template>
+                          <template #default="{ row }">
+                            {{ row.t1.toFixed(3) }}
+                          </template>
                         </el-table-column>
 
-                        <el-table-column prop="t2" :label="$t('scd36')" sortable="custom">
-                          <template #default="{ row }">{{ row.t2.toFixed(3) }}</template>
+                        <el-table-column prop="t2" sortable="custom">
+                          <template #header>
+                            {{ $t('scd36') }}
+                            <el-tooltip :content="$t('scd36-help')" placement="top">
+                              <el-icon class="help-icon">
+                                <QuestionFilled />
+                              </el-icon>
+                            </el-tooltip>
+                          </template>
+                          <template #default="{ row }">
+                            {{ row.t2.toFixed(3) }}
+                          </template>
                         </el-table-column>
 
                         <el-table-column prop="a" :label="$t('scd37')" sortable="custom" min-width="100">
@@ -256,6 +281,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
                   <el-collapse-item :title="$t('scd42')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterKEGG" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -325,6 +351,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded2" @change="getGO_BP" accordion>
                   <el-collapse-item :title="$t('scd52')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOBP" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -393,6 +420,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded3" @change="getGO_MF" accordion>
                   <el-collapse-item :title="$t('scd54')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOMF" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -461,6 +489,7 @@
                 <!-- 折叠面板头 -->
                 <el-collapse v-model="isenrichmentExpanded4" @change="getGO_CC" accordion>
                   <el-collapse-item :title="$t('scd55')" name="1">
+                    <el-text type="info">{{ $t('scd42-help') }}</el-text>
                     <div class="search-container" style="margin-bottom: 12px;">
                       <el-input v-model="filterGOCC" :placeholder="$t('scd53')" clearable prefix-icon="el-icon-search"
                         size="default" />
@@ -543,6 +572,7 @@ import pako from 'pako';
 import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 //import debounce from 'lodash.debounce';
+import { QuestionFilled } from '@element-plus/icons-vue'
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
@@ -668,7 +698,7 @@ const updateGenePlot = () => {
       showlegend: false,
       autosize: true,
       xaxis: { title: 'UMAP1' },
-      yaxis: { title: 'UMAP2' , scaleanchor: "x"},
+      yaxis: { title: 'UMAP2', scaleanchor: "x" },
     };
 
     Plotly.react('coord_chart_gene', traces, genelayout);
@@ -708,7 +738,7 @@ const updatePlot = () => {
   const layout = {
     title: '',
     xaxis: { title: 'coords_X' },
-    yaxis: { title: 'coords_Y' , scaleanchor: "x"},
+    yaxis: { title: 'coords_Y', scaleanchor: "x" },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     showlegend: false,
@@ -793,7 +823,7 @@ onMounted(() => {
         showlegend: false,
         title: '',
         xaxis: { title: 'coords_X' },
-        yaxis: { title: 'coords_Y' , scaleanchor: "x"},
+        yaxis: { title: 'coords_Y', scaleanchor: "x" },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
       };

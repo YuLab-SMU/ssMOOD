@@ -82,6 +82,7 @@ import { useI18n } from 'vue-i18n';
 //import { useRoute } from 'vue-router';
 const BaseURL = "goldmorningsmart";
 const BRANCH = process.env.BRANCH;
+
 const { locale } = useI18n();
 //onst route = useRoute();
 const showSubMenu = ref(false);

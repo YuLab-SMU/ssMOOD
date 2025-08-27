@@ -1,43 +1,52 @@
-
-.main-container{
-    display: flex;
-    flex-direction: column;
-    gap: 35px;
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
 }
+
 .information-container {
- /* display: flex;*/
+  /* display: flex;*/
   /*flex-direction: column; /* 子元素纵向排列 */
   padding: 20px;
   border-radius: 30px;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
-  flex:1;
-  
+  flex: 1;
+
 }
+
 .dataset-link {
-  font-size: 0.85rem;       /* 调小字体 */
-  color: var(--el-color-primary);           /* 链接蓝色 */
-  cursor: pointer;          /* 鼠标变手型 */
+  font-size: 0.85rem;
+  /* 调小字体 */
+  color: var(--el-color-primary);
+  /* 链接蓝色 */
+  cursor: pointer;
+  /* 鼠标变手型 */
   transition: color 0.2s;
 }
 
 .dataset-link:hover {
-  color: var(--el-color-primary-light-7);           /* 悬停变亮 */
+  color: var(--el-color-primary-light-7);
+  /* 悬停变亮 */
 }
 
 .sc-cluster-content {
-      display: flex;
-    flex-direction: column; /* 子元素垂直排列 */
-    flex:1;
+  display: flex;
+  flex-direction: column;
+  /* 子元素垂直排列 */
+  flex: 1;
   gap: 30px;
 }
-.umap-contain{
-    height: 80vh;
+
+.umap-contain {
+  height: 80vh;
 }
+
 .title-bar {
   flex-direction: column;
   display: flex;
   width: 100%;
-  align-items: center; /* 子元素水平居中 */
+  align-items: center;
+  /* 子元素水平居中 */
 }
 
 .title-bar-header {
@@ -56,80 +65,109 @@
 
 
 .title-bar-header h1 {
-  margin: 0 50px; /* 移除默认的外边距 */
-  font-size: 24px; /* 标题字号 */
-  font-weight: normal; /* 字体权重 */
-  color: white; /* 文字颜色 */
+  margin: 0 50px;
+  /* 移除默认的外边距 */
+  font-size: 24px;
+  /* 标题字号 */
+  font-weight: normal;
+  /* 字体权重 */
+  color: white;
+  /* 文字颜色 */
 }
+
 .bold-black {
   color: black;
 }
+
 .information-content {
   display: flex;
-  justify-content: space-between; /* 子元素水平排列 */
-  flex-grow: 1; /* 内容区域填充剩余空间 */
-  
+  justify-content: space-between;
+  /* 子元素水平排列 */
+  flex-grow: 1;
+  /* 内容区域填充剩余空间 */
+
 }
 
-.information-left, .information-right {
+.information-left,
+.information-right {
   width: 45%;
   flex: 1;
   margin: 0 10px;
-  
+
 }
-.information-first, .information-second {
-  margin: 0; /* 去除原本的左右间距 */
+
+.information-first,
+.information-second {
+  margin: 0;
+  /* 去除原本的左右间距 */
 
 }
 
 /* 添加一些样式以改善布局和可读性 */
-.information-left h1, .information-right h2 {
+.information-left h1,
+.information-right h2 {
   color: #333;
   margin-bottom: 0.5em;
 }
 
-.information-left p, .information-right p {
+.information-left p,
+.information-right p {
   font-size: 16px;
   color: #666;
   margin-bottom: 0.5em;
 }
 
-.information-left a, .information-right a {
+.information-left a,
+.information-right a {
   color: #007BFF;
   text-decoration: none;
 }
 
-.information-left a:hover, .information-right a:hover {
+.information-left a:hover,
+.information-right a:hover {
   text-decoration: underline;
 }
+
 .search-gene-input {
-  max-width: 300px; /* 最大宽度 */
-  width: 100%; /* 宽度占满容器 */
-  min-height: 40px; 
-  
+  max-width: 300px;
+  /* 最大宽度 */
+  width: 100%;
+  /* 宽度占满容器 */
+  min-height: 40px;
+
 }
 
 .search-gene-input:focus {
-  border-color: rgb(93, 116, 162); /* 聚焦时的边框颜色 */
-  box-shadow: 0 0 0 3px rgba(93, 116, 162,0.25); /* 聚焦时的外阴影 */
+  border-color: rgb(93, 116, 162);
+  /* 聚焦时的边框颜色 */
+  box-shadow: 0 0 0 3px rgba(93, 116, 162, 0.25);
+  /* 聚焦时的外阴影 */
 }
 
 .search-gene-input::placeholder {
-  color: #999; /* 占位符颜色 */
-  font-style: italic; /* 占位符字体样式 */
+  color: #999;
+  /* 占位符颜色 */
+  font-style: italic;
+  /* 占位符字体样式 */
 }
-.gene-search-con{
+
+.gene-search-con {
   display: flex;
-  justify-content:  flex-start;
-  align-items: center; /* 子元素在垂直方向上居中 */
+  justify-content: flex-start;
+  align-items: center;
+  /* 子元素在垂直方向上居中 */
   gap: 15px;
   position: relative;
 }
+
 .custom-textfield {
-  min-height: 36px; /* 可以根据需要调整高度 */
-  min-width: 50px; /* 可以根据需要调整高度 */
+  min-height: 36px;
+  /* 可以根据需要调整高度 */
+  min-width: 50px;
+  /* 可以根据需要调整高度 */
   display: block;
 }
+
 .scroller-wrapper {
   position: absolute;
   top: 105%;
@@ -140,11 +178,15 @@
   z-index: 1000;
 
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px; /* 圆角更柔和 */
+  border-radius: 12px;
+  /* 圆角更柔和 */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  background-color: rgba(255, 255, 255, 0.5); /* 半透明白色背景 */
-  backdrop-filter: blur(5px); /* 添加毛玻璃效果，模糊半径为 5px */
-  -webkit-backdrop-filter: blur(5px); /* Safari 支持 */
+  background-color: rgba(255, 255, 255, 0.5);
+  /* 半透明白色背景 */
+  backdrop-filter: blur(5px);
+  /* 添加毛玻璃效果，模糊半径为 5px */
+  -webkit-backdrop-filter: blur(5px);
+  /* Safari 支持 */
   transform: translateZ(0);
 }
 
@@ -161,15 +203,23 @@
   border: 1px solid #dadada;
   background-color: #ffffff;
 }
+
 /* 1. WebKit（Chrome/Edge/Safari）*/
-.legend-wrapper::-webkit-scrollbar              { width: 12px; }
-.legend-wrapper::-webkit-scrollbar-track        { background: transparent; }
+.legend-wrapper::-webkit-scrollbar {
+  width: 12px;
+}
+
+.legend-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .legend-wrapper::-webkit-scrollbar-thumb {
   background: #5d74a2;
   border-radius: 8px;
   /* 把滑块再往里缩 2px：透明“边框”充当隔离带 */
   border: 2px solid transparent;
-  background-clip: content-box;   /* 只把颜色涂在 content 区域 */
+  background-clip: content-box;
+  /* 只把颜色涂在 content 区域 */
 }
 
 /* 2. Firefox */
@@ -177,6 +227,7 @@
   scrollbar-width: thin;
   scrollbar-color: #5d74a2 transparent;
 }
+
 /* 全选按钮样式 */
 .select-all {
   display: flex;
@@ -196,7 +247,8 @@
 .legend-group {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 8px; /* 可选：格子间距 */
+  gap: 8px;
+  /* 可选：格子间距 */
 }
 
 
@@ -210,71 +262,106 @@
   white-space: nowrap;
   user-select: none;
 }
+
 /* ----------------------- */
 
 .select-all {
   margin-bottom: 10px;
   font-weight: bold;
 }
+
 .gene-item {
   height: 50px;
   line-height: 50px;
   padding: 0 12px;
   border-bottom: 1px solid #eee;
 }
+
 .gene-item.is-active {
   background-color: #f0f8ff;
 }
+
 .search-btn {
   right: 8px;
-  padding: 10px 20px; /* 调整按钮内边距 */
+  padding: 10px 20px;
+  /* 调整按钮内边距 */
   border: none;
-  border-radius: 5px; /* 圆角 */
+  border-radius: 5px;
+  /* 圆角 */
   cursor: pointer;
-  background-color: #5d74a2; /* 现代的蓝色 */
-  color: white; /* 文字颜色 */
-  font-family: 'Arial', sans-serif; /* 字体 */
-  font-size: 16px; /* 字体大小 */
-  text-transform: uppercase; /* 全部大写 */
-  transition: background-color 0.3s, transform 0.3s; /* 平滑背景色和变形变化 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影 */
-  outline: none; /* 去掉点击时的轮廓 */
+  background-color: #5d74a2;
+  /* 现代的蓝色 */
+  color: white;
+  /* 文字颜色 */
+  font-family: 'Arial', sans-serif;
+  /* 字体 */
+  font-size: 16px;
+  /* 字体大小 */
+  text-transform: uppercase;
+  /* 全部大写 */
+  transition: background-color 0.3s, transform 0.3s;
+  /* 平滑背景色和变形变化 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* 阴影 */
+  outline: none;
+  /* 去掉点击时的轮廓 */
 }
 
 .search-btn:hover {
-  background-color: #4a5e83; /* 悬停时的背景色 */
-  transform: translateY(-2px); /* 轻微上移，增加点击感 */
+  background-color: #4a5e83;
+  /* 悬停时的背景色 */
+  transform: translateY(-2px);
+  /* 轻微上移，增加点击感 */
 }
 
 .search-btn:active {
-  background-color: #3c4f76; /* 点击时的背景色 */
-  transform: translateY(0); /* 恢复原位 */
+  background-color: #3c4f76;
+  /* 点击时的背景色 */
+  transform: translateY(0);
+  /* 恢复原位 */
 }
+
 .custom-plus {
-  font-size: 24px; /* 您可以根据需要调整这个值 */
-  padding: 5px 10px; /* 内边距 */
-  border-radius: 5px; /* 圆角 */
-  border: none; /* 无边框 */
-  background-color: transparent; /* 无背景 */
-  color: black; /* 文字颜色 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
-  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
-  outline: none; /* 去掉点击时的轮廓 */
+  font-size: 24px;
+  /* 您可以根据需要调整这个值 */
+  padding: 5px 10px;
+  /* 内边距 */
+  border-radius: 5px;
+  /* 圆角 */
+  border: none;
+  /* 无边框 */
+  background-color: transparent;
+  /* 无背景 */
+  color: black;
+  /* 文字颜色 */
+  cursor: pointer;
+  /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s;
+  /* 平滑过渡效果 */
+  outline: none;
+  /* 去掉点击时的轮廓 */
 }
 
 .custom-plus:hover {
-  transform: scale(1.2); /* 轻微放大 */
+  transform: scale(1.2);
+  /* 轻微放大 */
 }
 
 .custom-plus:active {
-  transform: scale(1); /* 恢复原大小 */
+  transform: scale(1);
+  /* 恢复原大小 */
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
 }
 
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter,
+.fade-leave-to
+
+/* .fade-leave-active in <2.1.8 */
+  {
   opacity: 0;
 }
 
@@ -282,31 +369,42 @@
 .marker-size-controller {
   display: flex;
   align-items: center;
-  padding: 4px; /* 减小内边距 */
-  width: 300px; /* 根据需要调整宽度 */
+  padding: 4px;
+  /* 减小内边距 */
+  width: 300px;
+  /* 根据需要调整宽度 */
   height: 30px;
 }
 
 .label {
-  margin-right: 4px; /* 减小标签与数字之间的间距 */
-  font-size: 14px; /* 减小字体大小 */
+  margin-right: 4px;
+  /* 减小标签与数字之间的间距 */
+  font-size: 14px;
+  /* 减小字体大小 */
 }
 
 .size-value {
-  margin: 0 4px; /* 减小文字与按钮之间的间距 */
-  font-size: 14px; /* 减小字体大小 */
-  font-weight: bold; /* 粗体字 */
+  margin: 0 4px;
+  /* 减小文字与按钮之间的间距 */
+  font-size: 14px;
+  /* 减小字体大小 */
+  font-weight: bold;
+  /* 粗体字 */
 }
 
 /* Vuetify图标按钮的样式调整 */
 .marker-size-controller .v-btn {
-  background-color: transparent; /* 根据需要调整按钮背景色 */
-  height: 30px; /* 调整按钮高度 */
-  width: 30px; /* 调整按钮宽度 */
+  background-color: transparent;
+  /* 根据需要调整按钮背景色 */
+  height: 30px;
+  /* 调整按钮高度 */
+  width: 30px;
+  /* 调整按钮宽度 */
 }
 
 .marker-size-controller .v-btn svg {
-  width: 18px; /* 调整图标大小 */
+  width: 18px;
+  /* 调整图标大小 */
   height: 18px;
 }
 
@@ -314,75 +412,87 @@
 
 
 
- /* ----------------------------------------------------------- */
- /* 差异表达分析 */
- 
+/* ----------------------------------------------------------- */
+/* 差异表达分析 */
+
 .sc-deg-content {
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中（如果需要） */
-  flex-direction: column; /* 子元素垂直排列 */
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: center;
+  /* 水平居中（如果需要） */
+  flex-direction: column;
+  /* 子元素垂直排列 */
 }
 
-.information-deg-first,
-.information-deg-second {
-    
+.information-deg-first {
+  width: 100%;
   display: flex;
-  justify-content: center; /* 水平居中 */
-  margin: 0; /* 去除原本的左右间距 */
-  margin-bottom: 10px;
+  justify-content: center;
+  margin: 10px;
+  border: 2px solid var(--el-color-primary-light-9);
+  border-radius: 20px !important;
 }
-.information-deg-second {
-    flex-direction: column;
-}
+
 
 .de-analysis {
-  width: 45vw;
-  height: 65vh;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  background-color: #f9f9f9;
+  width: 90%;
+  height: auto;
+  margin: 10px;
   overflow: auto;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 }
-.kegg-card, .gobp-card, .gomf-card, .gocc-card{
-  margin: 0;
-  width: calc(90vw + 100px);
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 20px !important; 
-  margin-top: 20px;
+
+.kegg-card,
+.gobp-card,
+.gomf-card,
+.gocc-card {
+  margin: 10px;
+  width: 100%;
+  border: 2px solid var(--el-color-primary-light-9) !important;
+  border-radius: 20px !important;
 }
 
 .search-container {
   max-width: 300px;
 }
+
 .kegg-expand-button {
   height: 3vh;
   width: calc(90vw + 60px);
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
-  border-radius: 20px; /* 仅保留上方的圆角 */
+  border-radius: 20px;
+  /* 仅保留上方的圆角 */
   background-color: #ffffff;
-  cursor: pointer; /* 鼠标悬停时显示为手型 */
-  text-align: center; /* 文本居中 */
-  line-height: 1.5; /* 调整行高以垂直居中文本 */
-  overflow: hidden; /* 隐藏溢出内容 */
-  user-select: none; /* 禁止文本选择 */
-  transition: background-color 0.3s, border-color 0.3s; /* 添加过渡效果 */
-  box-shadow: 0 -5px 5px 5px rgba(0, 0, 0, 0.1); /* 在上方添加阴影 */
+  cursor: pointer;
+  /* 鼠标悬停时显示为手型 */
+  text-align: center;
+  /* 文本居中 */
+  line-height: 1.5;
+  /* 调整行高以垂直居中文本 */
+  overflow: hidden;
+  /* 隐藏溢出内容 */
+  user-select: none;
+  /* 禁止文本选择 */
+  transition: background-color 0.3s, border-color 0.3s;
+  /* 添加过渡效果 */
+  box-shadow: 0 -5px 5px 5px rgba(0, 0, 0, 0.1);
+  /* 在上方添加阴影 */
 }
+
 .kegg-expand-button:hover {
-  background-color: #e0e0e0; /* 鼠标悬停时的背景色 */
-  border-color: #aaa; /* 鼠标悬停时的边框色 */
+  background-color: #e0e0e0;
+  /* 鼠标悬停时的背景色 */
+  border-color: #aaa;
+  /* 鼠标悬停时的边框色 */
 }
-.enrichment-button-expanded{
-  border-radius: 20px 20px 0 0; /* 仅保留上方的圆角 */
-  border-bottom: none; /* 移除下边框 */
+
+.enrichment-button-expanded {
+  border-radius: 20px 20px 0 0;
+  /* 仅保留上方的圆角 */
+  border-bottom: none;
+  /* 移除下边框 */
 }
 
 .kegg-analysis {
@@ -391,11 +501,13 @@
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
-  border-top: none; /* 移除上边框 */
+  border-top: none;
+  /* 移除上边框 */
   border-radius: 0 0 20px 20px;
   background-color: #f9f9f9;
   overflow: auto;
-  box-shadow: 0px 8px 5px 5px rgba(0, 0, 0, 0.1); /* 在下方添加阴影 */
+  box-shadow: 0px 8px 5px 5px rgba(0, 0, 0, 0.1);
+  /* 在下方添加阴影 */
 }
 
 .note {
@@ -405,7 +517,11 @@
 }
 
 
-.group, .cell-type, .log2fc, .adjusted-pvalue, .de-direction {
+.group,
+.cell-type,
+.log2fc,
+.adjusted-pvalue,
+.de-direction {
   margin-bottom: 15px;
 }
 
@@ -413,32 +529,52 @@
 
 .custom-select {
   width: 60%;
-  padding: 10px; /* 内边距 */
-  border: 2px solid #ccc; /* 边框颜色和粗细 */
-  border-radius: 5px; /* 圆角 */
-  background-color: #fff; /* 背景颜色 */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内阴影 */
-  font-size: 16px; /* 字体大小 */
-  color: #333; /* 字体颜色 */
-  transition: border-color 0.3s, box-shadow 0.3s; /* 平滑过渡效果 */
-  outline: none; /* 去掉聚焦时的轮廓 */
-  box-sizing: border-box; /* 边框和内边距包含在宽度内 */
-  appearance: none; /* 去除默认样式 */
-  -webkit-appearance: none; /* 去除 WebKit 浏览器默认样式 */
-  -moz-appearance: none; /* 去除 Firefox 默认样式 */
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* 添加自定义箭头 */
-  background-repeat: no-repeat; /* 不重复背景图像 */
-  background-position: right 10px center; /* 箭头位置 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
+  padding: 10px;
+  /* 内边距 */
+  border: 2px solid #ccc;
+  /* 边框颜色和粗细 */
+  border-radius: 5px;
+  /* 圆角 */
+  background-color: #fff;
+  /* 背景颜色 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* 内阴影 */
+  font-size: 16px;
+  /* 字体大小 */
+  color: #333;
+  /* 字体颜色 */
+  transition: border-color 0.3s, box-shadow 0.3s;
+  /* 平滑过渡效果 */
+  outline: none;
+  /* 去掉聚焦时的轮廓 */
+  box-sizing: border-box;
+  /* 边框和内边距包含在宽度内 */
+  appearance: none;
+  /* 去除默认样式 */
+  -webkit-appearance: none;
+  /* 去除 WebKit 浏览器默认样式 */
+  -moz-appearance: none;
+  /* 去除 Firefox 默认样式 */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  /* 添加自定义箭头 */
+  background-repeat: no-repeat;
+  /* 不重复背景图像 */
+  background-position: right 10px center;
+  /* 箭头位置 */
+  cursor: pointer;
+  /* 鼠标悬停时的光标样式 */
 }
 
 .custom-select:focus {
-  border-color: #007bff; /* 聚焦时的边框颜色 */
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* 聚焦时的外阴影 */
+  border-color: #007bff;
+  /* 聚焦时的边框颜色 */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  /* 聚焦时的外阴影 */
 }
 
 .custom-select::-ms-expand {
-  display: none; /* 隐藏 IE 浏览器的默认箭头 */
+  display: none;
+  /* 隐藏 IE 浏览器的默认箭头 */
 }
 
 
@@ -452,12 +588,14 @@
 
 .radio-group {
   display: flex;
-  gap: 10px; /* 调整单选按钮之间的间距 */
+  gap: 10px;
+  /* 调整单选按钮之间的间距 */
 }
 
 .radio-label {
   position: relative;
-  padding-left: 30px; /* 留出空间放置圆圈 */
+  padding-left: 30px;
+  /* 留出空间放置圆圈 */
   cursor: pointer;
   font-size: 16px;
   color: #333;
@@ -486,17 +624,20 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: rgb(93, 116, 162); /* iOS 蓝色 */
+  background-color: rgb(93, 116, 162);
+  /* iOS 蓝色 */
   transition: transform 0.3s, background-color 0.3s;
 }
 
-input[type="radio"]:checked + .radio-label::after {
+input[type="radio"]:checked+.radio-label::after {
   transform: translateY(-50%) scale(1);
 }
 
-input[type="radio"]:focus + .radio-label::before {
-  border-color: rgb(93, 116, 162); /* iOS 蓝色 */
+input[type="radio"]:focus+.radio-label::before {
+  border-color: rgb(93, 116, 162);
+  /* iOS 蓝色 */
 }
+
 /* 隐藏默认的单选按钮 */
 input[type="radio"] {
   opacity: 0;
@@ -505,55 +646,88 @@ input[type="radio"] {
 }
 
 
-.page{
-  padding: 4px 8px; /* 内边距 */
-  border: none; /* 无边框 */
-  border-radius: 4px; /* 圆角 */
-  background-color: rgb(93, 116, 162); /* 背景颜色 */
-  color: white; /* 文字颜色 */
-  font-size: 14px; /* 字体大小 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
-  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
-  outline: none; /* 去掉聚焦时的轮廓 */
+.page {
+  padding: 4px 8px;
+  /* 内边距 */
+  border: none;
+  /* 无边框 */
+  border-radius: 4px;
+  /* 圆角 */
+  background-color: rgb(93, 116, 162);
+  /* 背景颜色 */
+  color: white;
+  /* 文字颜色 */
+  font-size: 14px;
+  /* 字体大小 */
+  cursor: pointer;
+  /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s;
+  /* 平滑过渡效果 */
+  outline: none;
+  /* 去掉聚焦时的轮廓 */
 }
 
 .pagination {
   margin-top: 10px;
   display: flex;
-  justify-content: space-between; /* 分页按钮在左边，下载按钮在右边 */
-  align-items: center; /* 垂直居中 */
+  justify-content: space-between;
+  /* 分页按钮在左边，下载按钮在右边 */
+  align-items: center;
+  /* 垂直居中 */
 }
+
 .left-section {
   display: flex;
   align-items: center;
 }
+
 .downloadButton {
-  padding: 4px 8px; /* 内边距 */
-  border: none; /* 无边框 */
-  border-radius: 4px; /* 圆角 */
-  background-color: rgb(93, 116, 162); /* 背景颜色 */
-  color: white; /* 文字颜色 */
-  font-size: 14px; /* 字体大小 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
-  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
-  outline: none; /* 去掉聚焦时的轮廓 */
-   float: right;
+  padding: 4px 8px;
+  /* 内边距 */
+  border: none;
+  /* 无边框 */
+  border-radius: 4px;
+  /* 圆角 */
+  background-color: rgb(93, 116, 162);
+  /* 背景颜色 */
+  color: white;
+  /* 文字颜色 */
+  font-size: 14px;
+  /* 字体大小 */
+  cursor: pointer;
+  /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s;
+  /* 平滑过渡效果 */
+  outline: none;
+  /* 去掉聚焦时的轮廓 */
+  float: right;
 }
-.geneModelButton{
-  padding: 4px 8px; /* 内边距 */
-  border: none; /* 无边框 */
-  border-radius: 4px; /* 圆角 */
-  background-color: rgb(93, 116, 162); /* 背景颜色 */
-  color: white; /* 文字颜色 */
-  font-size: 14px; /* 字体大小 */
-  cursor: pointer; /* 鼠标悬停时的光标样式 */
-  transition: background-color 0.3s, transform 0.1s; /* 平滑过渡效果 */
-  outline: none; /* 去掉聚焦时的轮廓 */
+
+.geneModelButton {
+  padding: 4px 8px;
+  /* 内边距 */
+  border: none;
+  /* 无边框 */
+  border-radius: 4px;
+  /* 圆角 */
+  background-color: rgb(93, 116, 162);
+  /* 背景颜色 */
+  color: white;
+  /* 文字颜色 */
+  font-size: 14px;
+  /* 字体大小 */
+  cursor: pointer;
+  /* 鼠标悬停时的光标样式 */
+  transition: background-color 0.3s, transform 0.1s;
+  /* 平滑过渡效果 */
+  outline: none;
+  /* 去掉聚焦时的轮廓 */
 }
 
 :deep(.el-overlay-dialog) {
   z-index: 9999 !important;
 }
+
 .keggModal {
   position: fixed;
   z-index: 1;
@@ -566,16 +740,20 @@ input[type="radio"] {
 }
 
 .keggModal-content {
-  background-color: rgba(255, 255, 255, 0.6); /* 半透明白色背景 */
-  backdrop-filter: blur(5px); /* 添加毛玻璃效果，模糊半径为 5px */
-  -webkit-backdrop-filter: blur(5px); /* Safari 支持 */
+  background-color: rgba(255, 255, 255, 0.6);
+  /* 半透明白色背景 */
+  backdrop-filter: blur(5px);
+  /* 添加毛玻璃效果，模糊半径为 5px */
+  -webkit-backdrop-filter: blur(5px);
+  /* Safari 支持 */
   margin: 10vh auto;
   padding: 20px;
   border: 1px solid #888;
   width: 35vw;
   height: auto;
   overflow-y: auto;
-  border-radius: 20px; /* 圆角 */
+  border-radius: 20px;
+  /* 圆角 */
 }
 
 
@@ -592,10 +770,15 @@ input[type="radio"] {
   text-decoration: none;
   cursor: pointer;
 }
-.de-direction, .de-direction-child{
-  display: flex; /* 启用flexbox布局 */
-  justify-content: flex-start; /* 子元素之间的间距 */
-  align-items: center; /* 垂直居中对齐 */
+
+.de-direction,
+.de-direction-child {
+  display: flex;
+  /* 启用flexbox布局 */
+  justify-content: flex-start;
+  /* 子元素之间的间距 */
+  align-items: center;
+  /* 垂直居中对齐 */
   gap: 10px;
 }
 
@@ -676,44 +859,64 @@ label {
 }
 
 .help-icon {
-  color: var( --el-color-primary-light-5) !important;    /* Element Plus 主色蓝 */
-  margin-left: 6px;  /* 和 radio group 保持间距 */
-  cursor: pointer;   /* 鼠标悬停小手形 */
+  color: var(--el-color-primary-light-5) !important;
+  /* Element Plus 主色蓝 */
+  margin-left: 6px;
+  /* 和 radio group 保持间距 */
+  cursor: pointer;
+  /* 鼠标悬停小手形 */
   vertical-align: middle;
 }
 
 
 
 
- /* ----------------------------------------------------------- */
-  /* 竖屏*/
- @media (orientation: portrait) or (max-width: 600px) {
-    .information-content {
-      display: flex;
-      flex-direction: column; /* 子元素垂直排列 */
-      justify-content: space-between; /* 子元素在主轴方向上分散对齐 */
-      flex-grow: 1; /* 内容区域填充剩余空间 */
-    }
-    .information-left, .information-right {
+/* ----------------------------------------------------------- */
+/* 竖屏*/
+@media (orientation: portrait) or (max-width: 600px) {
+  .information-content {
+    display: flex;
+    flex-direction: column;
+    /* 子元素垂直排列 */
+    justify-content: space-between;
+    /* 子元素在主轴方向上分散对齐 */
+    flex-grow: 1;
+    /* 内容区域填充剩余空间 */
+  }
+
+  .information-left,
+  .information-right {
     width: 100%;
-  
-}
-.legend-wrapper {
-  width: 65vw;               /* 40% 页面宽度 */
-  height: 40vh;              /* 30% 页面高度 */
-}
-.information-deg-first {
-      display: flex;
-      flex-direction: column; /* 子元素垂直排列 */
-      justify-content: space-between; /* 子元素在主轴方向上分散对齐 */
-      flex-grow: 1; /* 内容区域填充剩余空间 */
-      gap: 20px;
-}
+
+  }
+
+  .legend-wrapper {
+    width: 65vw;
+    /* 40% 页面宽度 */
+    height: 40vh;
+    /* 30% 页面高度 */
+  }
+
+  .information-deg-first {
+    display: flex;
+    flex-direction: column;
+    /* 子元素垂直排列 */
+    justify-content: space-between;
+    /* 子元素在主轴方向上分散对齐 */
+    flex-grow: 1;
+    /* 内容区域填充剩余空间 */
+    gap: 20px;
+  }
+
   .de-analysis {
-  width: 80%;
-  height: 65vh;
-}
-.kegg-card, .gobp-card, .gomf-card, .gocc-card{
-  width: 100%;
-}
+    width: 80%;
+    height: 65vh;
+  }
+
+  .kegg-card,
+  .gobp-card,
+  .gomf-card,
+  .gocc-card {
+    width: 100%;
+  }
 }
