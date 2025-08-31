@@ -265,7 +265,7 @@
                           <template #default="{ row }">{{ row.fc.toFixed(6) }}</template>
                         </el-table-column>
 
-<el-table-column prop="t1" sortable="custom">
+                        <el-table-column prop="t1" sortable="custom">
                           <template #header>
                             {{ $t('scd35') }}
                             <el-tooltip :content="$t('scd35-help')" placement="top">
@@ -1097,39 +1097,44 @@ const searchgene = async () => {
       id: route.params.study,
       gene: searchQuery.value
     });
-
+    let expressionData = [];
     try {
-      const response = await fetch(config.apiUrl + `ssc_getGeneExpression_bin.php?${params}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      const dataView = new DataView(arrayBuffer);
-      let offset = 0; // 当前解析位置
-      const expressionData = [];
-
-      // 解析每个数据块
-      while (offset < arrayBuffer.byteLength) {
-        // 读取数据块长度（4字节无符号整数）
-        const length = dataView.getUint32(offset, false);
-        offset += 4; // 移动到数据块内容
-
-        // 读取数据块内容
-        const binData = new Uint8Array(arrayBuffer, offset, length);
-        offset += length; // 移动到下一个数据块
-
-        // 解压数据块
-        const decompressed = pako.ungzip(binData);
-
-        // 解码为字符串
-        const text = new TextDecoder('utf-8').decode(decompressed);
-
-
-        // 将解析后的数据添加到数组
-        const jsonData = JSON.parse(text);
-        for (const key in jsonData) {
-          expressionData[key] = jsonData[key];
+      try {
+        const response = await fetch(config.apiUrl + `ssc_getGeneExpression_bin.php?${params}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const arrayBuffer = await response.arrayBuffer();
+        const dataView = new DataView(arrayBuffer);
+        let offset = 0; // 当前解析位置
+
+
+        // 解析每个数据块
+        while (offset < arrayBuffer.byteLength) {
+          // 读取数据块长度（4字节无符号整数）
+          const length = dataView.getUint32(offset, false);
+          offset += 4; // 移动到数据块内容
+
+          // 读取数据块内容
+          const binData = new Uint8Array(arrayBuffer, offset, length);
+          offset += length; // 移动到下一个数据块
+
+          // 解压数据块
+          const decompressed = pako.ungzip(binData);
+
+          // 解码为字符串
+          const text = new TextDecoder('utf-8').decode(decompressed);
+
+
+          // 将解析后的数据添加到数组
+          const jsonData = JSON.parse(text);
+          for (const key in jsonData) {
+            expressionData[key] = jsonData[key];
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching or parsing data:', error);
+        // 如果发生任何错误，jsonData保持为默认的空数组
       }
       //console.log(expressionData);
       isSearchgene.value = true;
@@ -1183,7 +1188,12 @@ const searchgene = async () => {
           // 边界保护
           const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
 
-          heatmapData[safeIndex][categoryIndex]++;
+          if (
+            safeIndex >= 0 && safeIndex < heatmapData.length &&
+            categoryIndex >= 0 && categoryIndex < categories.length
+          ) {
+            heatmapData[safeIndex][categoryIndex]++;
+          }
         }
       });
 

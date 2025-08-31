@@ -9,7 +9,7 @@
         <!-- 卡片栅格 -->
         <el-row :gutter="24" justify="center">
           <!-- 成员 1 -->
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
                 <div class="card-header">
@@ -34,7 +34,7 @@
           </el-col>
 
           <!-- 成员 2 -->
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
                 <el-avatar size="large" src="/boy.png" />
@@ -54,9 +54,30 @@
               </div>
             </el-card>
           </el-col>
+                    <!-- 成员 2-1 -->
+          <el-col :xs="24" :sm="12" :md="7">
+            <el-card class="contact-card" shadow="hover">
+              <template #header>
+                <el-avatar size="large" src="/boy.png" />
+              </template>
+              <div class="contact-info">
+                <h3>{{ $t('acu02-1') }}</h3>
+                <p>
+                  <el-icon><Location /></el-icon>
+                  {{ $t('acu07') }}
+                </p>
+                <p>
+                  <a :href="`mailto:${email5}`">
+                    <el-icon><Message /></el-icon>
+                    {{ safeEmail5 }}
+                  </a>
+                </p>
+              </div>
+            </el-card>
+          </el-col>
 
           <!-- 成员 3 -->
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
                 <el-avatar size="large" src="/girl.png" />
@@ -78,7 +99,7 @@
           </el-col>
 
           <!-- 成员 4 -->
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
                 <el-avatar size="large" src="/boy.png" />
@@ -116,12 +137,13 @@ const email1 = ['caoxiong', 'smu.edu.cn'].join('@')
 const email2 = ['guangchuangyu', 'smu.edu.cn'].join('@')
 const email3 = ['treywea', 'smu.edu.cn'].join('@')
 const email4 = ['goldmorningsmart', 'outlook.com'].join('@')
-
+const email5 = ['taotaomzk', 'smu.edu.cn'].join('@')
 // 显示用（把 @ 替换成 AT）
 const safeEmail1 = email1.replace('@', '＠')
 const safeEmail2 = email2.replace('@', '＠')
 const safeEmail3 = email3.replace('@', '＠')
 const safeEmail4 = email4.replace('@', '＠')
+const safeEmail5 = email5.replace('@', '＠')
 </script>
 
 <style scoped>

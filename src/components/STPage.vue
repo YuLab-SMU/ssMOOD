@@ -994,17 +994,24 @@ const searchgene = async () => {
       id: route.params.id,
       gene: searchQuery.value
     });
-
+    let jsonData = [];
     try {
-      const response = await fetch(config.apiUrl + `std_getGeneExpression_bin.php?${params}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const compressed = new Uint8Array(await response.arrayBuffer());
-      const decompressed = pako.ungzip(compressed); // 使用pako解压
+      try {
+        const response = await fetch(config.apiUrl + `std_getGeneExpression_bin.php?${params}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const compressed = new Uint8Array(await response.arrayBuffer());
+        const decompressed = pako.ungzip(compressed); // 使用pako解压
 
-      const data = new TextDecoder('utf-8').decode(decompressed);
-      const jsonData = JSON.parse(data);
+        const data = new TextDecoder('utf-8').decode(decompressed);
+
+        jsonData = JSON.parse(data);
+      } catch (error) {
+        console.error('Error fetching or parsing data:', error);
+        // 如果发生任何错误，jsonData保持为默认的空数组
+      }
+
       isSearchgene.value = true;
       // 合并数据
       const ncMap = jsonData.reduce((acc, item) => {
@@ -1019,13 +1026,15 @@ const searchgene = async () => {
       });
 
       mergedGeneArray.value = mergedArray;
+
+
       // 分类信息
       const categories = [...new Set(mergedArray.map(item => item.c))];
 
       categories.sort();
 
       // 安全计算最大值
-      maxNc.value = mergedArray.reduce(
+      maxNc.value = jsonData.reduce(
         (max, item) => (item.nc > max ? item.nc : max),
         -Infinity
       );
@@ -1050,8 +1059,12 @@ const searchgene = async () => {
 
           // 边界保护
           const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
-
-          heatmapData[safeIndex][categoryIndex]++;
+          if (
+            safeIndex >= 0 && safeIndex < heatmapData.length &&
+            categoryIndex >= 0 && categoryIndex < categories.length
+          ) {
+            heatmapData[safeIndex][categoryIndex]++;
+          }
         }
       });
 
@@ -1079,6 +1092,7 @@ const searchgene = async () => {
         xaxis: {
         },
         yaxis: {
+          scaleanchor: "x"
         },
         paper_bgcolor: 'rgba(0,0,0,0)', // 可选：设置背景透明
         plot_bgcolor: 'rgba(0,0,0,0)',

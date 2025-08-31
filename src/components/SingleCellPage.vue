@@ -1039,16 +1039,25 @@ const searchgene = async () => {
       gene: searchQuery.value
     });
 
-    try {
-      const response = await fetch(config.apiUrl + `scd_getGeneExpression_bin.php?${params}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const compressed = new Uint8Array(await response.arrayBuffer());
-      const decompressed = pako.ungzip(compressed); // 使用pako解压
+    let jsonData = []; // 默认值为空数组
 
-      const data = new TextDecoder('utf-8').decode(decompressed);
-      const jsonData = JSON.parse(data);
+    try {
+      try {
+        const response = await fetch(config.apiUrl + `scd_getGeneExpression_bin.php?${params}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const compressed = new Uint8Array(await response.arrayBuffer());
+        const decompressed = pako.ungzip(compressed); // 使用pako解压
+
+        const data = new TextDecoder('utf-8').decode(decompressed);
+        jsonData = JSON.parse(data); // 成功时解析JSON
+      } catch (error) {
+        console.error('Error fetching or parsing data:', error);
+        // 如果发生任何错误，jsonData保持为默认的空数组
+      }
+
       isSearchgene.value = true;
       // 合并数据
       const ncMap = jsonData.reduce((acc, item) => {
@@ -1062,6 +1071,7 @@ const searchgene = async () => {
         return item;
       });
       mergedGeneArray.value = mergedArray;
+      jsonData = [];
       //console.log(mergedGeneArray.value);
       // 分类信息
       const categories = [...new Set(mergedArray.map(item => item.c))];
@@ -1075,7 +1085,7 @@ const searchgene = async () => {
       //-----------创建热图信息------------------------
       /*
       const numCategories = categories.length;
-  
+   
       const heatmapData = Array.from({ length: 11 }, () =>
         Array.from({ length: numCategories }, () => 0)
       );
@@ -1100,7 +1110,12 @@ const searchgene = async () => {
           // 边界保护
           const safeIndex = Math.min(Math.max(expressionIndex, 0), numBins - 1);
 
-          heatmapData[safeIndex][categoryIndex]++;
+          if (
+            safeIndex >= 0 && safeIndex < heatmapData.length &&
+            categoryIndex >= 0 && categoryIndex < categories.length
+          ) {
+            heatmapData[safeIndex][categoryIndex]++;
+          }
         }
       });
 

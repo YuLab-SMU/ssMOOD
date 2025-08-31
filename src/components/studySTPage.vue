@@ -41,11 +41,11 @@
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                  }}</p>
+                }}</p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
@@ -241,7 +241,7 @@
                           <template #default="{ row }">{{ row.fc.toFixed(6) }}</template>
                         </el-table-column>
 
-<el-table-column prop="t1" sortable="custom">
+                        <el-table-column prop="t1" sortable="custom">
                           <template #header>
                             {{ $t('scd35') }}
                             <el-tooltip :content="$t('scd35-help')" placement="top">
@@ -1110,47 +1110,56 @@ const searchgene = async () => {
       gene: searchQuery.value,
     });
 
+    let expressionData = [];
+    let datasetIds = '';
+    let cols = 0;
+    let rows = 0;
+    const OFFSET = 22000;
     try {
-      const response = await fetch(config.apiUrl + `sst_getGeneExpression_bin.php?${params}`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      try {
+        const response = await fetch(config.apiUrl + `sst_getGeneExpression_bin.php?${params}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      const arrayBuffer = await response.arrayBuffer();
-      const dataView = new DataView(arrayBuffer);
-      let offset = 0;
-      const expressionData = [];
-      // 计算网格偏移
-      const datasetIds = Object.keys(coordinate_data.value);
-      const totalDatasets = datasetIds.length;
-      const cols = Math.ceil(Math.sqrt(totalDatasets));
-      const rows = Math.ceil(totalDatasets / cols);
-      const OFFSET = 22000;
-      let dataset_index = 0;
-      while (offset < arrayBuffer.byteLength) {
-        // 读取数据块长度（4字节无符号整数）
-        const length = dataView.getUint32(offset, false);
-        offset += 4; // 移动到数据块内容
+        const arrayBuffer = await response.arrayBuffer();
+        const dataView = new DataView(arrayBuffer);
+        let offset = 0;
+        // 计算网格偏移
+        datasetIds = Object.keys(coordinate_data.value);
+        const totalDatasets = datasetIds.length;
+        cols = Math.ceil(Math.sqrt(totalDatasets));
+        rows = Math.ceil(totalDatasets / cols);
 
-        // 读取数据块内容
-        const binData = new Uint8Array(arrayBuffer, offset, length);
-        offset += length; // 移动到下一个数据块
+        let dataset_index = 0;
+        while (offset < arrayBuffer.byteLength) {
+          // 读取数据块长度（4字节无符号整数）
+          const length = dataView.getUint32(offset, false);
+          offset += 4; // 移动到数据块内容
 
-        // 解压数据块
-        const decompressed = pako.ungzip(binData);
+          // 读取数据块内容
+          const binData = new Uint8Array(arrayBuffer, offset, length);
+          offset += length; // 移动到下一个数据块
 
-        // 解码为字符串
-        const text = new TextDecoder('utf-8').decode(decompressed);
-        const jsonData = JSON.parse(text);
-        const datasetId = datasetIds[dataset_index];
-        dataset_index++;
+          // 解压数据块
+          const decompressed = pako.ungzip(binData);
 
-        jsonData.forEach(item => {
-          const fullId = `${datasetId}_${item.i}`; // 加前缀
-          expressionData.push({
-            i: fullId,
-            nc: item.nc
+          // 解码为字符串
+          const text = new TextDecoder('utf-8').decode(decompressed);
+          const jsonData = JSON.parse(text);
+          const datasetId = datasetIds[dataset_index];
+          dataset_index++;
+
+          jsonData.forEach(item => {
+            const fullId = `${datasetId}_${item.i}`; // 加前缀
+            expressionData.push({
+              i: fullId,
+              nc: item.nc
+            });
           });
-        });
-        //console.log(expressionData);
+          //console.log(expressionData);
+        }
+      } catch (error) {
+        console.error('Error fetching or parsing data:', error);
+        // 如果发生任何错误，jsonData保持为默认的空数组
       }
 
       // 构造表达量索引
@@ -1252,7 +1261,12 @@ const searchgene = async () => {
           const normLogNC = (logNC - minLogNC) / (maxLogNC - minLogNC);
           const binIndex = Math.floor(normLogNC * (numBins - 1));
           const safeIndex = Math.min(Math.max(binIndex, 0), numBins - 1);
-          heatmapData[safeIndex][categoryIndex]++;
+          if (
+            safeIndex >= 0 && safeIndex < heatmapData.length &&
+            categoryIndex >= 0 && categoryIndex < categories.length
+          ) {
+            heatmapData[safeIndex][categoryIndex]++;
+          }
         }
       });
 
