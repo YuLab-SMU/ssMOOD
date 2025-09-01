@@ -44,11 +44,11 @@
 
                 <p><span class="bold-black">{{ $t('scd13') }}</span>: {{ dataset.information.DatasetSource1.Title }}</p>
                 <p><span class="bold-black">{{ $t('scd14') }}</span>: {{ dataset.information.DatasetSource1.Methodology
-                }}</p>
+                  }}</p>
                 <p><span class="bold-black">{{ $t('scd15') }}</span>: {{ dataset.information.DatasetSource1.Protocol }}
                 </p>
                 <p><span class="bold-black">{{ $t('scd16') }}</span>: {{ dataset.information.DatasetSource1.PublicDataID
-                }}</p>
+                  }}</p>
                 <p><span class="bold-black">{{ $t('scd18') }}</span>: <a
                     :href="'http://doi.org/' + dataset.information.DatasetSource1.DOI" target="_blank">{{
                       dataset.information.DatasetSource1.DOI }}</a>
@@ -59,23 +59,46 @@
                 <h2 v-if="dataset.information.DatasetSource2.Title != ''">{{ $t('scd12-1') }}</h2>
 
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd13')
-                    }}</span>: {{ dataset.information.DatasetSource2.Title }}</p>
+                }}</span>: {{ dataset.information.DatasetSource2.Title }}</p>
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd14')
-                    }}</span>: {{ dataset.information.DatasetSource2.Methodology
+                }}</span>: {{ dataset.information.DatasetSource2.Methodology
                     }}</p>
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd15')
-                    }}</span>: {{ dataset.information.DatasetSource2.Protocol }}
+                }}</span>: {{ dataset.information.DatasetSource2.Protocol }}
                 </p>
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd16')
-                    }}</span>: {{ dataset.information.DatasetSource2.PublicDataID
+                }}</span>: {{ dataset.information.DatasetSource2.PublicDataID
                     }}</p>
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd18')
-                    }}</span>: <a :href="'http://doi.org/' + dataset.information.DatasetSource2.DOI" target="_blank">{{
+                }}</span>: <a :href="'http://doi.org/' + dataset.information.DatasetSource2.DOI" target="_blank">{{
                       dataset.information.DatasetSource2.DOI }}</a>
 
                 </p>
                 <p v-if="dataset.information.DatasetSource2.Title != ''"><span class="bold-black">{{ $t('scd19')
-                    }}</span>: {{ dataset.information.DatasetSource2.Statement }}
+                }}</span>: {{ dataset.information.DatasetSource2.Statement }}
+                </p>
+
+
+                <h2 v-if="dataset.information.DatasetSource3.Title != ''">{{ $t('scd12-2') }}</h2>
+
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd13')
+                }}</span>: {{ dataset.information.DatasetSource3.Title }}</p>
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd14')
+                }}</span>: {{ dataset.information.DatasetSource3.Methodology
+                    }}</p>
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd15')
+                }}</span>: {{ dataset.information.DatasetSource3.Protocol }}
+                </p>
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd16')
+                }}</span>: {{ dataset.information.DatasetSource3.PublicDataID
+                    }}</p>
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd18')
+                }}</span>: <a :href="'http://doi.org/' + dataset.information.DatasetSource3.DOI" target="_blank">{{
+                      dataset.information.DatasetSource3.DOI }}</a>
+
+                </p>
+                <p v-if="dataset.information.DatasetSource3.Title != ''"><span class="bold-black">{{ $t('scd19')
+                }}</span>: {{ dataset.information.DatasetSource3.Statement }}
                 </p>
               </div>
             </div>
@@ -653,6 +676,15 @@ const dataset = ref({
       Statement: ""
     },
     DatasetSource2: {
+      Title: "",
+      Methodology: "",
+      Protocol: "",
+      PublicDataID: "",
+      Pubmed: null,
+      DOI: "",
+      Statement: ""
+    },
+    DatasetSource3: {
       Title: "",
       Methodology: "",
       Protocol: "",

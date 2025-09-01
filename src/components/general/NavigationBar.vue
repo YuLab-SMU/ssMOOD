@@ -36,10 +36,7 @@
           <a>{{ $t('about') }}</a>
           <ul v-if="showSubMenu1" class="submenu">
             <li>
-              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/Methods.md'" target="_blank"
-                rel="noopener noreferrer">
-                {{ $t('Methods') }}
-              </a>
+                <router-link to="/about/doc/Methods">{{ $t('Methods') }}</router-link>
             </li>
             <li>
               <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/Usage.md'" target="_blank"

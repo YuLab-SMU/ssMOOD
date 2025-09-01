@@ -1,4 +1,4 @@
-## 差异表达核心流程
+## 差异表达流程
 
 ### 1. 过滤数据
 ```python
@@ -35,7 +35,7 @@ pct.1 = 当前类中该基因检出比例
 pct.2 = 其余类中该基因检出比例
 
 
-## 离线富集分析核心流程
+## 离线富集分析流程
 
 ### 1. 输入
 ```json
@@ -47,8 +47,17 @@ pct.2 = 其余类中该基因检出比例
 ```
 > 支持 JSON 字符串或列表。
 
+### 2. GMT文件
+```bash
+wget -O KEGG_2019_Human.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human"
+wget -O go_bp_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2018"
+wget -O go_mf_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Molecular_Function_2018"
+wget -O go_cc_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Cellular_Component_2018"
 
-### 2. 富集分析
+```
+
+
+### 3. 富集分析
 ```python
 enrich_results = gp.enrich(
     gene_list   = significant_genes,
@@ -60,7 +69,7 @@ enrich_results = gp.enrich(
 - 方法：`gseapy 0.10+` 的 `enrich`（超几何检验）。  
 - 背景用于计算 odds ratio 与 p 值。
 
-### 3. 过滤 & 输出
+### 4. 过滤 & 输出
 ```python
 df = enrich_results.results
 df = df[df['Adjusted P-value'] <= 0.05]   # 保留显著
@@ -73,4 +82,4 @@ df = df.rename(columns={
 })
 print(df.to_json(orient='records'))
 ```
-返回字段：`t` 通路名称，`p` 校正后 p 值，`o` 比值比，`c` 综合评分，`g` 命中基因。
+返回字段：`t` 通路名称，`p` 校正后 p 值，`o` 比值比，`c` 综合评分，`g` 命中基因。翻译为英文

@@ -17,7 +17,7 @@ import studySTPage from '../components/studySTPage.vue';
 
 //import SearchPage from '../components/SearchPage.vue'; 
 import DownloadPage from '../components/DownloadPage.vue'; 
-import AboutPage from '../components/AboutPage.vue';
+import DocPage from '../components/DocPage.vue';
 import VisitLogPage from '../components/VisitLogPage.vue';
 
 import ContactUsPage from '../components/ContactUsPage.vue';
@@ -30,7 +30,7 @@ const routes = [
   { path: '/browse/SpatialTranscriptome', name: 'SpatialTranscriptomeList', component: STList, meta: { requiresLoading: true } },
   //{ path: '/search', name: 'Search', component: SearchPage, meta: { requiresLoading: true } },
   { path: '/download', name: 'Download', component: DownloadPage, meta: { requiresLoading: true } },
-  { path: '/about', name: 'About', component: AboutPage, meta: { requiresLoading: true } },
+  { path: '/about/doc/:name', name: 'Doc', component: DocPage, meta: { requiresLoading: true } },
   { path: '/browse/SingleCell/:id', name: 'SingleCellPage', component: SingleCellPage, meta: { requiresLoading: true } },
   { path: '/browse/singleCellStudy/:study', name: 'scStudy', component: studySingleCellPage, meta: { requiresLoading: true } },
   { path: '/browse/stStudy/:study', name: 'stStudy', component: studySTPage, meta: { requiresLoading: true } },

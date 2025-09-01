@@ -13,7 +13,17 @@ sc_mouse
 
 UPDATE `datasets`
 SET `information` =
-'{"DatasetSource1":{"Title":"Spatiotemporally Single-cell Atlas Revealing Molecular Dynamics of Major Depression Disorder Across Brain Regions During Disease Progression","Methodology":"Single-nucleus RNA-seq","Protocol":"10x Genomics","PublicDataID":"Public release upon publication","Pubmed":0,"DOI":"Public release upon publication","Statement":"reviewer private link at submission; public upon publication."}}'
+'{
+    "DatasetSource1": {
+        "Title": "Spatiotemporally Single-cell Atlas Revealing Molecular Dynamics of Major Depression Disorder Across Brain Regions During Disease Progression",
+        "Methodology": "Single-nucleus RNA-seq",
+        "Protocol": "10x Genomics",
+        "PublicDataID": "Public release upon publication",
+        "Pubmed": 0,
+        "DOI": "Public release upon publication",
+        "Statement": "reviewer private link at submission; public upon publication."
+    }
+}'
 WHERE `species` = 'mouse'
   AND `scorst` = 'sc';
 
@@ -101,9 +111,18 @@ WHERE `scorst` = 'st';
 
 
 
-study.all
+study3.all
 {
     "DatasetSource1": {
+        "Title": "Single-nucleus transcriptomics of the prefrontal cortex in major depressive disorder implicates oligodendrocyte precursor cells and excitatory neurons",
+        "Methodology": "Single-nucleus RNA-seq",
+        "Protocol": "10x Genomics",
+        "PublicDataID": "GSE144136 (NCBI)",
+        "DOI": "10.1038/s41593-020-0621-y",
+        "Pubmed": 0,
+        "Statement": "We downloaded the raw count matrices GSE144136 and re-analyzed them in this study. We performed unified quality control and integrated the data with our in‑house dataset using a consistent pipeline."
+    },
+    "DatasetSource2": {
         "Title": "Single-nucleus transcriptomic profiling of human orbitofrontal cortex reveals convergent effects of aging and psychiatric disease",
         "Methodology": "Single-nucleus RNA-seq",
         "Protocol": "10x Genomics",
@@ -112,7 +131,7 @@ study.all
         "Pubmed": 0,
         "Statement": "We downloaded the raw count matrices GSE254569 and re-analyzed them in this study. We performed unified quality control and integrated the data with our in‑house dataset using a consistent pipeline."
     },
-    "DatasetSource2": {
+    "DatasetSource3": {
         "Title": "Spatiotemporally Single-cell Atlas Revealing Molecular Dynamics of Major Depression Disorder Across Brain Regions During Disease Progression",
         "Methodology": "Single-nucleus RNA-seq",
         "Protocol": "Singleron GEXSCOPE",
