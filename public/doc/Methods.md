@@ -44,9 +44,37 @@ for g in groups:
 
 ---
 
-## Offline Enrichment Analysis Workflow
+## Enrichment Analysis Workflow 
 
-### 1. Input
+### 1. Python Library
+Python 3.10.12
+
+```python
+import os
+import sys
+import json
+import pandas as pd #Version 2.3.0
+import gseapy as gp #Version 1.1.9
+```
+
+---
+
+### 2. GMT Files
+
+Download link: [http://maayanlab.cloud/Enrichr](http://maayanlab.cloud/Enrichr). 
+
+We used the following four files:
+
+```text
+KEGG_2019_Human.gmt
+go_bp_2018.gmt
+go_mf_2018.gmt
+go_cc_2018.gmt
+```
+
+> These files are also included in our GitHub repository, located in **php/offline\_enrich\_db/**.
+
+### 3. Input
 
 ```json
 {
@@ -56,18 +84,8 @@ for g in groups:
 }
 ```
 
-> Supports JSON string or Python list.
 
-### 2. GMT Files
-
-```bash
-wget -O KEGG_2019_Human.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human"
-wget -O go_bp_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2018"
-wget -O go_mf_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Molecular_Function_2018"
-wget -O go_cc_2018.gmt "http://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Cellular_Component_2018"
-```
-
-### 3. Enrichment Analysis
+### 4. Enrichment Analysis
 
 ```python
 enrich_results = gp.enrich(
@@ -81,7 +99,7 @@ enrich_results = gp.enrich(
 * Method: `enrich` in **gseapy 0.10+** (hypergeometric test).
 * The background list is used for computing odds ratio and p-value.
 
-### 4. Filtering & Output
+### 5. Filtering & Output
 
 ```python
 df = enrich_results.results

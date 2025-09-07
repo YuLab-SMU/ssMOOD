@@ -39,16 +39,10 @@
                 <router-link to="/about/doc/Methods">{{ $t('Methods') }}</router-link>
             </li>
             <li>
-              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/Usage.md'" target="_blank"
-                rel="noopener noreferrer">
-                {{ $t('Usage') }}
-              </a>
+              <router-link to="/about/doc/Usage">{{ $t('Usage') }}</router-link>
             </li>
             <li>
-              <a :href="'https://github.com/'+BaseURL+'/ssMOOD/blob/' + BRANCH + '/doc/FAQ.md'" target="_blank"
-                rel="noopener noreferrer">
-                {{ $t('FAQ') }}
-              </a>
+              <router-link to="/about/doc/News">{{ $t('News') }}</router-link>
             </li>
             <li>
               <router-link to="/about/VisitLog">{{ $t('AccessAnalytics') }}</router-link>
@@ -76,9 +70,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-//import { useRoute } from 'vue-router';
-const BaseURL = "goldmorningsmart";
-const BRANCH = process.env.BRANCH;
+
 
 const { locale } = useI18n();
 //onst route = useRoute();

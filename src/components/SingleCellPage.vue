@@ -1013,7 +1013,7 @@ const handleBlur = () => {
 const maxNc = ref(0)
 
 const getColor = (value) => {
-  if (value === 0) return 'rgba(128, 128, 128, 0.15)';
+  if (value === 0) return 'rgba(222, 222, 222,0.7)';
   const t = Math.min(value / maxNc.value, 1);
   const h = 0;                    // 红色
   const s = 60 + 40 * t;          // 60% → 100%
