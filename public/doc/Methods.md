@@ -1,10 +1,19 @@
 # **Methods**
+   
+---
 
 ## Differential Expression Workflow
 
-### 1. Filter Data
-
+### 1. Import And Filter Data
+Python Version: 3.10.12
 ```python
+import scanpy as sc #Version 1.9.8
+import pandas as pd #Version 2.3.1
+import os
+import matplotlib.pyplot as plt #Version 3.7.5
+import scipy.sparse #Version 1.10.1
+
+adata = sc.read_h5ad("file.h5ad")
 valid = adata.obs[cluster_key].value_counts()
 valid = valid[valid > 3].index          # Keep only types with ≥4 cells
 adata   = adata[adata.obs[cluster_key].isin(valid)]
@@ -46,14 +55,14 @@ for g in groups:
 
 ## Enrichment Analysis Workflow 
 
-### 1. Python Library
-Python 3.10.12
+### 1. Import Library
+Python Version: 3.10.12
 
 ```python
 import os
 import sys
 import json
-import pandas as pd #Version 2.3.0
+import pandas as pd #Version 2.3.1
 import gseapy as gp #Version 1.1.9
 ```
 
