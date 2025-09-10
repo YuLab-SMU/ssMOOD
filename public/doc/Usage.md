@@ -6,7 +6,20 @@
 
 ### **Home**
 
-The **Home** page provides a general overview of the database and highlights its core features.
+The **Home** page provides a comprehensive overview of the database and highlights its core features:
+
+* **Bar Chart of Dataset Counts**: Displays the number of datasets available across different categories, offering a quick snapshot of the data distribution.
+
+* **Species Proportion Pie Chart**: Shows the distribution of species in the database, giving users a clear understanding of the species representation.
+
+* **Single-cell vs ST Proportion**: A comparison chart illustrating the proportion of single-cell data versus spatial transcriptomics (ST) data within the database.
+
+* **UMAP of Human and Mouse Single-cell Data**: Visualizes the clustering of single-cell data for both human and mouse species using UMAP (Uniform Manifold Approximation and Projection).
+
+* **ST Spatial Location Map for Human and Mouse**: Displays the spatial positioning of human and mouse samples within the context of spatial transcriptomics.
+
+* **Integrated Datasets**: Showcases the integration of various datasets, providing a holistic view of the available data across species and techniques.
+
 
 ---
 
@@ -15,10 +28,10 @@ The **Home** page provides a general overview of the database and highlights its
 The **Browse** section enables users to explore datasets in two primary categories:
 
 * **Single-cell datasets**
-  Includes both integrated datasets (aggregated from multiple studies) and individual datasets.
+  Includes both integrated datasets (aggregated from multiple studies) and individual datasets.As of August 2025, there are 626,425 cells.
 
-* **Bulk RNA-seq datasets**
-  Also includes both integrated and individual datasets, supporting both cross-study comparisons and single-study analyses.
+* **ST datasets**
+  Also includes both integrated and individual datasets, supporting both cross-study comparisons and single-study analyses.As of August 2025, there are 5,506,379 ST datas.
 
 This section is designed to provide intuitive access to raw and processed data, facilitating downstream analyses.
 
@@ -138,7 +151,7 @@ Taking the **single-cell integrated dataset page** as an example:
 
 \[2]. **Heatmap of Cell Counts Across Expression Levels and Clusters**
 
-* Visualizes the distribution of cell counts across varying expression levels and clusters using a heatmap, enabling comparative assessment of expression patterns among cell types.
+* isualizes the distribution of cell counts across varying expression levels and clusters using a heatmap. **This heatmap only appears after selecting and searching for specific genes**, enabling a focused comparative assessment of expression patterns among cell types.
 
 
 ---
@@ -195,6 +208,9 @@ Taking the **single-cell integrated dataset page** as an example:
 \[2]. **Gene Links**
 
 * Clicking a gene name redirects to the corresponding external database for detailed information.
+* UNIPROT link: https://www.uniprot.org/uniprotkb/
+* GENECARDS link: https://www.genecards.org/cgi-bin/carddisp.pl
+
 
 \[3]. **Download**
 

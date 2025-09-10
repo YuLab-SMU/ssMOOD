@@ -13,13 +13,13 @@ import './styles/element-theme.css';
 
 // 创建国际化实例
 const i18n = createI18n({
-  locale: 'zh1',
+  locale: 'en',
   legacy: false,
   globalInjection: true,
   messages: {
     en,
-    'zh1': zhCn,
-    'zh2': zhTw,
+    'zh-CN': zhCn,
+    'zh-TW': zhTw,
   }
 });
 const eventBus = mitt();

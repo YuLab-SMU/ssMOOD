@@ -56,8 +56,8 @@
       <div class="language-switcher-container">
         <span>Language</span>
         <el-select v-model="selectedLanguage" @change="switchLanguage" placeholder="Select Language" size="default">
-          <el-option label="简体中文" value="zh1" />
-          <el-option label="繁體中文" value="zh2" />
+          <el-option label="简体中文" value="zh-CN" />
+          <el-option label="繁體中文" value="zh-TW" />
           <el-option label="English" value="en" />
         </el-select>
       </div>
@@ -83,8 +83,27 @@ const selectedLanguage = ref('');
 
 // 加载语言偏好
 const loadLanguagePreference = () => {
-  return localStorage.getItem('selectedLanguage') || 'zh1';
+  const allowedLangs = ['zh-CN', 'zh-TW', 'en'];
+
+  // 1. 先看 localStorage 里有没有
+  const saved = localStorage.getItem('selectedLanguage');
+  if (saved && allowedLangs.includes(saved)) {
+    return saved;
+  }
+
+  // 2. 没有或不合法，就用浏览器语言
+  const browserLang = navigator.language.toLowerCase();
+
+  if (browserLang.startsWith('zh-tw') || browserLang.startsWith('zh-hk')) {
+    return 'zh-TW'; // 繁体
+  } else if (browserLang.startsWith('zh-cn') || browserLang.startsWith('zh')) {
+    return 'zh-CN'; // 简体
+  } else {
+    return 'en'; // 默认英文
+  }
 };
+
+
 
 // 保存语言偏好
 const saveLanguagePreference = (language) => {
