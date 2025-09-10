@@ -1,7 +1,9 @@
 # News
 ---
-## V4.7.0（第一个发布版本）
-优化Differential expression (DE) / Gene set enrichment部分的显示效果和动态响应大小
-增强热图部分数组的边界保护
-优化英文翻译
-在网站内部加入文档
+## V4.7.0 (First Public Release)
+- Optimized the display and dynamic responsiveness of **Differential Expression (DE) / Gene Set Enrichment** modules  
+- Enhanced array boundary protection in the heatmap section  
+- Improved English translations  
+- Added documentation within the website  
+- Website language is now automatically selected based on the browser's default language  
+
