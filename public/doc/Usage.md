@@ -77,8 +77,9 @@ The **Download** section provides direct access to:
 \[2]. **Language Switcher**
 * Supports Simplified Chinese, Traditional Chinese, and English.
 
-\[3]. **Integrated (Combined) Datasets**
+\[3]. **Integrated Datasets**
 * Click the corresponding button in the chart to access an integrated dataset.
+* Due to the large size of the **mouse ST dataset**, the “All” button is not provided in the integration view.  
 
 \[4]. **Individual Datasets**
 * Click the dataset ID to view details of a specific dataset.

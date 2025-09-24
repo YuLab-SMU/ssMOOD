@@ -28,7 +28,7 @@
     "hv8": "The data are mainly derived from mouse and human samples, covering two types of sequencing data: single-cell transcriptomics and spatial transcriptomics.",
     "hv9": "Interactive charts",
     "hv10-1": "Utilizes an efficient plotting engine and data structure to support real-time loading and smooth interaction with large-scale data.",
-    "hv10-2": "Provides multiple chart types, including UMAP clustering plots, spatial distribution maps, heatmaps, and more.",
+    "hv10-2": "Provides multiple chart types, including UMAP clustering plots, Spatial location map, heatmaps, and more.",
     "hv10-3": "Users can freely explore the data through interactive operations such as zooming, filtering, and hover tooltips, with support for conditional filtering, cell type highlighting, and multi-plot linked analysis.",
     "hv11": "Integrated datasets",
     "hv12": "Provides two types of integrated datasets, covering single-cell transcriptomics (scRNA-seq) and spatial transcriptomics (ST) data, integrated by experimental conditions and anatomical regions.",
