@@ -100,6 +100,7 @@ The **Download** section provides direct access to:
 * **Database**: MariaDB 10.6
 
 # ssMOOD project
+![bp](./doc/ssMOODFarmework.png "bp")
 ```
 src
 ├── App.vue                 # Vue root component, entry point and layout container for the entire application
@@ -148,13 +149,13 @@ To get started, you need to install the project dependencies. Follow these steps
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone <repository-url>
+   https://github.com/YuLab-SMU/ssMOOD.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd <project-name>
+   cd ssMOOD-master
    ```
 
 3. Install the required dependencies using **npm** or **yarn**:
