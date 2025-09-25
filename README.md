@@ -1,4 +1,4 @@
-![封面](./doc/ssmood.jpg "封面")
+[![ssMOOD cover](./doc/ssmood.jpg "ssMOOD cover")](https://ssmood.genomics.cn)
 
 [![AGPLv3 License](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
@@ -231,3 +231,7 @@ This will launch the app on the default port **8787**. You can modify the port i
 * **Vue Router**: Routing management
 * **npm/yarn**: Package managers
 
+
+### Citation for ssMOOD (to be updated)
+
+* Once the article is published, this section will be updated with the full bibliographic information and DOI. For now, please reference the project URL: [https://ssmood.genomics.cn](https://ssmood.genomics.cn)
