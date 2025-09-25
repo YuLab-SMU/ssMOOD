@@ -6,10 +6,11 @@ The table below shows the correspondence between the **running version** (the us
 This mapping helps ensure reproducibility in research and makes it easier to track which codebase was used for a specific software release.
 
 ```markdown
-| Running Version | Codebase Version | Notes                |
-| --------------- | ---------------- | -------------------- |
-| v1.1.0 (Now)    | v4.7.0           | Latest release       |
-| v1.0.0          | v4.6.0           | First major release  |
+| Running Version | Codebase Version | Release Date | Notes                |
+| --------------- | ---------------- | ------------ | -------------------- |
+| v1.1.0 (Now)    | v4.7.0           | 2025-08-27   | Latest release       |
+| v1.0.0          | v4.6.0           | 2025-07-06   | First major release  |
+
 ```
 
 * **Running Version**: the version number displayed in the software interface or release notes.
