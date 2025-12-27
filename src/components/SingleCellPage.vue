@@ -769,7 +769,6 @@ const updateGenePlot = () => {
     };
 
     Plotly.react('umap-chart-gene', traces, genelayout);
-    
   }
 }
 
@@ -963,11 +962,6 @@ const markerSize1 = ref(4); // 默认点大小
 // 更新 UMAP 图1 的点大小
 const updateUmap1 = () => {
   Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
-  // // 同步更新右边图的点大小
-  // if (isSearchgene.value === true) {
-  //   markerSize2.value = markerSize1.value;
-  //   Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
-  // }
 };
 
 //###################################//
@@ -1350,9 +1344,6 @@ const searchgene = async () => {
 const updateUmap2 = () => {
   if (isSearchgene.value === true) {
     Plotly.restyle('umap-chart-gene', 'marker.size', [markerSize2.value]);
-    // // 同步更新左边图的点大小
-    // markerSize1.value = markerSize2.value;
-    // Plotly.restyle('umap-plot', 'marker.size', [markerSize1.value]);
   }
 };
 
