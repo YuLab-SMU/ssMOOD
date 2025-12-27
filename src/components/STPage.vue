@@ -569,7 +569,7 @@ import Plotly from 'plotly.js-dist-min';
 import VirtualListItem from './general/VirtualListItem.vue';
 import VirtualList from 'vue3-virtual-scroll-list'
 import pako from 'pako';
-import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
+import { ref, onMounted, computed, watch,nextTick, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 //import debounce from 'lodash.debounce';
 import { QuestionFilled } from '@element-plus/icons-vue'
@@ -642,6 +642,48 @@ const isIndeterminate = ref(false)
 const checkAllFlag = ref(true)
 
 const coord_chartLoading = ref(true)
+
+// 防止缩放同步循环的标志位
+const isSyncingZoom = ref(false)
+const isSelectZoom = ref(false)
+// 防止双击重置时的重复更新
+const isDoubleClickReset = ref(false)
+
+
+// 根据缩放范围自动选择可见的细胞类型
+const selectVisibleCellTypes = (xRange, yRange) => {
+  if (!xRange || !yRange || coordinate_data.value.length === 0) return;
+  isSelectZoom.value = true;
+  const [xMin, xMax] = xRange;
+  const [yMin, yMax] = yRange;
+  
+  // 找出在当前视图范围内的细胞类型
+  const visibleTypes = new Set();
+  
+  coordinate_data.value.forEach(cell => {
+    const x = parseFloat(cell.x);
+    const y = parseFloat(cell.y);
+    
+    if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+      visibleTypes.add(cell.c);
+    }
+  });
+  
+  // 更新可见的细胞类型 - 使用 nextTick 确保 DOM 更新完成
+  if (visibleTypes.size > 0) {
+    nextTick(() => {
+      visibleLabels.value = Array.from(visibleTypes);
+      // 在 DOM 更新后重置标志位
+      setTimeout(() => {
+        isSelectZoom.value = false;
+      }, 50);
+    });
+  } else {
+    // 如果没有找到可见类型，立即重置标志位
+    isSelectZoom.value = false;
+  }
+};
+
 // 全选/全不选
 const toggleAll = () => {
   if (checkAllFlag.value) {
@@ -654,8 +696,12 @@ const toggleAll = () => {
 // 单个复选框变动时
 const onCheckboxChange = () => {
   // 这里只处理图更新，选中状态由 watch 管
-  updatePlot()
-  updateGenePlot()
+  // 只有在非缩放选择的情况下才更新图表
+  if(!isSelectZoom.value) {
+    updatePlot()
+    updateGenePlot()
+  } // 如果是缩放触发的变化，跳过
+  
 }
 
 // 自动追踪 visibleLabels 的变化，更新全选与半选中状态
@@ -665,9 +711,13 @@ watch(visibleLabels, (val) => {
 
   checkAllFlag.value = checkedCount === total
   isIndeterminate.value = checkedCount > 0 && checkedCount < total
-  updatePlot()
-  updateGenePlot()
-})
+  
+  // 只有在非缩放选择且非双击重置的情况下才更新图表
+  if (!isSelectZoom.value && !isDoubleClickReset.value) {
+    updatePlot()
+    updateGenePlot()
+  }
+}, { flush: 'post' })
 
 const updateGenePlot = () => {
   if (isSearchgene.value === true) {
@@ -829,13 +879,82 @@ onMounted(() => {
       };
 
       Plotly.newPlot('coord_chart', traces, layout);
+      
+      // 添加缩放事件监听，让左边图的缩放同步到右边图
+      document.getElementById('coord_chart').on('plotly_relayout', function(eventdata) {
+        if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
+          isSyncingZoom.value = true;
+
+          // 获取缩放范围并选择可见的细胞类型
+          const xRange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
+          const yRange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
+          selectVisibleCellTypes(xRange, yRange);
+
+          // 同步缩放范围到右边图
+          if (isSearchgene.value === true) {
+            const rightChart = document.getElementById('coord_chart_gene');
+            if (rightChart) {
+              Plotly.relayout('coord_chart_gene', {
+                'xaxis.range[0]': eventdata['xaxis.range[0]'],
+                'xaxis.range[1]': eventdata['xaxis.range[1]'],
+                'yaxis.range[0]': eventdata['yaxis.range[0]'],
+                'yaxis.range[1]': eventdata['yaxis.range[1]']
+              });
+            }
+          }
+          
+          setTimeout(() => {
+            isSyncingZoom.value = false;
+          }, 100);
+        }
+      });
+      
+      // 添加双击重置事件监听
+      document.getElementById('coord_chart').on('plotly_doubleclick', function() {
+        // 防止重复触发
+        if (isDoubleClickReset.value) return;
+        isDoubleClickReset.value = true;
+        
+        // 直接重置视图，不触发勾选框更新
+        Plotly.relayout('coord_chart', {
+          'xaxis.autorange': true,
+          'yaxis.autorange': true
+        });
+        
+        // 重置勾选框状态
+        visibleLabels.value = [...global_clusterLabels.value];
+        
+        // 重置右边图的视图
+        if (isSearchgene.value === true) {
+          const rightChart = document.getElementById('coord_chart_gene');
+          if (rightChart) {
+            Plotly.relayout('coord_chart_gene', {
+              'xaxis.autorange': true,
+              'yaxis.autorange': true
+            });
+          }
+        }
+        
+        // 延时重置防抖标志
+        setTimeout(() => {
+          isDoubleClickReset.value = false;
+        }, 300);
+      });
+      
       coord_chartLoading.value = false;
     })
     .catch(error => console.error('Error fetching UMAP data:', error));
 });
+
+
 // 更新 UMAP 图表的方法
 const updateUmap1 = () => {
   Plotly.restyle('coord_chart', 'marker.size', [markerSize1.value]);
+  // // 同步更新右边图的点大小
+  // if (isSearchgene.value === true) {
+  //   markerSize2.value = markerSize1.value;
+  //   Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
+  // }
 };
 
 //------------------------------------------------------
@@ -948,11 +1067,7 @@ const eventBus = inject('eventBus')
 onMounted(() => {
   eventBus.on('select-item', handleSelectItem);
 });
-onUnmounted(() => {
-  if (eventBus) {
-    eventBus.off('select-item', handleSelectItem);
-  }
-});
+
 
 const handleSelectItem = (item) => {
   searchQuery.value = item;
@@ -1098,6 +1213,61 @@ const searchgene = async () => {
         plot_bgcolor: 'rgba(0,0,0,0)',
       };
       Plotly.newPlot('coord_chart_gene', traces, genelayout);
+      
+      // 添加缩放事件监听，让右边图的缩放同步到左边图
+      document.getElementById('coord_chart_gene').on('plotly_relayout', function(eventdata) {
+        if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
+          isSyncingZoom.value = true;
+
+
+          // 获取缩放范围并选择可见的细胞类型
+          const xRange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
+          const yRange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
+          selectVisibleCellTypes(xRange, yRange);
+
+          // 同步缩放范围到左边图
+          Plotly.relayout('coord_chart', {
+            'xaxis.range[0]': eventdata['xaxis.range[0]'],
+            'xaxis.range[1]': eventdata['xaxis.range[1]'],
+            'yaxis.range[0]': eventdata['yaxis.range[0]'],
+            'yaxis.range[1]': eventdata['yaxis.range[1]']
+          });
+          setTimeout(() => {
+            isSyncingZoom.value = false;
+          }, 100);
+        }
+      });
+      
+      // 添加双击重置事件监听
+      document.getElementById('coord_chart_gene').on('plotly_doubleclick', function() {
+        // 防止重复触发
+        if (isDoubleClickReset.value) return;
+        isDoubleClickReset.value = true;
+        
+        // 直接重置视图，不触发勾选框更新
+        Plotly.relayout('coord_chart_gene', {
+          'xaxis.autorange': true,
+          'yaxis.autorange': true
+        });
+        
+        // 重置勾选框状态
+        visibleLabels.value = [...global_clusterLabels.value];
+        
+        // 重置左边图的视图
+        const leftChart = document.getElementById('coord_chart');
+        if (leftChart) {
+          Plotly.relayout('coord_chart', {
+            'xaxis.autorange': true,
+            'yaxis.autorange': true
+          });
+        }
+        
+        // 延时重置防抖标志
+        setTimeout(() => {
+          isDoubleClickReset.value = false;
+        }, 300);
+      });
+      coord_chartLoading.value = false;
 
 
       //-----------绘制热图------------------------
@@ -1153,7 +1323,12 @@ const searchgene = async () => {
 
 // 更新 UMAP 图2 的点大小
 const updateUmap2 = () => {
-  Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
+  if (isSearchgene.value === true) {
+    Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
+    // 同步更新左边图的点大小
+    markerSize1.value = markerSize2.value;
+    Plotly.restyle('coord_chart', 'marker.size', [markerSize1.value]);
+  }
 };
 
 
@@ -1997,9 +2172,30 @@ const resizeMyChart = () => {
 
 };
 
-//import { onUnmounted } from 'vue';
 onUnmounted(() => {
+  // 清理事件总线
+  if (eventBus) {
+    eventBus.off('select-item', handleSelectItem);
+  }
+  
+  // 清理窗口resize事件
   window.removeEventListener('resize', resizeMyChart);
+  
+  // 清理Plotly事件监听器
+  const leftChart = document.getElementById('coord_chart');
+  const rightChart = document.getElementById('coord_chart_gene');
+  
+  if (leftChart) {
+    leftChart.removeAllListeners('plotly_relayout');
+    leftChart.removeAllListeners('plotly_doubleclick');
+  }
+  
+  if (rightChart) {
+    rightChart.removeAllListeners('plotly_relayout');
+    rightChart.removeAllListeners('plotly_doubleclick');
+  }
+  
+  // 清理数据
   genes.value = [];
   coordinate_data.value = [];
   mergedGeneArray.value = [];
@@ -2007,6 +2203,20 @@ onUnmounted(() => {
   GOBPdata.value = [];
   GOMFdata.value = [];
   GOCCdata.value = [];
+  
+  // 重置标志位
+  isSelectZoom.value = false;
+  isDoubleClickReset.value = false;
+  isSyncingZoom.value = false;
+  
+  // 移除ResizeObserver错误处理器
+  window.removeEventListener('error', function(event) {
+    if (event.error && event.error.message && event.error.message.includes('ResizeObserver')) {
+      event.preventDefault();
+      console.warn('ResizeObserver error suppressed:', event.error.message);
+      return false;
+    }
+  });
 });
 </script>
 
