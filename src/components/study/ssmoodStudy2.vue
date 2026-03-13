@@ -3,7 +3,7 @@
     <div class="image-container">
       <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
       <!-- 按钮 1 -->
-      <button class="navigation-button button-1" @click="goToPage('study2.conditions.C')">
+      <button class="navigation-button button-1" @click="goToPage('study2.conditions.0D')">
         0Day(Control)
       </button>
       <!-- 按钮 2 -->

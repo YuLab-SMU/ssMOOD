@@ -1249,7 +1249,14 @@ const searchgene = async () => {
         
       };
       Plotly.newPlot('umap-chart-gene', traces, genelayout);
-      
+
+      // 重置左边图为初始视图,并重置勾选框为全选状态
+      visibleLabels.value = [...global_clusterLabels.value];
+      Plotly.relayout('umap-plot', {
+        'xaxis.autorange': true,
+        'yaxis.autorange': true
+      });
+
       // 添加缩放事件监听，让右边图的缩放同步到左边图
       document.getElementById('umap-chart-gene').on('plotly_relayout', function(eventdata) {
         if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
@@ -1331,7 +1338,18 @@ const searchgene = async () => {
       };
 
       Plotly.newPlot('expressionHeatmap', [trace], layout);
-
+      
+      // 重置左边图的视图到原始大小
+      const leftChart = document.getElementById('umap-plot');
+      if (leftChart) {
+        Plotly.relayout('umap-plot', {
+          'xaxis.autorange': true,
+          'yaxis.autorange': true
+        });
+      }
+      
+      // 重置勾选框为全选状态
+      visibleLabels.value = [...global_clusterLabels.value];
     } catch (error) {
       console.error('Failed to load genes:', error);
     }

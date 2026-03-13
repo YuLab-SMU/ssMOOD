@@ -178,7 +178,7 @@ import NavigationBar from './general/NavigationBar.vue'
 const email1 = ['caoxiong', 'smu.edu.cn'].join('@')
 const email2 = ['guangchuangyu', 'smu.edu.cn'].join('@')
 const email3 = ['treywea', 'smu.edu.cn'].join('@')
-const email4 = ['goldmorningsmart', 'outlook.com'].join('@')
+const email4 = ['yt22520318', 'i.smu.edu.cn'].join('@')
 const email5 = ['taotaomzk', 'smu.edu.cn'].join('@')
 const email6 = ['xiemin', 'genomics.cn'].join('@')
 
