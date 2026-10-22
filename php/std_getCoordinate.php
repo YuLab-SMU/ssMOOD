@@ -66,7 +66,12 @@ if (!function_exists('zlib_encode')) {
 }
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
+// 返回 JSON 数据
+header('Content-Type: application/octet-stream');
+    // 清除缓冲区并关闭输出缓冲
+ob_clean();
+flush();
 echo $compressed;
 
 //内存统计

@@ -70,10 +70,10 @@
 import { Link, Download, Document } from '@element-plus/icons-vue'
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
-const BRANCH = process.env.BRANCH;
+
 // 打开GitHub仓库
 const openGitHub = () => {
-    window.open('https://github.com/YuLab-SMU/ssMOOD/tree/'+BRANCH, '_blank')
+    window.open('https://github.com/YuLab-SMU/ssMOOD/', '_blank')
 }
 
 // 打开生物数据下载页面

@@ -1,6 +1,6 @@
 {
   "name": "ssMOOD",
-  "version": "4.6.0",
+  "version": "4.8.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8787",
@@ -15,6 +15,7 @@
     "highlight.js": "^11.11.1",
     "js-base64": "^3.7.7",
     "leaflet": "^1.9.4",
+    "markdown-it": "^14.1.1",
     "marked": "^16.2.1",
     "marked-highlight": "^2.2.2",
     "mitt": "^3.0.1",
@@ -24,7 +25,7 @@
     "uuid": "^11.0.3",
     "vue": "^3.5.0-beta.3",
     "vue-i18n": "^11.0.0-beta.1",
-    "vue-router": "^4.0.13",
+    "vue-router": "^4.6.3",
     "vue-web-terminal": "^3.4.0",
     "vue3-virtual-scroll-list": "^0.2.1",
     "vue3-virtual-scroller": "^0.2.3"
@@ -36,7 +37,7 @@
     "@vue/cli-plugin-babel": "^5.0.0",
     "@vue/cli-plugin-eslint": "^5.0.0",
     "@vue/cli-service": "^5.0.0",
-    "element-plus": "^2.10.3",
+    "element-plus": "^2.11.5",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "git-revision-webpack-plugin": "^5.0.0",

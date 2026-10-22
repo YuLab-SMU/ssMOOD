@@ -1313,6 +1313,18 @@ const searchgene = async () => {
 
       Plotly.newPlot('expressionHeatmap', [trace], layout);
       coord_chartGeneLoading.value = false;
+      
+      // 重置左边图的视图到原始大小
+      const leftChart = document.getElementById('coord_chart');
+      if (leftChart) {
+        Plotly.relayout('coord_chart', {
+          'xaxis.autorange': true,
+          'yaxis.autorange': true
+        });
+      }
+      
+      // 重置勾选框为全选状态
+      visibleLabels.value = [...global_clusterLabels.value];
     } catch (error) {
       console.error('Failed to load genes:', error);
     }

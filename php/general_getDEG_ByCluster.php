@@ -1,10 +1,15 @@
 <?php
 include 'config.php';
+
+// 移除 config.php 中设置的 Content-Type header
+header_remove('Content-Type');
+
 // 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 // 检查连接
 if ($conn->connect_error) {
     http_response_code(500);
+    header('Content-Type: application/json');
     error_log("Database connection failed: " . $conn->connect_error);
     echo json_encode(['error' => 'Database connection failed']);
     exit;
@@ -41,18 +46,20 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     // 获取第一行数据
     $row = $result->fetch_assoc();
-    
+
     // 设置适当的 HTTP 头
     header('Content-Type: application/octet-stream');
-    
+
     // 清除缓冲区并关闭输出缓冲
     ob_clean();
     flush();
-    
+
     // 输出二进制数据
     echo $row['bin_data'];
 } else {
-    echo 'error';
+    http_response_code(404);
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'No DEG data found for the given parameters']);
 }
 
 $stmt->close();

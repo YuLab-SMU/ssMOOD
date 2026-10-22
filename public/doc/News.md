@@ -8,7 +8,8 @@ This mapping helps ensure reproducibility in research and makes it easier to tra
 ```markdown
 | Running Version | Codebase Version | Release Date | Notes                |
 | --------------- | ---------------- | ------------ | -------------------- |
-| v1.1.0 (Now)    | v4.7.0           | 2025-08-27   | Latest release       |
+| v1.1.1 (Now)    | v4.8.0           | 2026-03-07   | Latest release       |
+| v1.1.0          | v4.7.0           | 2025-08-27   | Second release       |
 | v1.0.0          | v4.6.0           | 2025-07-06   | First major release  |
 
 ```
@@ -16,6 +17,17 @@ This mapping helps ensure reproducibility in research and makes it easier to tra
 * **Running Version**: the version number displayed in the software interface or release notes.
 * **Codebase Version**: the internal development version of the core analysis engine.
 * **Notes**: brief description of the release status.
+
+---
+## V1.1.1
+This release includes interface optimizations and several bug fixes to enhance stability and user experience.
+
+* **UI Enhancement**: Optimized the data display interfaces for single-cell and transcriptomics data, as well as integrated datasets, introducing synchronized interactions between charts during data exploration.
+Updated the download links on the download page.
+* **Bug Fixes**:
+Resolved an error that occurred when clicking on (0‑day) data within the spatial transcriptomics integrated dataset view.
+Fixed a rendering failure issue when opening the Methods page.
+Addressed an error in fetching request data for spatial transcriptomics.
 
 ---
 ## V1.1.0
