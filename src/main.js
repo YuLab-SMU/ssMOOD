@@ -34,7 +34,7 @@ app.provide('eventBus', eventBus);
 app.use(ElementPlus)
 // 挂载应用
 app.mount('#app');
-// 挂载完成后淡出加载页（样式与动画在 public/index.html 中）
+// Fade out the startup loading screen once the app has mounted (styles live in public/index.html)
 const loader = document.getElementById('app-loading')
 if (loader) {
   requestAnimationFrame(() => loader.classList.add('done'))

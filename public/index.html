@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
-    <!-- 不再同步加载 Google Fonts / jsDelivr：国内访问时会阻塞首屏渲染（项目中未使用 Roboto 与 MDI 图标） -->
+    <!-- Google Fonts / jsDelivr stylesheets removed: they block first paint in mainland China, and Roboto / MDI icons are unused -->
     <!--  <script src="./ace.js"></script> -->
     <!-- 在 public/index.html 中引入 Plotly -->
     <!--  <script src="./plotly-latest.min.js"></script> -->
@@ -22,12 +22,12 @@
 
   </head>
   <body>
-  <!-- 加载动画（在 Vue 挂载前显示，挂载后由 main.js 淡出） -->
+  <!-- Startup loading screen: shown until Vue mounts, then faded out by main.js -->
   <div id="app-loading" role="status" aria-live="polite">
     <canvas id="app-loading-canvas" aria-hidden="true"></canvas>
     <div class="loading-ui">
       <div class="loading-logo-row">
-        <!-- Logo：脑轮廓 + 细胞网络（深色背景版） -->
+        <!-- Logo mark: brain outline + cell network (dark-background variant) -->
         <svg width="52" height="52" viewBox="0 0 56 56" aria-hidden="true">
           <path d="M10 30 C8 20,12 10,20 7 C26 4,34 4,40 8 C47 13,50 20,48 28 C46 35,42 40,38 43 C34 46,30 47,28 47 C26 47,22 46,18 43 C13 39,11 36,10 30Z" fill="none" stroke="#c8daf2" stroke-width="1.2" opacity="0.45"/>
           <path d="M20 22 C24 18,30 19,34 16" fill="none" stroke="#c8daf2" stroke-width="0.9" opacity="0.25"/>
@@ -61,7 +61,7 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
     <script>
-    // 加载页背景：缓慢漂移的“细胞网络”，颜色与 UMAP 细胞类型配色一致
+    // Loading-screen background: a slowly drifting cell network using the UMAP cell-type palette
     (function () {
       var canvas = document.getElementById('app-loading-canvas');
       if (!canvas || !canvas.getContext) return;
@@ -90,7 +90,7 @@
       }
       function frame(ts) {
         var el = document.getElementById('app-loading');
-        if (!el || el.style.display === 'none') return; // 加载页移除后停止动画
+        if (!el || el.style.display === 'none') return; // stop animating once the loading screen is gone
         ctx.clearRect(0, 0, W, H);
         var i, j, a, b, dx, dy, d;
         for (i = 0; i < dots.length; i++) {
@@ -193,7 +193,7 @@
   opacity: 0;
   animation: loadingFadeUp .4s ease forwards .4s;
 }
-/* 不确定进度：一段渐变光条循环扫过 */
+/* Indeterminate progress: a gradient highlight sweeps across the track */
 .loading-bar {
   position: absolute;
   top: 0; bottom: 0;

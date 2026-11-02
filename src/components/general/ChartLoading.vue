@@ -1,5 +1,5 @@
 <template>
-  <!-- 图表加载占位：覆盖在图表容器上，替代原 /loading.gif -->
+  <!-- Chart loading placeholder: overlays the chart container (replaces /loading.gif) -->
   <div class="chart-loading" role="status" aria-live="polite">
     <div class="chart-loading-dots" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span>
@@ -42,7 +42,7 @@ defineProps({
   border-radius: 50%;
   animation: chartLoadingPulse 1.2s ease-in-out infinite;
 }
-/* 颜色取自细胞类型配色 */
+/* Dot colors follow the cell-type palette */
 .chart-loading-dots span:nth-child(1) { background: rgb(93, 116, 162); animation-delay: 0s; }
 .chart-loading-dots span:nth-child(2) { background: #7ea8d8; animation-delay: .12s; }
 .chart-loading-dots span:nth-child(3) { background: #5aab8a; animation-delay: .24s; }

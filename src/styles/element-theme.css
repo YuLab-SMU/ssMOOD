@@ -12,7 +12,7 @@
   font-size: 18px;       /* 字号，可按需调整 */
 }
 
-/* 表格等区域的 v-loading 遮罩：半透明 + 轻微模糊，转圈颜色跟随主色 */
+/* v-loading mask (tables etc.): translucent with a light blur; spinner uses the primary color */
 .el-loading-mask {
   background-color: rgba(247, 249, 252, 0.78);
   backdrop-filter: blur(2px);
@@ -26,7 +26,7 @@
   font-size: 13px;
 }
 
-/* 页面切换顶部进度条（NProgress）：主色渐变，替换默认亮蓝色 */
+/* Route-change progress bar (NProgress): primary-color gradient instead of the default bright blue */
 #nprogress .bar {
   height: 3px;
   background: linear-gradient(90deg, rgb(93, 116, 162), #5aab8a);
