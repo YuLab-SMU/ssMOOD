@@ -14,19 +14,19 @@
 <script setup>
 import { ref, defineProps,onMounted} from 'vue';
 
-// 定义接收的属性
+// Define accepted props
 const props = defineProps({
   id: String,
   data: Object
 });
 
-// 定义发出的事件
+// Define emitted events
 //const emit = defineEmits(['update:tips']);
 
-// 响应式引用，用于存储输入框的内容
+// Reactive ref holding the input box content
 const tipsValue = ref('');
 
-// 处理文本框内容变化的方法
+// Handle text box content changes
 function onTipsChange(event) {
   tipsValue.value = event.target.value;
  // eslint-disable-next-line
@@ -60,6 +60,6 @@ onMounted(() => {
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-top: 5px;
-  resize: vertical; /* 允许垂直调整大小 */
+  resize: vertical; /* Allow vertical resizing */
 }
 </style>

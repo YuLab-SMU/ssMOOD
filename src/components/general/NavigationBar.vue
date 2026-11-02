@@ -78,51 +78,51 @@ const showSubMenu = ref(false);
 const showSubMenu1 = ref(false);
 const isMenuCollapsed = ref(false);
 
-// 创建响应式引用
+// Create reactive refs
 const selectedLanguage = ref('');
 
-// 加载语言偏好
+// Load language preference
 const loadLanguagePreference = () => {
   const allowedLangs = ['zh-CN', 'zh-TW', 'en'];
 
-  // 1. 先看 localStorage 里有没有
+  // 1. First check localStorage
   const saved = localStorage.getItem('selectedLanguage');
   if (saved && allowedLangs.includes(saved)) {
     return saved;
   }
 
-  // 2. 没有或不合法，就用浏览器语言
+  // 2. If missing or invalid, fall back to the browser language
   const browserLang = navigator.language.toLowerCase();
 
   if (browserLang.startsWith('zh-tw') || browserLang.startsWith('zh-hk')) {
-    return 'zh-TW'; // 繁体
+    return 'zh-TW'; // Traditional Chinese
   } else if (browserLang.startsWith('zh-cn') || browserLang.startsWith('zh')) {
-    return 'zh-CN'; // 简体
+    return 'zh-CN'; // Simplified Chinese
   } else {
-    return 'en'; // 默认英文
+    return 'en'; // Default to English
   }
 };
 
 
 
-// 保存语言偏好
+// Save language preference
 const saveLanguagePreference = (language) => {
   localStorage.setItem('selectedLanguage', language);
 };
 
-// 切换语言
+// Switch language
 const switchLanguage = () => {
   saveLanguagePreference(selectedLanguage.value);
   locale.value = selectedLanguage.value;
 };
 
-// 在组件挂载时设置初始语言
+// Set the initial language when the component is mounted
 onMounted(() => {
   selectedLanguage.value = loadLanguagePreference();
   locale.value = selectedLanguage.value;
 });
 
-// 监听窗口大小变化，自动折叠或展开导航栏
+// Watch window resizes to auto-collapse or expand the navbar
 /*
 window.addEventListener('resize', () => {
   if (window.innerWidth <= 768) {
@@ -132,7 +132,7 @@ window.addEventListener('resize', () => {
   }
 });
 */
-// 切换导航栏的展开和折叠状态
+// Toggle the navbar between expanded and collapsed
 const toggleMenu = () => {
   if (window.innerWidth <= 768) {
     isMenuCollapsed.value = !isMenuCollapsed.value;
@@ -185,7 +185,7 @@ header {
   padding: 0 10px;
 }
 
-/* 添加active样式 */
+/* Add active style */
 .nav-item.active {
   background: rgba(255, 255, 255, 0.3);
 }
@@ -207,7 +207,7 @@ a {
 
 
 
-/* 二级菜单样式 */
+/* Submenu styles */
 .has-submenu {
   position: relative;
 }
@@ -218,9 +218,9 @@ a {
   background-color: #fff;
   z-index: 2000;
   top: 100%;
-  /* 父菜单项高度的100% */
+  /* 100% of the parent menu item height */
   left: 0;
-  /* 根据需要调整 */
+  /* Adjust as needed */
   transition: opacity 0.3s, visibility 0.3s;
   border: 1px solid #eaeaea;
   border-radius: 8px;
@@ -248,8 +248,8 @@ a {
 .submenu a {
   text-decoration: none;
   white-space: nowrap;
-  /* 禁止文字换行 */
-  /* 移除下划线 */
+  /* Prevent text wrapping */
+  /* Remove underline */
   color: black;
   display: block;
   transition: background 0.3s, color 0.3s;
@@ -262,24 +262,24 @@ a {
   border-radius: 4px;
   margin-left: auto;
 
-  /* 不使用flex，改用inline-block水平排列 */
+  /* Use inline-block instead of flex for horizontal layout */
   white-space: nowrap;
-  /* 防止换行 */
+  /* Prevent wrapping */
   text-align: right;
-  /* 内容右对齐 */
+  /* Right-align content */
 }
 
 .language-switcher-container>* {
   display: inline-block;
   vertical-align: middle;
-  /* 让元素垂直居中 */
+  /* Center elements vertically */
   margin-left: 8px;
-  /* 控制间距 */
+  /* Control spacing */
 }
 
 .language-switcher-container>*:first-child {
   margin-left: 0;
-  /* 第一个元素左边距去掉 */
+  /* Remove left margin of the first element */
 }
 
 .language-switcher-container a {
@@ -287,7 +287,7 @@ a {
 }
 
 
-/* 移动端样式 */
+/* Mobile styles */
 .toggle-button {
   font-size: 24px;
 }
@@ -307,15 +307,15 @@ a {
 
 .modal {
   background-color: rgba(255, 255, 255, 0.6);
-  /* 半透明白色背景 */
+  /* Semi-transparent white background */
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
   backdrop-filter: blur(5px);
-  /* 添加毛玻璃效果，模糊半径为 5px */
+  /* Frosted-glass effect with a 5px blur radius */
   -webkit-backdrop-filter: blur(5px);
-  /* Safari 支持 */
+  /* Safari support */
   position: relative;
 }
 
@@ -375,7 +375,7 @@ a {
 
   .nav-menu.nav-menu-collapsed {
     max-height: 500px;
-    /* 足够容纳所有菜单项的高度 */
+    /* Tall enough to fit all menu items */
   }
 
   .nav-item {
@@ -390,10 +390,10 @@ a {
     background-color: #fff;
     z-index: 2000;
     top: auto;
-    /* 父菜单项高度的100% */
+    /* 100% of the parent menu item height */
     bottom: 0%;
     left: 50%;
-    /* 根据需要调整 */
+    /* Adjust as needed */
     transition: opacity 0.3s, visibility 0.3s;
     border: 1px solid #eaeaea;
     border-radius: 8px;

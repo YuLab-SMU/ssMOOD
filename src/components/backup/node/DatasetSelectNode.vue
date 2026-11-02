@@ -23,19 +23,19 @@ import { Handle, Position } from '@vue-flow/core';
 import pako from 'pako';
 
 const props = defineProps({
-  id: String,      // 节点 ID
-  data: Object,    // 节点数据
-  newWebR: Object  // WebR 实例
+  id: String,      // Node ID
+  data: Object,    // Node data
+  newWebR: Object  // WebR instance
 });
 
 const emit = defineEmits(['dataset-selected', 'text-input-changed']);
 
-// 本地状态
-const selectedDatasetId = ref('');  // 当前选中的数据集 ID
-const datasets = ref([]);           // 数据集列表
-const userInput = ref('');          // 用户输入的文本
+// Local state
+const selectedDatasetId = ref('');  // Currently selected dataset ID
+const datasets = ref([]);           // Dataset list
+const userInput = ref('');          // User input text
 
-// 获取数据集列表
+// Fetch dataset list
 async function fetchDatasets() {
   try {
     const response = await fetch('../php/ap_getDatasetList.php'); 
@@ -48,15 +48,15 @@ async function fetchDatasets() {
 
 
 const eventBus = inject('eventBus');
-// 用户选择数据集时更新本地状态
+// Update local state when the user selects a dataset
 function onDatasetChange() {
-  //emit('dataset-selected', selectedDatasetId.value);  // 发射事件给父组件
+  //emit('dataset-selected', selectedDatasetId.value);  // Emit event to parent component
   props.data.datasetsId = selectedDatasetId.value;
 }
 
-// 用户输入文本时更新本地状态并发射事件
+// Update local state and emit event when the user types
 function onTextInput() {
-  //emit('text-input-changed', userInput.value, props.id);  // 发射事件给父组件，包括节点 ID
+  //emit('text-input-changed', userInput.value, props.id);  // Emit event to parent component, including node ID
   props.data.dfName = userInput.value;
 }
 const handlePerformAction = async (nodeId) => {
@@ -71,22 +71,22 @@ const handlePerformAction = async (nodeId) => {
           id: selectedDatasetId.value
         });
     try {
-    // 发起 fetch 请求并获取响应
+    // Send fetch request and get the response
     const response = await fetch(`../php/ap_getumapdata.php?${params}`);
 
-    // 确保请求成功
+    // Make sure the request succeeded
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // 获取响应的 ArrayBuffer
+    // Get the response ArrayBuffer
     const arrayBuffer = await response.arrayBuffer();
 
-    // 解压数据
+    // Decompress data
     const compressed = new Uint8Array(arrayBuffer);
-    const decompressed = pako.ungzip(compressed); // 使用 pako 解压
+    const decompressed = pako.ungzip(compressed); // Decompress with pako
 
-    // 确保解压成功
+    // Make sure decompression succeeded
     if (decompressed === null) {
       throw new Error('Decompression failed');
     }
@@ -95,7 +95,7 @@ const handlePerformAction = async (nodeId) => {
     console.error('Error fetching and processing data:', error);
   }
 
-    // 将解压后的数据解码为字符串
+    // Decode decompressed data into a string
     
     //let jsondata = JSON.stringify(jsonString);
     
@@ -111,7 +111,7 @@ ${userInput.value} <- fromJSON(jsondata)
   }
 };
 onMounted(() => {
-  fetchDatasets(); // 组件挂载时获取数据集列表
+  fetchDatasets(); // Fetch dataset list when the component mounts
   if (eventBus) {
     eventBus.on('perform-action', handlePerformAction);
   }

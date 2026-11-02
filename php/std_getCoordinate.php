@@ -2,7 +2,7 @@
 ini_set('memory_limit', '512M');
 
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     http_response_code(500);
@@ -69,16 +69,16 @@ if (!function_exists('zlib_encode')) {
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 //header('Content-Type: application/json');
-// 返回 JSON 数据
+// Return JSON data
 header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
 ob_clean();
 flush();
 echo $compressed;
 
-//内存统计
+//Memory stats
 //$peakMemory = memory_get_peak_usage();
-// 将峰值内存使用情况写入日志文件
-//$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - 峰值内存使用量：" . $peakMemory/1024 . " KB\n";
+// Write peak memory usage to the log file
+//$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - Peak memory usage: " . $peakMemory/1024 . " KB\n";
 //file_put_contents($logFile, $logEntry, FILE_APPEND);
 ?>

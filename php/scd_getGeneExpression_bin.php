@@ -1,62 +1,62 @@
 <?php
 include 'config.php';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
-    // 将数据库连接错误写入日志文件
+    // Write database connection errors to the log file
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
     exit;
 }
 
-// 获取 GET 参数
+// Get GET parameters
 $datasetId = $_GET['id'] ?? '';
 $gene = $_GET['gene'] ?? '';
 
-// 检查参数是否为空
+// Check whether parameters are empty
 if (empty($datasetId) || empty($gene)) {
     echo json_encode(['error' => 'Missing required parameters']);
     exit;
 }
 
-// 准备 SQL 查询
+// Prepare SQL query
 $sql = "SELECT bin_data FROM sc_expression WHERE dataset_id = ? AND gene_id = ?";
 
-// 准备语句
+// Prepare statement
 $stmt = $conn->prepare($sql);
 
-// 绑定参数
+// Bind parameters
 $stmt->bind_param("ss", $datasetId, $gene);
 
-// 执行查询
+// Execute query
 $stmt->execute();
 
-// 获取结果
+// Get results
 $result = $stmt->get_result();
 
-// 检查是否有结果
+// Check whether there are results
 if ($result->num_rows > 0) {
-    // 获取第一行数据
+    // Get the first row
     $row = $result->fetch_assoc();
     
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
     header('Content-Type: application/octet-stream');
     
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
     ob_clean();
     flush();
     
-    // 输出二进制数据
+    // Output binary data
     echo $row['bin_data'];
 } else {
     echo 'error';
 }
 
-// 关闭语句
+// Close statement
 $stmt->close();
 
-// 关闭连接
+// Close connection
 $conn->close();
 ?>

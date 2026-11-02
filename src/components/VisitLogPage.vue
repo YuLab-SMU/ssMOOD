@@ -2,7 +2,7 @@
   <div>
     <NavigationBar></NavigationBar>
     <main>
-      <!-- 📌 隐私声明 -->
+      <!-- 📌 Privacy notice -->
       <section class="page-section" style="margin-bottom: 20px;">
         <el-alert
           :title="$t('privacyTitle')"
@@ -70,9 +70,9 @@ const { t, locale } = useI18n()
 const stats = ref([])
 const visitors = ref([])
 const map = ref(null)
-let visitData = null   // 缓存原始数据
+let visitData = null   // Cache raw data
 
-// 更新 stats 的函数
+// Function to update stats
 function updateStats(data) {
   stats.value = [
     {
@@ -93,11 +93,11 @@ function updateStats(data) {
   ]
 }
 
-// 拉取数据
+// Fetch data
 const fetchData = async () => {
   const res = await fetch(config.apiUrl + 'visit_dashboard.php')
   const data = await res.json()
-  visitData = data   // 保存一份原始数据，方便切换语言时用
+  visitData = data   // Keep a copy of the raw data for use when switching languages
 
   updateStats(data)
   visitors.value = data.visitors
@@ -109,7 +109,7 @@ const fetchData = async () => {
   })
 }
 
-// ✅ 监听语言切换
+// ✅ Watch for language changes
 watch(locale, () => {
   if (visitData) {
     updateStats(visitData)

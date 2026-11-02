@@ -10,7 +10,7 @@
                         <router-link to="/">{{ $t('home') }}</router-link>
                     </li>
                     <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu"> <a>{{ $t('browse') }}</a>
-                        <!-- 二级菜单 -->
+                        <!-- Submenu -->
                         <ul v-if="showSubMenu" class="submenu">
                             <li>
                                 <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>

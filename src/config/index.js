@@ -1,18 +1,18 @@
 // src/config/index.js
 
-// 开发环境配置
+// Development config
 const devConfig = {
   apiUrl: 'http://172.16.165.245/php/',
   email:"xxxx@xxx.com"
 };
 
-// 生产环境配置
+// Production config
 const prodConfig = {
   apiUrl: './php/',
   email:"xxxx@xxx.com"
 };
 
-// 根据环境变量选择配置
+// Choose config based on environment variable
 const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
 
 export default config;

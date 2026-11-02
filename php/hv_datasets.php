@@ -2,17 +2,17 @@
 
 include 'config.php';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// 定义查询条件
+// Define query conditions
 $queries = [
     ['species' => 'mouse', 'scorst' => 'sc'],
     ['species' => 'mouse', 'scorst' => 'st'],
@@ -22,7 +22,7 @@ $queries = [
 
 $results = [];
 
-// 遍历查询条件并执行查询
+// Iterate over query conditions and run each query
 foreach ($queries as $query) {
     $species = $conn->real_escape_string($query['species']);
     $scorst = $conn->real_escape_string($query['scorst']);
@@ -32,27 +32,27 @@ foreach ($queries as $query) {
 
     $data = [];
     if ($result->num_rows > 0) {
-        // 将数据存入数组
+        // Store data in the array
         while ($row = $result->fetch_assoc()) {
             $data[$row['dataset_id']] = $row['cells'];
         }
     }
 
-    // 将结果存入最终数组
+    // Store results in the final array
     $results[] = $data;
 }
 
-// 关闭连接
+// Close connection
 $conn->close();
 
-// 将结果转换为 JSON 格式
+// Convert results to JSON
 $response = json_encode($results);
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
 header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
 ob_clean();
 flush();
 echo $compressed;

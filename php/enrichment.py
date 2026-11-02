@@ -1,15 +1,15 @@
 ############################
-#功能：基因富集分析
-#作者：李金晨
-#时间：20250515
+#Purpose: gene enrichment analysis
+#Author: Li Jinchen
+#Date: 20250515
 ############################
 
-#./offline_enrich_db/目录下为离线数据库
+#Offline databases are located in ./offline_enrich_db/
 
-#配置缓存目录为当前目录
-#请给予运行目录777权限
+#Set the cache directory to the current directory
+#Grant 777 permissions to the working directory
 import os
-# ⚠️设置 matplotlib 缓存目录，避免无权限报错，必须在引入其他库之前设置！！！
+# ⚠️Set the matplotlib cache directory to avoid permission errors; must be set before importing other libraries!!!
 script_dir = os.path.dirname(os.path.realpath(__file__))
 cache_dir = os.path.join(script_dir, '.cache')
 os.environ['MPLCONFIGDIR'] = cache_dir
@@ -39,7 +39,7 @@ def main():
     background_genes = data['background_genes']
     gene_sets_name = data['gene_sets']
 
-    # 如果是字符串（从 PHP 传来时可能是 JSON string），转换为列表
+    # If it's a string (may be a JSON string when passed from PHP), convert it to a list
     if isinstance(significant_genes, str):
         significant_genes = significant_genes.strip("[]").replace('"', '').split(',')
     if isinstance(background_genes, str):
@@ -60,7 +60,7 @@ def main():
         print("[]")
         return
 
-    # 清洗、筛选和重命名结果
+    # Clean, filter and rename the results
     results = results.drop(columns=['Gene_set', 'Overlap', 'P-value'], errors='ignore')
     results = results[results['Adjusted P-value'] <= 0.05]
     results = results.reset_index(drop=True)

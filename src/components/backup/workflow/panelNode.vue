@@ -34,8 +34,8 @@ const { onDragStart } = useDragAndDrop()
   
 }
 .vue-flow-node:hover {
-  background-color: white; /* 渐变背景变深 */
-  transform: translateY(-2px); /* 轻微上移 */
+  background-color: white; /* Darken the gradient background */
+  transform: translateY(-2px); /* Shift up slightly */
   
 }
 </style>

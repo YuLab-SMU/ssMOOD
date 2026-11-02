@@ -14,11 +14,11 @@ import { ref, onMounted, onUnmounted, defineProps } from 'vue';
 const props = defineProps({
   targetSelector: {
     type: String,
-    default: 'main', // 默认目标为 `body`，可指定 `.Top-container`、`.scrollable-div` 等
+    default: 'main', // Default target is `body`; can be set to `.Top-container`, `.scrollable-div`, etc.
   },
   scrollThreshold: {
     type: Number,
-    default: 300, // 滚动触发的阈值，默认 300px
+    default: 300, // Scroll threshold that triggers it, default 300px
   },
 });
 
@@ -69,7 +69,7 @@ onUnmounted(() => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   opacity: 0.8;
   transition: all 0.3s ease;
-  z-index: 1001; /* 确保按钮显示在其他元素上方 */
+  z-index: 1001; /* Keep the button above other elements */
 }
 
 .back-to-top:hover {

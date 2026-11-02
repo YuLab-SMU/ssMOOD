@@ -1,12 +1,12 @@
 <?php
 include 'config.php';
 
-// 移除 config.php 中设置的 Content-Type header
+// Remove the Content-Type header set in config.php
 header_remove('Content-Type');
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     http_response_code(500);
     header('Content-Type: application/json');
@@ -15,7 +15,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 定义 datasetId 值
+// Define datasetId value
 $datasetId = $_GET['id'] ?? '';
 $cell_cluster = $_GET['cluster'] ?? '';
 
@@ -42,19 +42,19 @@ $stmt->bind_param("ss", $datasetId,$cell_cluster);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// 检查是否有结果
+// Check whether there are results
 if ($result->num_rows > 0) {
-    // 获取第一行数据
+    // Get the first row
     $row = $result->fetch_assoc();
 
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
     header('Content-Type: application/octet-stream');
 
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
     ob_clean();
     flush();
 
-    // 输出二进制数据
+    // Output binary data
     echo $row['bin_data'];
 } else {
     http_response_code(404);

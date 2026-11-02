@@ -11,7 +11,7 @@
                     </li>
                     <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu NowPage"> <a>{{ $t('browse') }}</a>
 
-                        <!-- 二级菜单 -->
+                        <!-- Submenu -->
                         <ul v-if="showSubMenu" class="submenu">
                             <li>
                                 <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
@@ -38,7 +38,7 @@
             <section class="page-section">
                 <div class="main-container">
 <!--##################################################-->      
-<!--详细信息容器-->
+<!--Details container-->
 <div class="information-container">
     <div class="title-bar">
          <h1>{{ $t('scd1') }}</h1>
@@ -78,31 +78,31 @@
 </div>
                     
 <!--##################################################-->                    
-<!--细胞分类容器-->
+<!--Cell type container-->
   <div class="information-container">
     <div class="title-bar">
       <h1>{{ $t('scd20') }}</h1>
     </div>
     <div class="sc-cluster-content">
-      <!-- 左侧内容：UMAP图与标记大小控制 -->
+      <!-- Left side: UMAP plot and marker size controls -->
       <div class="information-first">
         <h1>{{ $t('scd21') }}</h1>
         <div class="marker-size-controller">
           <div class="label">{{ $t('scd22') }}:</div>
-          <!-- 减少按钮 -->
+          <!-- Decrease button -->
           <v-btn class="custom-plus" icon @click="decreaseSize1">
             -
           </v-btn>
-          <!-- 显示当前大小 -->
+          <!-- Show current size -->
           <span class="size-value">{{ markerSize1 }}</span>
-          <!-- 增加按钮 -->
+          <!-- Increase button -->
           <v-btn class="custom-plus" icon @click="increaseSize1">
             +
           </v-btn>
         </div>
         <div id="umap-plot"></div>
       </div>
-      <!-- 右侧内容：基因搜索与基因列表 -->
+      <!-- Right side: gene search and gene list -->
       <div class="information-second">
         <h1>{{ $t('scd23') }}</h1>
         <div class="gene-search-con">
@@ -120,20 +120,20 @@
             </button>
           <div class="marker-size-controller">
             <div class="label">{{ $t('scd22') }}:</div>
-            <!-- 减少按钮 -->
+            <!-- Decrease button -->
             <v-btn class="custom-plus" icon @click="decreaseSize2">
               -
             </v-btn>
-            <!-- 显示当前大小 -->
+            <!-- Show current size -->
             <span class="size-value">{{ markerSize2 }}</span>
-            <!-- 增加按钮 -->
+            <!-- Increase button -->
             <v-btn class="custom-plus" icon @click="increaseSize2">
               +
             </v-btn>
           </div>
         </div>
 
-        <!-- 基因列表滚动显示 -->
+        <!-- Scrollable gene list -->
         <recycle-scroller
           v-if="showScroller"
           class="scroller"
@@ -158,7 +158,7 @@
     </div>
   </div>
 <!--##################################################-->                  
-<!--差异表达分析容器-->
+<!--Differential expression analysis container-->
 <div class="information-container">
     <div class="title-bar">
          <h1>{{ $t('scd25') }}</h1>
@@ -263,8 +263,8 @@ export default {
     return {
       showSubMenu: false,
       datasetId: this.$route.params.study,
-    markerSize1: 4, // 默认点大小
-    markerSize2: 4, // 默认点大小
+    markerSize1: 4, // Default point size
+    markerSize2: 4, // Default point size
       genes: [],
       
       filteredGenes: [],
@@ -295,7 +295,7 @@ export default {
           }
       },
       //------------------------------------------------------
-      //差异表达分析
+      //Differential expression analysis
       group: 'cellTypeSpecificGenes',
       cellType: 'inhibitoryNeurons',
       log2fc: 0.5,
@@ -315,17 +315,17 @@ export default {
   },
     computed: {
       totalPages() {
-        // 总页数基于筛选后的数据集计算
+        // Total pages are computed from the filtered dataset
         return Math.ceil(this.filteredData.length / this.itemsPerPage);
       },
       paginatedData() {
-        // 分页应用于筛选后的数据集
+        // Apply pagination to the filtered dataset
         const start = (this.currentPage - 1) * this.itemsPerPage;
         const end = start + this.itemsPerPage;
         return this.filteredData.slice(start, end);
       },
       filteredData() {
-        // 筛选逻辑保持不变
+        // Filtering logic unchanged
         return this.DEGdata.filter(item => {
           const logFoldChange = parseFloat(item.f);
           const adjustedPvalue = parseFloat(item.p);
@@ -388,9 +388,9 @@ export default {
         .then(arrayBuffer => {
             
         const compressed = new Uint8Array(arrayBuffer);
-        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const decompressed = pako.ungzip(compressed); // Decompress with pako
         const jsonString = new TextDecoder('utf-8').decode(decompressed);
-        const data = JSON.parse(jsonString); // 解析JSON字符串
+        const data = JSON.parse(jsonString); // Parse JSON string
         
         //console.log(data);
           this.umapData = data.umap_data;
@@ -450,16 +450,16 @@ export default {
           paper_bgcolor: 'rgba(0,0,0,0)',
           plot_bgcolor: 'rgba(0,0,0,0)',
           legend: {
-            orientation: 'v', // 设置图例垂直排列
-            xanchor: 'left', // 图例的x轴锚点设置为左对齐
-            yanchor: 'bottom', // 图例的y轴锚点设置为底部对齐
-            x: 1, // 图例在水平方向上的位置，1表示最右侧
-            y: 0, // 图例在垂直方向上的位置，0.5表示中间
+            orientation: 'v', // Stack legend items vertically
+            xanchor: 'left', // Anchor legend x to the left
+            yanchor: 'bottom', // Anchor legend y to the bottom
+            x: 1, // Horizontal legend position; 1 means far right
+            y: 0, // Vertical legend position; 0.5 means middle
             font: {
-              size: 12 // 设置图例文本的大小
+              size: 12 // Legend text size
             },
-            itemwidth: 30, // 控制每个图例项的宽度
-            itemheight: 20 // 控制每个图例项的高度
+            itemwidth: 30, // Width of each legend item
+            itemheight: 20 // Height of each legend item
           },
 
         };
@@ -470,7 +470,7 @@ export default {
         })
         .catch(error => console.error('Error fetching UMAP data:', error));
         
-        //基因umap图的预加载
+        //Preload gene UMAP plot
         /*
         const initialTraces = this.umapData.slice(0, 100).map((point) => ({
           x: [point.u1],
@@ -482,7 +482,7 @@ export default {
             color: 'rgba(128, 128, 128, 0.2)',
             size: this.markerSize2,
           },
-          text: this.getTooltipText(point), // 可选，显示 cell_id 信息
+          text: this.getTooltipText(point), // Optional: show cell_id info
         }));
         
         const layout = {
@@ -550,7 +550,7 @@ export default {
             this.filteredGenes = [...this.genes];
         } catch (error) {
             console.error('Failed to load genes:', error);
-            // 可以在这里处理错误，例如显示错误消息或设置错误状态
+            // Handle the error here, e.g. show an error message or set an error state
         }
     },
     filterGenes(query) {
@@ -572,7 +572,7 @@ export default {
     //------------------------------------------------------
     /*
 async searchgene() {
-    //清除之前的点
+    //Clear previous points
     const chartElement = document.getElementById('umap-chart-gene');
     const traceCount = chartElement.data.length;
     Plotly.deleteTraces('umap-chart-gene', Array.from(Array(traceCount).keys()));
@@ -588,20 +588,20 @@ async searchgene() {
     }
     const data = await response.json();
     
-    // 合并数据
+    // Merge data
     const ncMap = data.data.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
       return acc;
     }, {});
     
-    // 合并数组
+    // Merge arrays
     const mergedArray = this.umapData.map(item => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
-    // 分批次渲染
+    // Render in batches
 
-    let batchSize = 2000; // 第一次渲染的批次大小
+    let batchSize = 2000; // Batch size for the first render
     let currentIndex = 0;
     
     const renderBatch = () => {
@@ -615,16 +615,16 @@ async searchgene() {
           color: this.getColor(point.nc),
           size: this.markerSize2,
         },
-        text: `${point.i}<br>${point.nc}`, // 显示 cell_id 信息
+        text: `${point.i}<br>${point.nc}`, // Show cell_id info
       }));
     
       Plotly.addTraces('umap-chart-gene', batch);
     
       currentIndex += batchSize;
       if (currentIndex < mergedArray.length) {
-        // 将 batchSize 调整为更大的值以加快后续批次的渲染
-        batchSize = 20000; // 后续批次的大小
-        setTimeout(renderBatch, 0); // 延迟下一批次渲染
+        // Increase batchSize to speed up rendering of later batches
+        batchSize = 20000; // Size of later batches
+        setTimeout(renderBatch, 0); // Defer rendering the next batch
       }
     };
     
@@ -638,7 +638,7 @@ async searchgene() {
 
 async searchgene() {
 
-  // 请求参数
+  // Request parameters
   const params = new URLSearchParams({
     studyid: this.$route.params.study,
     gene: this.searchQuery
@@ -651,19 +651,19 @@ async searchgene() {
     }
     const data = await response.json();
 
-    // 合并数据
+    // Merge data
     const ncMap = data.data.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
       return acc;
     }, {});
 
-    // 合并数组
+    // Merge arrays
     const mergedArray = this.umapData.map(item => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
 
-    // 按分类信息创建轨迹
+    // Create traces by cell type
     const categories = [...new Set(mergedArray.map(item => item.c))];
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
@@ -679,11 +679,11 @@ async searchgene() {
           color: colors, 
           size: this.markerSize2,
         },
-        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
+        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // Show cell_id and nc info
       };
     });
 
-    // 绘制图表
+    // Draw the chart
     const halfViewportWidth = window.innerWidth * 0.48;
     Plotly.newPlot('umap-chart-gene', traces, {
                     showlegend: false,
@@ -709,7 +709,7 @@ async searchgene() {
   return `Cell ID: ${value.i}<br>Normalized Count: ${value.nc}`;
     },
      //------------------------------------------------------
-     //差异表达分析
+     //Differential expression analysis
      //------------------------------------------------------
     initDEG() {
       const params = new URLSearchParams({
@@ -744,7 +744,7 @@ async searchgene() {
 
 
  /* ----------------------------------------------------------- */
- /* 差异表达分析右容器表格,避免影响全局样式 */
+ /* DEG right-panel table, scoped to avoid affecting global styles */
 .table-container {
   max-width: 100%;
   overflow-x: auto;

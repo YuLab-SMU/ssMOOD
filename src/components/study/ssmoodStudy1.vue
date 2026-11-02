@@ -2,48 +2,48 @@
   <div class="navigation-container">
     <div class="image-container">
       <img src="@/assets/Mouse-CSDS.png" alt="Navigation Image" class="navigation-image" />
-      <!-- 按钮 1 -->
+      <!-- Button 1 -->
       <button class="navigation-button button-1" @click="goToPage('study1.conditions.0D')">
         0Day(Control)
       </button>
-      <!-- 按钮 2 -->
+      <!-- Button 2 -->
       <button class="navigation-button button-2" @click="goToPage('study1.conditions.3D')">
         3Day
       </button>
-      <!-- 按钮 3  7D -->
+      <!-- Button 3  7D -->
       <button class="navigation-button button-3" @click="goToPage('study1.conditions.7D')">
         7Day
       </button>
-      <!-- 按钮 4 -->
+      <!-- Button 4 -->
       <button class="navigation-button button-4" @click="goToPage('study1.conditions.S')">
         Sus
       </button>
-      <!-- 按钮 5 -->
+      <!-- Button 5 -->
       <button class="navigation-button button-5" @click="goToPage('study1.conditions.R')">
         Res
       </button>
 
-      <!-- 按钮 6 -->
+      <!-- Button 6 -->
       <button class="navigation-button button-6" @click="goToPage('study1.area.I')">
         I
       </button>
-      <!-- 按钮 7 -->
+      <!-- Button 7 -->
       <button class="navigation-button button-7" @click="goToPage('study1.area.II')">
         II
       </button>
-      <!-- 按钮 8 -->
+      <!-- Button 8 -->
       <button class="navigation-button button-8" @click="goToPage('study1.area.III')">
         III
       </button>
-      <!-- 按钮 9 -->
+      <!-- Button 9 -->
       <button class="navigation-button button-9" @click="goToPage('study1.area.IV')">
         IV
       </button>
-      <!-- 按钮 10 -->
+      <!-- Button 10 -->
       <button class="navigation-button button-10" @click="goToPage('study1.area.V')">
         V
       </button>
-      <!-- 按钮 11 -->
+      <!-- Button 11 -->
       <button class="navigation-button button-11" @click="goToPage('study1.all')">
         All
       </button>
@@ -65,9 +65,9 @@ const goToPage = (study) => {
 .navigation-container {
   position: relative;
   width: 400px;
-  /* 根据图片大小调整 */
+  /* Adjust to the image size */
   height: auto;
-  /* 根据图片大小调整 */
+  /* Adjust to the image size */
 }
 
 .image-container {
@@ -80,28 +80,28 @@ const goToPage = (study) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* 确保图片覆盖整个容器 */
+  /* Ensure the image covers the entire container */
 }
 
 .navigation-button {
   position: absolute;
   padding: 5px 10px;
   background-color: rgba(0, 0, 0, 0.4);
-  /* 半透明背景 */
+  /* Semi-transparent background */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-/* 鼠标悬浮时的效果 */
+/* Hover effect */
 .navigation-button:hover {
   background-color: rgba(0, 0, 0, 0.6);
-  /* 悬浮时背景颜色加深 */
+  /* Darken background on hover */
   transform: scale(1.1);
-  /* 放大按钮 */
+  /* Enlarge button */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  /* 添加阴影 */
+  /* Add shadow */
 }
 
 .button-1 {
@@ -160,7 +160,7 @@ const goToPage = (study) => {
 }
 
 /* ----------------------------------------------------------- */
-/* 移动端响应 */
+/* Mobile responsive */
 @media (max-width: 800px) {
   .navigation-button {
     display: none;

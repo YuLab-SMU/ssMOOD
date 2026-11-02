@@ -26,9 +26,9 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps({
-  id: String,      // 节点 ID
-  data: Object,    // 节点数据
-  newWebR: Object  // WebR 实例
+  id: String,      // Node ID
+  data: Object,    // Node data
+  newWebR: Object  // WebR instance
 });
 
 const webraceEditor = ref(null);
@@ -52,7 +52,7 @@ onMounted(() => {
     editor.value.session.on('change', () => {
         code.value = editor.value.getValue();
         // eslint-disable-next-line
-        props.data.rcode = code.value; //默认不允许该方法，需要禁用eslint
+        props.data.rcode = code.value; //Not allowed by default; ESLint must be disabled
     });
     if (eventBus) {
         eventBus.on('perform-action', handlePerformAction);

@@ -1,17 +1,17 @@
 <?php
 include 'config.php';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// 执行查询
+// Execute query
 $sql = "SELECT gene_id, cluster_label, p_value, fold_change
             FROM differential_expression
             WHERE p_value < 0.05
@@ -22,19 +22,19 @@ $result = $conn->query($sql);
 $data = array();
 
 if ($result->num_rows > 0) {
-    // 将结果存储到数组中
+    // Store results in the array
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
 }
 
-// 将数据转换为 JSON 格式
+// Convert data to JSON
 $response = json_encode($data);
 
 
-// 返回 JSON 数据
+// Return JSON data
 echo $response;
 
-// 关闭数据库连接
+// Close database connection
 $conn->close();
 ?>

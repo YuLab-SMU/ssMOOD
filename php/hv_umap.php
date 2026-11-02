@@ -1,19 +1,19 @@
 <?php
 ini_set('memory_limit', '512M');
-// 数据库连接信息
+// Database connection info
 include 'config.php';
 
-// 数据库连接
+// Database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
-    // 将数据库连接错误写入日志文件
+    // Write database connection errors to the log file
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
     exit;
 }
 
-// 定义 4 张表的查询条件，统一字段命名为 umap1 和 umap2
+// Define query conditions for the 4 tables, with fields uniformly named umap1 and umap2
 $queries = [
     "SELECT c.cell_id AS cell_id, c.umap1 AS umap1, c.umap2 AS umap2, c.cluster_label2 FROM cells c WHERE dataset_id = 'SC0023_S_Stri'",
     "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0049_S_mPFC'",
@@ -21,7 +21,7 @@ $queries = [
     "SELECT c.spatial_cell_id AS cell_id, c.x_coordinate AS umap1, c.y_coordinate AS umap2, c.cluster_label2 FROM spatial_cells c WHERE dataset_id = 'ST0054_S_BA12'"
 ];
 
-// 初始化数组存储 4 张表的数据
+// Initialize array to store data from the 4 tables
 $umap_datasets = [];
 
 foreach ($queries as $index => $sql) {
@@ -44,7 +44,7 @@ foreach ($queries as $index => $sql) {
             }
         }
 
-        // 将当前表的数据和分类信息存入数组
+        // Store the current table's data and category info in the array
         $umap_datasets[$index] = [
             'umap' => $umap_data,
             'cluster' => $cluster_labels
@@ -56,13 +56,13 @@ foreach ($queries as $index => $sql) {
 
 $conn->close();
 
-// 将所有数据转换为 JSON 格式
+// Convert all data to JSON
 $response = json_encode($umap_datasets);
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
 
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
 header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
 ob_clean();
 flush();
 echo $compressed;

@@ -6,9 +6,9 @@
       <section class="page-section">
         <h1>{{ $t('ContactUs') }}</h1>
 
-        <!-- 卡片栅格 -->
+        <!-- Card grid -->
         <el-row :gutter="24" justify="center">
-          <!-- 成员 1 -->
+          <!-- Member 1 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -36,7 +36,7 @@
             </el-card>
           </el-col>
 
-          <!-- 成员 2 -->
+          <!-- Member 2 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -61,7 +61,7 @@
             </el-card>
           </el-col>
 
-          <!-- 成员 2-1 -->
+          <!-- Member 2-1 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -86,7 +86,7 @@
             </el-card>
           </el-col>
 
-          <!-- 成员 2-2 -->
+          <!-- Member 2-2 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -111,7 +111,7 @@
             </el-card>
           </el-col>
 
-          <!-- 成员 3 -->
+          <!-- Member 3 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -136,7 +136,7 @@
             </el-card>
           </el-col>
 
-          <!-- 成员 4 -->
+          <!-- Member 4 -->
           <el-col :xs="24" :sm="12" :md="7">
             <el-card class="contact-card" shadow="hover">
               <template #header>
@@ -168,13 +168,13 @@
 </template>
 
 <script setup>
-// 引入 Element Plus 图标
+// Import Element Plus icons
 import { Location, Message, CopyDocument } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import BackToTop from './general/BackToTop.vue'
 import NavigationBar from './general/NavigationBar.vue'
 
-// 🛡️ 用 JS 拼接邮箱，避免源码直接出现完整地址
+// 🛡️ Build the email address in JS so the full address never appears in the source
 const email1 = ['caoxiong', 'smu.edu.cn'].join('@')
 const email2 = ['guangchuangyu', 'smu.edu.cn'].join('@')
 const email3 = ['treywea', 'smu.edu.cn'].join('@')
@@ -182,7 +182,7 @@ const email4 = ['yt22520318', 'i.smu.edu.cn'].join('@')
 const email5 = ['taotaomzk', 'smu.edu.cn'].join('@')
 const email6 = ['xiemin', 'genomics.cn'].join('@')
 
-// 显示用（把 @ 替换成全角＠）
+// For display (replace @ with a full-width at sign)
 const safeEmail1 = email1.replace('@', '＠')
 const safeEmail2 = email2.replace('@', '＠')
 const safeEmail3 = email3.replace('@', '＠')
@@ -190,7 +190,7 @@ const safeEmail4 = email4.replace('@', '＠')
 const safeEmail5 = email5.replace('@', '＠')
 const safeEmail6 = email6.replace('@', '＠')
 
-// 复制函数
+// Copy function
 const copyEmail = async (email) => {
   try {
     await navigator.clipboard.writeText(email)
@@ -202,7 +202,7 @@ const copyEmail = async (email) => {
 </script>
 
 <style scoped>
-/* 卡片统一宽度 & 垂直居中 */
+/* Uniform card width & vertical centering */
 .contact-card {
   text-align: center;
   margin-bottom: 20px;

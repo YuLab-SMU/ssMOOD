@@ -7,7 +7,7 @@
             <section class="page-section">
                 <h1>{{ $t('dp01') }}</h1>
 
-                <!-- GitHub 源码卡片 -->
+                <!-- GitHub source code card -->
                 <el-card class="download-card" shadow="hover">
                     <template #header>
                         <div class="card-header">
@@ -33,7 +33,7 @@
                     </div>
                 </el-card>
 
-                <!-- 生物数据卡片 -->
+                <!-- Biological data card -->
                 <el-card class="download-card" shadow="hover">
                     <template #header>
                         <div class="card-header">
@@ -71,12 +71,12 @@ import { Link, Download, Document } from '@element-plus/icons-vue'
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
 
-// 打开GitHub仓库
+// Open the GitHub repository
 const openGitHub = () => {
     window.open('https://github.com/YuLab-SMU/ssMOOD/', '_blank')
 }
 
-// 打开生物数据下载页面
+// Open the biological data download page
 const openBioData = () => {
     window.open('https://ngdc.cncb.ac.cn/', '_blank')
 }

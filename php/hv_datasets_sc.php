@@ -2,10 +2,10 @@
 
 include 'config.php';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
@@ -17,19 +17,19 @@ $result = $conn->query($sql);
 
 $data = [];
 if ($result->num_rows > 0) {
-    // 将数据存入数组
+    // Store data in the array
     while ($row = $result->fetch_assoc()) {
         $data[$row['dataset_id']] = $row['cells'];
     }
 }
 
-// 关闭连接
+// Close connection
 $conn->close();
 
-// 将数据转换为 JSON 格式
+// Convert data to JSON
 $response = json_encode($data);
 
 
-// 返回 JSON 数据
+// Return JSON data
 echo $response;
 ?>

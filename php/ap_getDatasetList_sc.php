@@ -1,30 +1,30 @@
 <?php
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// SQL 查询
-$sql = "SELECT dataset_id FROM datasets WHERE scorst = 'sc'"; // 假设您的数据表名为 datasets，并且包含 id 和 name 字段
+// SQL query
+$sql = "SELECT dataset_id FROM datasets WHERE scorst = 'sc'"; // Assumes the table is named datasets and has id and name columns
 
-// 执行查询
+// Execute query
 $result = $conn->query($sql);
 
-// 初始化数组来存储结果
+// Initialize array to store results
 $datasets = array();
 
-// 检查结果
+// Check results
 if ($result) {
-    // 遍历结果集
+    // Iterate over the result set
     $i = 0 ;
     while ($row = $result->fetch_assoc()) {
-        // 将每行数据添加到数组中，确保键名为 'id' 和 'name'
+        // Append each row to the array, with keys 'id' and 'name'
         $datasets[] = array(
             "id" => $i,
             "name" => $row['dataset_id']
@@ -32,10 +32,10 @@ if ($result) {
         $i++;
     }
     
-    // 释放结果集
+    // Free the result set
     $result->free();
     
-    // 将数组转换为 JSON 格式，并封装在包含 'datasets' 键的外层数组中
+    // Convert the array to JSON, wrapped in an outer array under the 'datasets' key
     echo json_encode(array("datasets" => $datasets));
 } else {
     error_log("Query failed: " . $conn->error);
@@ -43,6 +43,6 @@ if ($result) {
     echo json_encode(['error' => 'Query failed']);
 }
 
-// 关闭连接
+// Close connection
 $conn->close();
 ?>

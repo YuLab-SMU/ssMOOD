@@ -11,7 +11,7 @@
                     </li>
                     <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu NowPage"> <a>{{ $t('browse') }}</a>
 
-                        <!-- 二级菜单 -->
+                        <!-- Submenu -->
                         <ul v-if="showSubMenu" class="submenu">
                             <li>
                                 <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
@@ -38,7 +38,7 @@
             <section class="page-section">
                 <div class="main-container">
 <!--##################################################-->      
-<!--详细信息容器-->
+<!--Details container-->
 <div class="information-container">
     <div class="title-bar">
         <h1>{{ $t('std1') }}</h1>
@@ -67,7 +67,7 @@
 </div>
                     
 <!--##################################################-->                    
-<!--细胞分类容器-->
+<!--Cell type container-->
 <div class="information-container">
   <div class="title-bar">
     <h1>{{ $t('std14') }}</h1>
@@ -78,13 +78,13 @@
       <h1>{{ $t('std17') }}</h1>
       <div class="marker-size-controller">
         <div class="label">{{ $t('std18') }}:</div>
-        <!-- 减少按钮 -->
+        <!-- Decrease button -->
         <v-btn class="custom-plus" icon @click="decreaseSize1">
           -
         </v-btn>
-        <!-- 显示当前大小 --> 
+        <!-- Show current size --> 
         <span class="size-value">{{ markerSize1 }}</span>
-        <!-- 增加按钮 -->
+        <!-- Increase button -->
         <v-btn class="custom-plus" icon @click="increaseSize1">
           +
         </v-btn>
@@ -92,7 +92,7 @@
       <div id="coord_chart"></div>
   </div>
   <!-- ################################ -->
-  <!-- 第二列 -->
+  <!-- Second column -->
   <div class="st-information-second">
       <h1>{{ $t('std19') }}</h1>
             <div class="gene-search-con">
@@ -111,20 +111,20 @@
       </div>
       <div class="marker-size-controller">
         <div class="label">{{ $t('std20') }}:</div>
-        <!-- 减少按钮 -->
+        <!-- Decrease button -->
         <v-btn class="custom-plus" icon @click="decreaseSize2">
           -
         </v-btn>
-        <!-- 显示当前大小 --> 
+        <!-- Show current size --> 
         <span class="size-value">{{ markerSize2 }}</span>
-        <!-- 增加按钮 -->
+        <!-- Increase button -->
         <v-btn class="custom-plus" icon @click="increaseSize2">
           +
         </v-btn>
         
         
       </div>
-        <!-- 基因列表滚动显示 -->
+        <!-- Scrollable gene list -->
   <recycle-scroller
     v-if="showScroller"
     class="scroller"
@@ -148,7 +148,7 @@
 </div>
 </div>
 <!--##################################################-->                  
-<!--差异表达分析容器-->
+<!--Differential expression analysis container-->
 <div class="information-container">
     <div class="title-bar">
          <h1>{{ $t('std23') }}</h1>
@@ -254,8 +254,8 @@ export default {
     return {
       showSubMenu: false,
       datasetId: this.$route.params.id,
-    markerSize1: 2, // 默认点大小
-    markerSize2: 2, // 默认点大小
+    markerSize1: 2, // Default point size
+    markerSize2: 2, // Default point size
       genes: [],
       
       filteredGenes: [],
@@ -291,7 +291,7 @@ export default {
           },
               },
       //------------------------------------------------------
-      //差异表达分析
+      //Differential expression analysis
       group: 'cellTypeSpecificGenes',
       cellType: 'inhibitoryNeurons',
       log2fc: 0.5,
@@ -311,17 +311,17 @@ export default {
   },
     computed: {
       totalPages() {
-        // 总页数基于筛选后的数据集计算
+        // Total pages are computed from the filtered dataset
         return Math.ceil(this.filteredData.length / this.itemsPerPage);
       },
       paginatedData() {
-        // 分页应用于筛选后的数据集
+        // Apply pagination to the filtered dataset
         const start = (this.currentPage - 1) * this.itemsPerPage;
         const end = start + this.itemsPerPage;
         return this.filteredData.slice(start, end);
       },
       filteredData() {
-        // 筛选逻辑保持不变
+        // Filtering logic unchanged
         return this.DEGdata.filter(item => {
           const logFoldChange = parseFloat(item.f);
           const adjustedPvalue = parseFloat(item.p);
@@ -386,9 +386,9 @@ export default {
         .then(arrayBuffer => {
             
         const compressed = new Uint8Array(arrayBuffer);
-        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const decompressed = pako.ungzip(compressed); // Decompress with pako
         const jsonString = new TextDecoder('utf-8').decode(decompressed);
-        const data = JSON.parse(jsonString); // 解析JSON字符串
+        const data = JSON.parse(jsonString); // Parse JSON string
         
         //console.log(data);
           this.coordinate_data = data.coordinate_data;
@@ -448,16 +448,16 @@ export default {
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             legend: {
-                orientation: 'v', // 设置图例垂直排列
-                xanchor: 'left', // 图例的x轴锚点设置为左对齐
-                yanchor: 'bottom', // 图例的y轴锚点设置为底部对齐
-                x: 1, // 图例在水平方向上的位置，1表示最右侧
-                y: 0, // 图例在垂直方向上的位置，0.5表示中间
+                orientation: 'v', // Stack legend items vertically
+                xanchor: 'left', // Anchor legend x to the left
+                yanchor: 'bottom', // Anchor legend y to the bottom
+                x: 1, // Horizontal legend position; 1 means far right
+                y: 0, // Vertical legend position; 0.5 means middle
                 font: {
-                  size: 12 // 设置图例文本的大小
+                  size: 12 // Legend text size
                 },
-                itemwidth: 30, // 控制每个图例项的宽度
-                itemheight: 20 // 控制每个图例项的高度
+                itemwidth: 30, // Width of each legend item
+                itemheight: 20 // Height of each legend item
             },
           };
 
@@ -517,7 +517,7 @@ export default {
             this.filteredGenes = [...this.genes];
         } catch (error) {
             console.error('Failed to load genes:', error);
-            // 可以在这里处理错误，例如显示错误消息或设置错误状态
+            // Handle the error here, e.g. show an error message or set an error state
         }
     },
     filterGenes(query) {
@@ -539,7 +539,7 @@ export default {
     //------------------------------------------------------
 async searchgene() {
 
-  // 请求参数
+  // Request parameters
   const params = new URLSearchParams({
     id: this.$route.params.id,
     gene: this.searchQuery
@@ -552,19 +552,19 @@ async searchgene() {
     }
     const data = await response.json();
 
-    // 合并数据
+    // Merge data
     const ncMap = data.data.reduce((acc, item) => {
       acc[item.i] = parseFloat(item.nc) || 0;
       return acc;
     }, {});
 
-    // 合并数组
+    // Merge arrays
     const mergedArray = this.coordinate_data.map(item => {
       item.nc = ncMap[item.i] || 0;
       return item;
     });
     //console.error(mergedArray);
-    // 按分类信息创建轨迹
+    // Create traces by cell type
     const categories = [...new Set(mergedArray.map(item => item.c))];
     const traces = categories.map(category => {
       const categoryPoints = mergedArray.filter(point => point.c === category);
@@ -580,11 +580,11 @@ async searchgene() {
           color: colors, 
           size: this.markerSize2,
         },
-        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // 显示 cell_id 和 nc 信息
+        text: categoryPoints.map(point => `${point.i}<br>${point.nc}`), // Show cell_id and nc info
       };
     });
 
-    // 绘制图表
+    // Draw the chart
     const halfViewportWidth = window.innerWidth * 0.48;
     Plotly.newPlot('coord_chart_gene', traces, {
                     showlegend: false,
@@ -610,7 +610,7 @@ async searchgene() {
   return `Cell ID: ${value.i}<br>Normalized Count: ${value.nc}`;
     },
      //------------------------------------------------------
-     //差异表达分析
+     //Differential expression analysis
      //------------------------------------------------------
     initDEG() {
       const params = new URLSearchParams({
@@ -648,7 +648,7 @@ async searchgene() {
 
 
  /* ----------------------------------------------------------- */
- /* 差异表达分析右容器表格,避免影响全局样式 */
+ /* DEG right-panel table, scoped to avoid affecting global styles */
 .table-container {
   max-width: 100%;
   overflow-x: auto;
@@ -671,7 +671,7 @@ button {
 }
 .st-coord-content{
     display: flex;
-    flex-direction: column; /* 子元素垂直排列 */
+    flex-direction: column; /* Stack child elements vertically */
     flex:1;
 }
  /* ----------------------------------------------------------- */

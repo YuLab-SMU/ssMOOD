@@ -33,8 +33,8 @@ export default {
       return text.replace(/[&<>"']/g, (m) => map[m]);
     },
     highlight(text) {
-      // 这里可以添加一些简单的文本高亮逻辑
-      // 例如，将所有的错误信息高亮显示为红色
+      // Simple text highlighting logic can be added here
+      // e.g. highlight all error messages in red
       return text.replace(/ERROR/g, '<span style="color: red;">ERROR</span>');
     }
   }
@@ -67,7 +67,7 @@ export default {
 .terminal-content {
   margin: 0;
   padding: 0;
-  white-space: pre-wrap; /* 保持格式，同时允许换行 */
+  white-space: pre-wrap; /* Preserve formatting while allowing line wraps */
   color: #fff;
 }
 </style>

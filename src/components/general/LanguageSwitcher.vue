@@ -17,32 +17,32 @@
 <script setup>
 import { ref, onMounted ,defineEmits} from 'vue';
 
-// 创建响应式引用
+// Create reactive refs
 const selectedLanguage = ref('');
 
-// 加载语言偏好
+// Load language preference
 const loadLanguagePreference = () => {
   return localStorage.getItem('selectedLanguage') || 'zh1';
 };
 
-// 保存语言偏好
+// Save language preference
 const saveLanguagePreference = (language) => {
   localStorage.setItem('selectedLanguage', language);
 };
 
-// 切换语言
+// Switch language
 const switchLanguage = () => {
   saveLanguagePreference(selectedLanguage.value);
   emit('languageChanged', selectedLanguage.value);
 };
 
-// 在组件挂载时设置初始语言
+// Set the initial language when the component is mounted
 onMounted(() => {
   selectedLanguage.value = loadLanguagePreference();
   emit('languageChanged', selectedLanguage.value);
 });
 
-// 定义 emit 函数来触发父组件的事件监听器
+// Define emit to trigger the parent component's event listeners
 const emit = defineEmits(['languageChanged']);
 </script>
 
@@ -86,7 +86,7 @@ const emit = defineEmits(['languageChanged']);
   background-color: #f8f8f8;
 }
 
-/* 美化下拉菜单的选项 */
+/* Style the dropdown menu options */
 .language-switcher option {
   padding: 10px;
   background-color: #f2f2f2;

@@ -2,7 +2,7 @@
 ini_set('memory_limit', '2048M');
 
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     http_response_code(500);
@@ -11,14 +11,14 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 定义batch值
+// Define batch value
 $studyId = $_GET['id'] ?? '';
 if (empty($studyId)) {
     http_response_code(400);
     echo "Invalid or missing 'id' parameter.";
     exit;
 }
-// 查询study表获取datasets字段
+// Query the study table for the datasets field
 $sql = "SELECT datasets FROM study WHERE study_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $studyId);
@@ -30,12 +30,12 @@ $umap_data = array();
 $cluster_labels = array();
 
 if ($row) {
-    // 获取datasets字段并按逗号分割
+    // Get the datasets field and split by comma
     $datasets = explode(",", $row['datasets']);
 
-    // 遍历每个dataset_id并查询cells表
+    // Iterate over each dataset_id and query the cells table
     foreach ($datasets as $dataset_id) {
-        $dataset_id = trim($dataset_id); // 去除可能的空格
+        $dataset_id = trim($dataset_id); // Trim possible whitespace
         $sql = "SELECT c.spatial_cell_id, c.x_coordinate, c.y_coordinate, c.cluster_label2
         FROM spatial_cells c
         WHERE c.dataset_id = ?";
@@ -45,7 +45,7 @@ if ($row) {
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // 将数据存入数组
+            // Store data in the array
             while ($row = $result->fetch_assoc()) {
                 $umap_data[$dataset_id][] = array(
                     'i' => $row['spatial_cell_id'],
@@ -53,7 +53,7 @@ if ($row) {
                     'y' => $row['y_coordinate'],
                     'c' => $row['cluster_label2'],
                 );
-                $cluster_labels[$row['cluster_label2']] = true; // 收集唯一的cluster_label
+                $cluster_labels[$row['cluster_label2']] = true; // Collect unique cluster_label values
             }
         } else {
             echo "0 results";
@@ -67,22 +67,22 @@ if ($row) {
     exit;
 }
 
-// 将分类信息转换为数组
+// Convert category info to an array
 $cluster_labels = array_keys($cluster_labels);
 
 $response = json_encode(['coordinate_data' => $umap_data, 'cluster_labels' => $cluster_labels]);
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
-// 返回 JSON 数据
+// Return JSON data
 header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
 ob_clean();
 flush();
 echo $compressed;
 
-//内存统计
+//Memory stats
 //$peakMemory = memory_get_peak_usage();
-// 将峰值内存使用情况写入日志文件
-//$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - 峰值内存使用量：" . $peakMemory/1024 . " KB\n";
+// Write peak memory usage to the log file
+//$logEntry = date("Y-m-d H:i:s") . "[". __FILE__ ."] - Peak memory usage: " . $peakMemory/1024 . " KB\n";
 //file_put_contents($logFile, $logEntry, FILE_APPEND);
 ?>

@@ -1,20 +1,20 @@
 <?php
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
-    // 将数据库连接错误写入日志文件
+    // Write database connection errors to the log file
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
     exit;
 }
 
-// 定义batch值
+// Define batch value
 $datasetId = $_GET['id'] ?? '';
 
 if (strpos($datasetId, 'study') !== false) {
-    // 解析study部分
+    // Parse the study part
     $study = explode('.', $datasetId)[0];
     $sql = "SELECT gene_id FROM genes WHERE study_id = ?";
     $stmt = $conn->prepare($sql);
@@ -30,22 +30,22 @@ if (strpos($datasetId, 'study') !== false) {
 
 $stmt->execute();
 $result = $stmt->get_result();
-// 获取查询结果并存储在数组中
+// Fetch query results into an array
 $genes = array();
 while ($row = $result->fetch_assoc()) {
     $genes[] = $row['gene_id'];
 }
 
-// 关闭数据库连接
+// Close database connection
 $stmt->close();
 $conn->close();
 
 
 $compressed = zlib_encode(json_encode(array('genes' => $genes)), ZLIB_ENCODING_GZIP);
 
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
 header('Content-Type: application/octet-stream');
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
 ob_clean();
 flush();
 echo $compressed;

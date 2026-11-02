@@ -57,10 +57,10 @@ onUnmounted(() => {
   background-color: #f9f9f9;
 }
 
-/* 定义一个新类，用于添加粗绿色边框 */
+/* New class that adds a thick green border */
 .start-node-green-border {
-  border: 4px solid #90EE90; /* 柔和绿色，粗边框 */
-  animation: hideBorder 5s forwards; /* 5秒后隐藏边框 */
+  border: 4px solid #90EE90; /* Soft green, thick border */
+  animation: hideBorder 5s forwards; /* Hide the border after 5 seconds */
 }
 @keyframes hideBorder {
   to {
@@ -73,9 +73,9 @@ onUnmounted(() => {
 }
 
 .node-message {
-  margin-top: 10px; /* 消息顶部外边距 */
-  font-size: 6px; /* 设置字号为16像素，你可以根据需要调整这个值 */
-  font-weight: normal; /* 确保文本不加粗 */
+  margin-top: 10px; /* Top margin of the message */
+  font-size: 6px; /* Font size 16px; adjust as needed */
+  font-weight: normal; /* Ensure text is not bold */
 }
 
 .vue-flow__handle {

@@ -1,43 +1,43 @@
 import subprocess
 import re
 
-# 获取当前所在分支
+# Get the current branch
 def get_current_branch():
     result = subprocess.run(['git', 'symbolic-ref', '--short', 'HEAD'], capture_output=True, text=True)
     current_branch = result.stdout.strip()
     print(f"当前分支: {current_branch}")
 
-# 创建新分支
+# Create a new branch
 def create_new_branch():
     branch_name = input("请输入新分支的版本号（如 v1.0.0）： ")
     subprocess.run(['git', 'checkout', '-b', branch_name])
     print(f"已创建并切换到新分支：{branch_name}")
 
-# 提交更改
-# 检查提交信息的格式是否符合规范（例如：'feat: 新增功能'）
+# Commit changes
+# Check that the commit message follows the convention (e.g. 'feat: add new feature')
 def is_commit_message_valid(commit_message):
     pattern = re.compile(r"^(feat|fix|docs|style|refactor|perf|test)\(.*\): .+$")
     return bool(pattern.match(commit_message))
 
-# 可用的提交类型
+# Available commit types
 commit_types = [
-    "feat",   # 新增功能
-    "fix",    # 修复 bug
-    "docs",   # 文档修改
-    "style",  # 代码格式（不影响功能的修改）
-    "refactor",  # 代码重构
-    "perf",   # 性能优化
-    "test"    # 测试
+    "feat",   # New feature
+    "fix",    # Bug fix
+    "docs",   # Documentation changes
+    "style",  # Code style (changes that don't affect functionality)
+    "refactor",  # Code refactoring
+    "perf",   # Performance improvement
+    "test"    # Tests
 ]
 
-# 提交更改
+# Commit changes
 def commit_changes():
-    # 显示提交类型供用户选择
+    # Show commit types for the user to choose from
     print("选择提交类型：")
     for i, commit_type in enumerate(commit_types, 1):
         print(f"{i}. {commit_type}")
 
-    # 获取用户选择的提交类型
+    # Get the commit type selected by the user
     while True:
         try:
             choice = int(input(f"请输入选择（1-{len(commit_types)}）: "))
@@ -49,31 +49,31 @@ def commit_changes():
         except ValueError:
             print(f"无效输入，请输入 1 到 {len(commit_types)} 之间的数字。")
 
-    # 获取范围信息（可选）
+    # Get the scope (optional)
     scope = input("请输入范围（如有，例：user, api），不输入则留空： ").strip()
 
-    # 获取提交描述
+    # Get the commit description
     description = input("请输入提交描述： ")
 
-    # 生成提交信息
+    # Build the commit message
     if scope:
         commit_message = f"{commit_type}({scope}): {description}"
     else:
         commit_message = f"{commit_type}: {description}"
 
-    # 打印提交信息
+    # Print the commit message
     print(f"提交信息: {commit_message}")
 
-    # 自动化添加文件
+    # Automatically stage files
     subprocess.run(['git', 'add', '.'])
 
-    # 提交更改
+    # Commit changes
     subprocess.run(['git', 'commit', '-m', commit_message])
 
-    # 提交成功提示
+    # Commit success message
     print(f"已提交更改: {commit_message}")
 
-    # 提交后是否继续提交其他更改
+    # Ask whether to continue committing other changes
     while True:
         continue_commit = input("是否继续提交其他更改? (y/n): ").lower()
         if continue_commit == 'y':
@@ -84,7 +84,7 @@ def commit_changes():
             break
         else:
             print("无效选择，请输入 'y' 或 'n'。")
-# 合并到 master 分支
+# Merge into the master branch
 def merge_to_master():
     subprocess.run(['git', 'checkout', 'master'])
     subprocess.run(['git', 'pull', 'origin', 'master'])
@@ -93,9 +93,9 @@ def merge_to_master():
     subprocess.run(['git', 'push', 'origin', 'master'])
     print(f"已将 {branch_name} 合并到 master 并推送到远程仓库")
 
-# 列出所有分支并切换分支
+# List all branches and switch branch
 def list_and_switch_branch():
-    # 列出所有本地分支
+    # List all local branches
     result = subprocess.run(['git', 'branch'], capture_output=True, text=True)
     branches = result.stdout.strip().split('\n')
     
@@ -103,7 +103,7 @@ def list_and_switch_branch():
     for i, branch in enumerate(branches, 1):
         print(f"{i}. {branch.strip()}")
 
-    # 获取用户选择的分支
+    # Get the branch selected by the user
     while True:
         try:
             choice = int(input(f"请输入要切换的分支编号（1-{len(branches)}）： "))
@@ -118,7 +118,7 @@ def list_and_switch_branch():
         except ValueError:
             print(f"无效输入，请输入 1 到 {len(branches)} 之间的数字。")
 
-# 显示菜单
+# Show menu
 def show_menu():
     print("====================================")
     print("Git 操作菜单")
@@ -130,7 +130,7 @@ def show_menu():
     print("6. 退出")
     print("====================================")
 
-# 主程序
+# Main program
 def main():
     while True:
         show_menu()

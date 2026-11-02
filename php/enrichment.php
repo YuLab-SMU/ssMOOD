@@ -18,18 +18,18 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 获取 significant_genes（根据你的业务逻辑）
-// 假设 POST 中的 genes 是 JSON 数组
+// Get significant_genes (according to your business logic)
+// Assumes genes in POST is a JSON array
 $significant_genes = json_decode($_POST['genes'] ?? '[]', true);
 
 if (strpos($datasetId, 'study') !== false) {
-    // 解析study部分
+    // Parse the study part
     $study = explode('.', $datasetId)[0];
     $sql = "SELECT gene_id FROM genes WHERE study_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $study);
 } else {
-    // 获取背景基因
+    // Get background genes
     $sql = "SELECT g.gene_id FROM genes g JOIN datasets d ON g.study_id = d.study WHERE d.dataset_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $datasetId);
@@ -43,20 +43,20 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
-// 参数校验
+// Validate parameters
 if (empty($significant_genes) || empty($gene_sets) || empty($background_genes)) {
     echo "Error: Missing genes, gene_sets or background.";
     exit();
 }
 
-// 构建JSON数据
+// Build JSON data
 $data = json_encode([
     'significant_genes' => $significant_genes,
     'background_genes' => $background_genes,
     'gene_sets' => $gene_sets
 ]);
 
-// 运行 Python
+// Run Python
 $command = "python3 enrichment.py";
 $descriptorspec = [
     0 => ["pipe", "r"],

@@ -11,7 +11,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css';
 import './styles/element-theme.css';
 
-// 创建国际化实例
+// Create the i18n instance
 const i18n = createI18n({
   locale: 'en',
   legacy: false,
@@ -32,7 +32,7 @@ app.use(createTerminal());
 app.provide('eventBus', eventBus);
 
 app.use(ElementPlus)
-// 挂载应用
+// Mount the app
 app.mount('#app');
 // Fade out the startup loading screen once the app has mounted (styles live in public/index.html)
 const loader = document.getElementById('app-loading')

@@ -1,16 +1,16 @@
 <?php
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($host, $username, $password, $dbname);
 
-// 检查连接是否成功
+// Check whether the connection succeeded
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// 查询 sc 和 st 的 cells 字段数值之和
+// Query the sum of the cells field for sc and st
 $query = "
     SELECT 
         SUM(CASE WHEN scorst = 'sc' THEN cells ELSE 0 END) AS sc_cells_sum,
@@ -20,13 +20,13 @@ $query = "
 
 $result = $conn->query($query);
 
-// 初始化结果数组
+// Initialize result array
 $resultArray = [
     'sc_cells_sum' => 0,
     'st_cells_sum' => 0
 ];
 
-// 获取查询结果
+// Get query results
 if ($result) {
     $row = $result->fetch_assoc();
     $resultArray['sc_cells_sum'] = $row['sc_cells_sum'];
@@ -34,7 +34,7 @@ if ($result) {
     $result->free();
 }
 
-// 关闭数据库连接
+// Close database connection
 $conn->close();
 
 echo json_encode($resultArray);

@@ -3,7 +3,7 @@
     <button @click="toggleSidebar" class="expandButton">
       {{ isExpanded ? '>>' : '<<' }}
     </button>
-    <!-- 面板切换按钮列表 -->
+    <!-- Panel toggle button list -->
     <div class="panel-buttons">
       <button
         v-for="(panel, index) in panels"
@@ -51,29 +51,29 @@ const switchPanel = (index) => {
 
 <style scoped>
 .sidebar {
-  width: 300px; /* 初始宽度 */
+  width: 300px; /* Initial width */
   position: fixed;
   left: 0;
   top: 60px;
   bottom: 0;
-  background-color: #f5f5f5; /* 背景颜色 */
-  transition: width 0.3s; /* 平滑过渡效果 */
-  overflow: hidden; /* 隐藏溢出的内容 */
+  background-color: #f5f5f5; /* Background color */
+  transition: width 0.3s; /* Smooth transition */
+  overflow: hidden; /* Hide overflowing content */
 }
 
 .expanded {
-  width: 30px; /* 收缩后的宽度 */
+  width: 30px; /* Width when collapsed */
   height: 15px;
 }
 .expandButton{
   width: 30px; 
   height: 30px;
-  border-radius: 5px; /* 圆角 */
+  border-radius: 5px; /* Rounded corners */
   border: none;
 }
-/* 按钮悬停效果 */
+/* Button hover effect */
 .expandButton:hover {
-  background-color: white; /* 渐变背景变深 */
+  background-color: white; /* Darken the gradient background */
   
 }
 .hidden {
@@ -93,41 +93,41 @@ const switchPanel = (index) => {
 
 
 
-/* 按钮点击效果 */
+/* Button click effect */
 .expandButton:active {
-  transform: translateY(2px); /* 轻微下移 */
+  transform: translateY(2px); /* Shift down slightly */
 }
 
-/* 面板切换按钮列表样式 */
+/* Panel toggle button list styles */
 .panel-buttons button {
   padding: 8px 15px;
   margin: 5px;
   border: none;
-  border-radius: 4px; /* 圆角 */
-  background-color: white; /* 背景色 */
+  border-radius: 4px; /* Rounded corners */
+  background-color: white; /* Background color */
   color: #333;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.1s; /* 过渡效果 */
+  transition: background-color 0.3s, transform 0.1s; /* Transition effect */
 }
 
-/* 面板切换按钮悬停效果 */
+/* Panel toggle button hover effect */
 .panel-buttons button:hover {
-  background-color: #e9ecef; /* 背景色变深 */
-  transform: translateY(-1px); /* 轻微上移 */
+  background-color: #e9ecef; /* Darker background color */
+  transform: translateY(-1px); /* Shift up slightly */
 }
 
-/* 面板切换按钮激活效果 */
+/* Panel toggle button active effect */
 .panel-buttons button.active {
-  background-color: rgb(093, 116, 162); /* 激活时的背景色 */
+  background-color: rgb(093, 116, 162); /* Background color when active */
   color: white;
 }
 
-/* 面板样式 */
+/* Panel styles */
 .panel {
-  border-radius: 8px; /* 圆角 */
-  overflow: hidden; /* 隐藏溢出的内容 */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 阴影 */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Hide overflowing content */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Shadow */
 }
 
 
