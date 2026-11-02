@@ -1,0 +1,5 @@
+# 禁止通过网页直接访问日志、调试输出、Python 脚本和富集分析用的基因集文件
+# （需要 Apache 对该目录开启 AllowOverride，否则请把同样的规则写进站点配置）
+<FilesMatch "\.(log|txt|py|gmt|json|md)$">
+    Require all denied
+</FilesMatch>

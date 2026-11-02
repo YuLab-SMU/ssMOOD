@@ -24,4 +24,7 @@ pnpm-debug.log*
 
 DevelopmentLog.md
 package-lock.json
-/php/.cache
+# PHP 运行时产生的日志/调试输出，不入库
+/php/*.log
+/php/output.txt
+/php/.cache/
