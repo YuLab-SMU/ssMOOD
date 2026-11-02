@@ -13,7 +13,7 @@ $datasetId = $_GET['id'] ?? '';
 // SQL 查询
 $sql = "SELECT dataset_id, species, age, sex, conditions, area, cells, clusters,detail, scorst, information FROM datasets WHERE dataset_id = ? AND scorst = 'st'";
 
-// 执行查询（预处理语句，防止 SQL 注入）
+// Run the query with a prepared statement
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $datasetId);
 $stmt->execute();

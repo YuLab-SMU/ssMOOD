@@ -14,7 +14,7 @@ $study_id = $_GET['id'] ?? '';
 // SQL 查询
 $sql = "SELECT study_id, species, age, sex, conditions, area, cells, clusters,information,datasets FROM study WHERE study_id = ?";
 
-// 执行查询（预处理语句，防止 SQL 注入）
+// Run the query with a prepared statement
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $study_id);
 $stmt->execute();

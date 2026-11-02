@@ -6,7 +6,8 @@ include 'config.php';
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     http_response_code(500);
-    echo "Database connection failed: " . $conn->connect_error;
+    error_log("Database connection failed: " . $conn->connect_error);
+    echo json_encode(['error' => 'Database connection failed']);
     exit;
 }
 
@@ -23,7 +24,8 @@ $sql = "SELECT c.spatial_cell_id, c.x_coordinate, c.y_coordinate, c.cluster_labe
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     http_response_code(500);
-    echo "SQL Prepare failed: " . $conn->error;
+    error_log("Query failed: " . $conn->error);
+    echo json_encode(['error' => 'Query failed']);
     exit;
 }
 

@@ -24,7 +24,7 @@ pnpm-debug.log*
 
 DevelopmentLog.md
 package-lock.json
-# PHP 运行时产生的日志/调试输出，不入库
+# Runtime logs and debug output written by PHP; keep out of git
 /php/*.log
 /php/output.txt
 /php/.cache/

@@ -4,7 +4,6 @@
 // 发布时去掉此处代码，仅用于生产和测试环境。
 // 跨域配置
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
 //------------------------------------------------------------------------------
 
 
