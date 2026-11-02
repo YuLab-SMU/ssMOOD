@@ -69,8 +69,7 @@
                 <!-- coord_chart的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="coord_chartLoading" src="/loading.gif" alt="Loading"
-                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
+                  <ChartLoading v-if="coord_chartLoading" />
                   <div id="coord_chart"
                     :style="{ width: '100%', aspectRatio: '1 / 1', visibility: coord_chartLoading ? 'hidden' : 'visible' }">
                   </div>
@@ -102,8 +101,7 @@
                 <!-- 空间基因表达量图的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="coord_chartGeneLoading" src="/loading.gif" alt="Loading"
-                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
+                  <ChartLoading v-if="coord_chartGeneLoading" />
 
                   <!-- Plotly 图表容器 -->
                   <div id="coord_chart_gene"
@@ -576,6 +574,7 @@ import { QuestionFilled } from '@element-plus/icons-vue'
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
+import ChartLoading from './general/ChartLoading.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';

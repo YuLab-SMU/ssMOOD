@@ -11,3 +11,30 @@
   font-weight: 700;      /* 加粗 */
   font-size: 18px;       /* 字号，可按需调整 */
 }
+
+/* 表格等区域的 v-loading 遮罩：半透明 + 轻微模糊，转圈颜色跟随主色 */
+.el-loading-mask {
+  background-color: rgba(247, 249, 252, 0.78);
+  backdrop-filter: blur(2px);
+}
+.el-loading-spinner .path {
+  stroke: var(--el-color-primary);
+  stroke-width: 3;
+}
+.el-loading-spinner .el-loading-text {
+  color: var(--el-color-primary);
+  font-size: 13px;
+}
+
+/* 页面切换顶部进度条（NProgress）：主色渐变，替换默认亮蓝色 */
+#nprogress .bar {
+  height: 3px;
+  background: linear-gradient(90deg, rgb(93, 116, 162), #5aab8a);
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px rgb(93, 116, 162), 0 0 5px rgb(93, 116, 162);
+}
+#nprogress .spinner-icon {
+  border-top-color: rgb(93, 116, 162);
+  border-left-color: rgb(93, 116, 162);
+}

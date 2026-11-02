@@ -34,7 +34,9 @@ app.provide('eventBus', eventBus);
 app.use(ElementPlus)
 // 挂载应用
 app.mount('#app');
-window.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('app-loading')
-  if (loader) loader.style.display = 'none'
-})
+// 挂载完成后淡出加载页（样式与动画在 public/index.html 中）
+const loader = document.getElementById('app-loading')
+if (loader) {
+  requestAnimationFrame(() => loader.classList.add('done'))
+  setTimeout(() => { loader.style.display = 'none' }, 600)
+}
