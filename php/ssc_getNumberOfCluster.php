@@ -6,7 +6,9 @@ $conn = new mysqli($host, $username, $password, $dbname);
 
 // 检查连接是否成功
 if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
+    error_log("Database connection failed: " . $conn->connect_error);
+    http_response_code(500);
+    die(json_encode(['error' => 'Database connection failed']));
 }
 
 // 获取study_id
@@ -31,7 +33,9 @@ if (!$row) {
 $datasets = explode(",", $row['datasets']);
 
 // 构造IN子句
-$datasetInClause = implode("','", array_map('trim', $datasets));
+$datasetInClause = implode("','", array_map(function ($d) use ($conn) {
+    return $conn->real_escape_string(trim($d));
+}, $datasets));
 
 // 查询各个细胞分类的数量
 $query = "
