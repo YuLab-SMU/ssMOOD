@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <!-- 左下角悬浮气泡 -->
+    <!-- Floating bubble in the bottom-left corner -->
     <el-tooltip
       content="Copyright © 2025 Jinchen Li. All rights reserved."
       placement="right"

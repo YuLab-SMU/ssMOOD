@@ -1,9 +1,9 @@
 <?php
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     http_response_code(500);
     error_log("Database connection failed: " . $conn->connect_error);
@@ -11,7 +11,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 定义 datasetId 值
+// Define datasetId value
 $datasetId = $_GET['id'] ?? '';
 
 if (empty($datasetId)) {
@@ -41,7 +41,7 @@ while ($row = $result->fetch_assoc()) {
     $cluster_labels[] = $row['group_type'];
 }
 header('Content-Type: application/json');
-// 将数组转换为 JSON 格式
+// Convert the array to JSON
 echo json_encode($cluster_labels);
 
 $conn->close();

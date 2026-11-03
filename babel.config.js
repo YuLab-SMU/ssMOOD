@@ -3,6 +3,6 @@ module.exports = {
     '@vue/cli-plugin-babel/preset'
   ],
   ignore: [
-    /node_modules\/plotly\.js-dist-min\/plotly\.min\.js/  // 忽略特定文件或目录
+    /node_modules\/plotly\.js-dist-min\/plotly\.min\.js/  // Ignore specific files or directories
   ]
 }

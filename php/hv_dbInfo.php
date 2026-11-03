@@ -1,20 +1,20 @@
 <?php
 include 'config.php';
 
-// 创建连接
+// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// 初始化结果数组
+// Initialize result array
 $results = [];
 
-// 查询单细胞数量
+// Query the number of single cells
 $sql = "SELECT COUNT(*) as count FROM cells";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
     $results['cellNum'] = 0;
 }
 
-// 查询类别数量
+// Query the number of categories
 $sql = "SELECT COUNT(*) as count FROM datasets";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -33,7 +33,7 @@ if ($result->num_rows > 0) {
 } else {
     $results['clusterNum'] = 0;
 }
-// 查询唯一基因数量
+// Query the number of unique genes
 $sql = "SELECT COUNT(DISTINCT gene_id) as count FROM genes";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -53,9 +53,9 @@ if ($result->num_rows > 0) {
     $results['spatialNum'] = 0;
 }
 
-// 关闭连接
+// Close connection
 $conn->close();
 
-// 返回JSON结果
+// Return JSON result
 echo json_encode($results);
 ?>

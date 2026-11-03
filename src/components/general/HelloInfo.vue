@@ -4,9 +4,9 @@
 
 <script setup>
 import { onMounted } from 'vue';
-// 打印版权信息
+// Print copyright info
 const logCopyright = () => {
-  const version = "ssMOOD "+process.env.BRANCH;//从项目设置自动获取
+  const version = "ssMOOD "+process.env.BRANCH;//Read automatically from project settings
   console.log(
     `%c${version}`,
     'background:#333333; color:white; font-size:30px; padding:5px; border-radius:5px;'
@@ -25,8 +25,8 @@ const logCopyright = () => {
   );
 };
 
-// 在组件挂载时执行
+// Run when the component is mounted
 onMounted(() => {
-  logCopyright(); // 打印版权信息
+  logCopyright(); // Print copyright info
 });
 </script>

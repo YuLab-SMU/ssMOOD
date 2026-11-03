@@ -63,9 +63,9 @@ onUnmounted(() => {
 }
 
 .node-message {
-  margin-top: 10px; /* 消息顶部外边距 */
-  font-size: 8px; /* 设置字号为16像素，你可以根据需要调整这个值 */
-  font-weight: normal; /* 确保文本不加粗 */
+  margin-top: 10px; /* Top margin of the message */
+  font-size: 8px; /* Font size 16px; adjust as needed */
+  font-weight: normal; /* Ensure text is not bold */
 }
 .vue-flow__handle {
     height:24px;

@@ -14,7 +14,7 @@
           <h3>{{ $t('bst2-2') }}</h3>
           <el-card class="filter-box" shadow="never">
             <el-row :gutter="20" align="middle" class="filter-row">
-              <!-- 物种 -->
+              <!-- Species -->
               <el-col :span="1" class="filter-label">
                 {{ $t('bsc3') }}
               </el-col>
@@ -26,7 +26,7 @@
                 </el-select>
               </el-col>
 
-              <!-- 区域 -->
+              <!-- Region -->
               <el-col :span="1" class="filter-label">
                 {{ $t('bsc4') }}
               </el-col>
@@ -45,7 +45,7 @@
                 </el-select>
               </el-col>
 
-              <!-- 性别 -->
+              <!-- Sex -->
               <el-col :span="1" class="filter-label">
                 {{ $t('bsc5') }}
               </el-col>
@@ -60,7 +60,7 @@
           </el-card>
 
 
-          <!-- 数据集列表 -->
+          <!-- Dataset list -->
           <el-table :data="filteredDatasets" stripe style="width: 100%;">
             <el-table-column prop="dataset_id" :label="$t('bsc6.1')" width="180">
               <template #default="{ row }">
@@ -93,11 +93,11 @@ import ssmoodStudy3 from './study/ssmoodStudy3.vue';
 
 import { useRouter } from 'vue-router';
 
-//----------以下为一个ssmood页面需要的最基础的东西--------------
+//----------Below is the bare minimum needed for an ssmood page--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-//----------以上为一个ssmood页面需要的最基础的东西--------------
+//----------Above is the bare minimum needed for an ssmood page--------------
 
 const datasets = ref([]);
 const filters = ref({
@@ -228,28 +228,28 @@ button:hover {
   cursor: pointer;
   text-decoration: underline;
   color: rgb(093, 116, 162);
-  /* 你可以根据需要更改颜色 */
+  /* Change the color as needed */
 }
 
 .clickable:hover {
   text-decoration: none;
   color: rgba(093, 116, 162, 0.8);
-  /* 悬浮时的颜色 */
+  /* Color on hover */
 }
 
 
 .filter-box {
   border: 1px solid #ebeef5;
-  /* 和 el-table border 一致 */
+  /* Match the el-table border */
   border-radius: 6px;
-  /* 略小一点，更贴近表格圆角 */
+  /* Slightly smaller, closer to the table's border radius */
   padding: 12px 16px;
-  /* 更舒适的内边距 */
+  /* More comfortable padding */
   background-color: #ffffff;
-  /* 表格默认是白底 */
+  /* Tables have a white background by default */
   margin-bottom: 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  /* 可选：添加轻微阴影，增强分层 */
+  /* Optional: add a subtle shadow for depth */
 }
 
 .filter-label {
@@ -257,7 +257,7 @@ button:hover {
   align-items: center;
   font-weight: 500;
   color: #303133;
-  /* 表格默认字体颜色 */
+  /* Default table text color */
   font-size: 14px;
 }
 
@@ -280,7 +280,7 @@ button:hover {
 }
 
 /* ----------------------------------------------------------- */
-/* 竖屏响应*/
+/* Portrait-orientation responsive styles*/
 @media (orientation: portrait) or (max-width: 800px) {
 
   table {

@@ -14,7 +14,7 @@
 
   </div>
  <div class="container">
-    <!-- 左侧展示区 -->
+    <!-- Left display panel -->
     <div class="panel left-panel">
       <div class="preview-area">
         <div class="image-preview">
@@ -27,7 +27,7 @@
       
     </div>
 
-    <!-- 中间代码编辑区 -->
+    <!-- Center code editor -->
     <div class="panel editor-panel">
       <div ref="editor" class="code-editor" @mouseup="handleSelection"></div>
             <div 
@@ -58,7 +58,7 @@
 
     </div>
 
-    <!-- 右侧聊天区 -->
+    <!-- Right chat panel -->
     <div class="panel chat-panel">
       <div class="chat-container">
         <div class="chat-messages">
@@ -86,7 +86,7 @@
   
   
 
-      <!-- 数据集管理模态窗 -->
+      <!-- Dataset management modal -->
     <div v-if="showModal0" class="dataset-modal">
       <div class="dataset-modal-content">
         <div class="dataset-modal-header">
@@ -95,7 +95,7 @@
         </div>
         <div class="add-dataset-content">
         <h3>添加数据集</h3>
-        <!-- 添加数据集 -->
+        <!-- Add dataset -->
         <div class="add-dataset-div">
         <div class="add-dataset">
             <select v-model="selectedDataType">
@@ -106,7 +106,7 @@
                 <option value="4">空转基因表达量</option>
             </select>
         </div>
-        <!-- 添加数据集 -->
+        <!-- Add dataset -->
         <div class="add-dataset" v-if="showDatasetSelect === 1">
           <select v-model="selectedId1">
               <option disabled value="">数据集ID</option>
@@ -121,7 +121,7 @@
           <button @click="addDataset(1)">➕ </button>
         </div>
         
-        <!-- 添加数据集 -->
+        <!-- Add dataset -->
         <div class="add-dataset" v-if="showDatasetSelect === 2">
           <select v-model="selectedId2">
               <option disabled value="">数据集ID</option>
@@ -135,7 +135,7 @@
           </select>
           <button @click="addDataset(2)">➕ </button>
         </div>
-                <!-- 添加数据集 -->
+                <!-- Add dataset -->
         <div class="add-dataset" v-if="showDatasetSelect === 3">
           <select v-model="selectedId3">
               <option disabled value="">数据集ID</option>
@@ -149,7 +149,7 @@
           </select>
           <button @click="addDataset(3)">➕ </button>
         </div>
-                <!-- 添加数据集 -->
+                <!-- Add dataset -->
         <div class="add-dataset" v-if="showDatasetSelect === 4">
           <select v-model="selectedId4">
             <option value="分类1">分类1</option>
@@ -164,7 +164,7 @@
         </div>
         </div>
         
-        <!-- 数据集列表 -->
+        <!-- Dataset list -->
         <ul class="dataset-list">
           <li v-for="(dataset, index) in datasets" :key="index">
             {{ dataset.id }} - {{ dataset.type }}
@@ -177,7 +177,7 @@
     </div>
   
   
-  <!-- iOS风格模态窗 -->
+  <!-- iOS-style modal -->
       <div 
       v-if="showModal"
       ref="modalRef"
@@ -214,12 +214,12 @@
 import { ref,onMounted,watch } from 'vue'
 //import {  computed, onUnmounted } from 'vue'
 
-//----------以下为一个ssmood页面需要的最基础的东西--------------
+//----------Below is the bare minimum needed for an ssmood page--------------
 //import { useI18n } from 'vue-i18n';
 //import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-//----------以上为一个ssmood页面需要的最基础的东西--------------
+//----------Above is the bare minimum needed for an ssmood page--------------
 
 
 const isLoading = ref(true);
@@ -233,14 +233,14 @@ import 'ace-builds/src-noconflict/theme-monokai'
 import axios from 'axios';
 import { TerminalApi } from 'vue-web-terminal';
 import pako from 'pako';
-// 终端相关
+// Terminal
 const terminalLogs = ref([])
 
 const handleExe = async () => {
   try {
-    const dynamicVariable = {}; // 用于存储加载的数据
+    const dynamicVariable = {}; // Stores loaded data
 
-    // 将每个数据集的加载逻辑包装为 Promise
+    // Wrap each dataset's loading logic in a Promise
     const fetchPromises = datasets.value.map(async (dataset) => {
       if (dataset.way == 1) {
         const params = new URLSearchParams({
@@ -251,11 +251,11 @@ const handleExe = async () => {
         const arrayBuffer = await response.arrayBuffer();
 
         const compressed = new Uint8Array(arrayBuffer);
-        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const decompressed = pako.ungzip(compressed); // Decompress with pako
         const jsonString = new TextDecoder('utf-8').decode(decompressed);
-        const data = JSON.parse(jsonString); // 解析JSON字符串
+        const data = JSON.parse(jsonString); // Parse JSON string
 
-        // 将数据存储到 dynamicVariable 中
+        // Store data in dynamicVariable
         dynamicVariable[dataset.id + '_' + dataset.type] = data;
       }else if (dataset.way == 3) {
         const params = new URLSearchParams({
@@ -266,31 +266,31 @@ const handleExe = async () => {
         const arrayBuffer = await response.arrayBuffer();
 
         const compressed = new Uint8Array(arrayBuffer);
-        const decompressed = pako.ungzip(compressed); // 使用pako解压
+        const decompressed = pako.ungzip(compressed); // Decompress with pako
         const jsonString = new TextDecoder('utf-8').decode(decompressed);
-        const data = JSON.parse(jsonString); // 解析JSON字符串
+        const data = JSON.parse(jsonString); // Parse JSON string
 
-        // 将数据存储到 dynamicVariable 中
+        // Store data in dynamicVariable
         dynamicVariable[dataset.id + '_' + dataset.type] = data;
       }
     });
 
-    // 等待所有 Promise 完成
+    // Wait for all Promises to complete
     await Promise.all(fetchPromises);
 
-    // 执行用户输入的代码
-    const code = codeEditor.getValue(); // 获取用户输入的代码
-    const func = new Function('dynamicVariable', code); // 将 dynamicVariable 作为参数传递
-    func(dynamicVariable); // 执行函数并传递 dynamicVariable
+    // Execute user-entered code
+    const code = codeEditor.getValue(); // Get user-entered code
+    const func = new Function('dynamicVariable', code); // Pass dynamicVariable as a parameter
+    func(dynamicVariable); // Execute the function with dynamicVariable
 
-    // 提示执行成功
+    // Notify success
     TerminalApi.pushMessage('ssMOOD', {
       class: 'system',
       tag: 'success',
       content: '执行成功'
     });
   } catch (error) {
-    // 提示执行失败
+    // Notify failure
     TerminalApi.pushMessage('ssMOOD', {
       class: 'system',
       tag: 'fail',
@@ -299,7 +299,7 @@ const handleExe = async () => {
     console.error("执行代码时出错:", error);
   }
 };
-// 代码编辑器相关
+// Code editor
 const editor = ref(null)
 let codeEditor = null
 const codeContent = ref('// 生成的代码将出现在这里\n')
@@ -312,10 +312,10 @@ const modalRef = ref(null)
 const showModal = ref(false)
 const selectedCode = ref('')
 const userInput2 = ref('')
-// 更新模态窗位置
+// Update modal position
 
-let selectionTimeout = null; // 用于存储定时器
-const selectionDelay = 300; // 延迟300ms，判断是否完成选择
+let selectionTimeout = null; // Stores the timer
+const selectionDelay = 300; // Wait 300ms to determine whether selection is finished
 
 onMounted(() => {
   codeEditor = ace.edit(editor.value, {
@@ -333,25 +333,25 @@ codeEditor.selection.on('changeSelection', () => {
   const selection = codeEditor.getSelection();
   const range = selection.getRange();
   
-  // 如果没有选择内容，直接隐藏模态窗
+  // If nothing is selected, hide the modal immediately
   if (selection.$isEmpty) {
     showModal.value = false;
     return;
   }
 
-  // 如果之前有定时器，先清除掉
+  // Clear any existing timer first
   if (selectionTimeout) {
     clearTimeout(selectionTimeout);
   }
 
-  // 延迟执行，等用户选择结束后再执行
+  // Delay execution until the user finishes selecting
   selectionTimeout = setTimeout(() => {
     const selectionText = codeEditor.getSelectedText();
     if (selectionText.length > 0) {
-      selectedCode.value = selectionText; // 获取选中的文本
-      showModal.value = true; // 显示模态窗
+      selectedCode.value = selectionText; // Get the selected text
+      showModal.value = true; // Show modal
       lastSelection = range;
-      updateModalPosition(); // 更新模态窗位置
+      updateModalPosition(); // Update modal position
     }
   }, selectionDelay);
 });
@@ -362,108 +362,108 @@ codeEditor.selection.on('changeSelection', () => {
 const updateModalPosition = () => {
   if (!lastSelection || !codeEditor) return;
 
-  // 获取选中结束位置的屏幕坐标
+  // Get screen coordinates of the selection end
   const endPos = lastSelection.end;
   const screenPos = codeEditor.renderer.textToScreenCoordinates(endPos.row, endPos.column);
 
-  // 转换为容器相对位置
+  // Convert to container-relative position
   const containerRect = editor.value.getBoundingClientRect();
-  const modalWidth = 280; // 模态窗固定宽度
+  const modalWidth = 280; // Fixed modal width
 
-  // 计算理想位置：将模态窗放在选中区域的右边
-  let left = screenPos.pageX - containerRect.left; // 距离选中文本右侧15px
+  // Compute ideal position: place the modal to the right of the selection
+  let left = screenPos.pageX - containerRect.left; // 15px to the right of the selected text
   let top = screenPos.pageY - containerRect.top;
 
-  // 边界检测：确保模态窗不会超出编辑器的右边界
+  // Boundary check: keep the modal within the editor's right edge
   const maxLeft = containerRect.width - modalWidth - 20;
   if (left > maxLeft) left = maxLeft;
 
-  const maxTop = containerRect.height - 200; // 假设模态窗高度200px
+  const maxTop = containerRect.height - 200; // Assume modal height of 200px
   if (top > maxTop) top = maxTop;
 
-  // 应用位置
+  // Apply position
   modalPosition.value = {
     top: `${top}px`,
     left: `${left}px`
   };
 
-  // 延迟显示确保位置计算完成
+  // Delay showing to ensure position calculation is complete
   setTimeout(() => showModal.value = true, 50);
 };
 
 
-// 窗口变化时重新定位
+// Reposition on window resize
 window.addEventListener('resize', updateModalPosition)
 
 //-------------------------------------
-//局部代码编辑
+//Partial code editing
 //-------------------------------------
 
 const handleSubmit = async () => {
   if (!userInput2.value.trim()) return;
 
-  // 处理提交逻辑
+  // Handle submit logic
   console.log('选中的代码:', selectedCode.value);
   console.log('用户输入:', userInput2.value);
   
-  // 获取AI生成的代码
+  // Get AI-generated code
   const response = await partCodefetchOpenAI('需要修改的代码：' + selectedCode.value + "，用户要求：" + userInput2.value);
   const generatedCode = response.code;
   const cleanedCode = generatedCode.replace(/```javascript|```/g, '').trim();
 
-  // 获取选中的范围
+  // Get the selected range
   const selection = codeEditor.getSelection();
-  const range = selection.getRange();  // 获取当前选中的范围
+  const range = selection.getRange();  // Get the currently selected range
 
-  // 使用选中的范围进行替换
+  // Replace using the selected range
   if (!selection.isEmpty()) {
-    const session = codeEditor.session; // 定义 session
-    session.replace(range, cleanedCode); // 替换选中的内容
+    const session = codeEditor.session; // Define session
+    session.replace(range, cleanedCode); // Replace the selected content
   }
 
-  // 执行其他逻辑（如果有）
+  // Run other logic (if any)
   handleExe();
   
-  closeModal();  // 关闭模态窗
-  userInput2.value = '';  // 清空用户输入
+  closeModal();  // Close modal
+  userInput2.value = '';  // Clear user input
 };
 
 
 const closeModal = () => {
   showModal.value = false
-  codeEditor.clearSelection() // 清除编辑器选中状态
+  codeEditor.clearSelection() // Clear editor selection
 }
 
 
 
-// 发送请求到 OpenAI，并获取代码
+// Send request to OpenAI and get code
 const partCodefetchOpenAI = async (userMessage) => {
     
     
     const systemMessage = `你是一个专业的JavaScript程序员，请始终以代码块形式返回代码，用户给出一段代码，按要求修改，仅返回修改后的部分，按原代码格式返回，如果原代码有空格等符号也要返回，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，不返回html元素`;
     
-    // 使用 Vue 的 ref 来存储聊天记录
+    // Use a Vue ref to store chat history
     const chatHistory = ref([{ role: 'system', content: systemMessage }]);
-  // 将用户消息添加到聊天记录
+  // Add user message to chat history
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // 发送请求到后端 (PHP)
+    // Send request to backend (PHP)
     const response = await axios.post(config.apiUrl + 'openai_proxy.php', {
-      messages: chatHistory.value // 发送聊天记录
+      messages: chatHistory.value // Send chat history
     }, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
 
-    // 处理并返回 OpenAI 响应
+    // Process and return OpenAI response
     const { choices } = response.data;
     const code = choices && choices[0] ? choices[0].message.content : '';
-    // 返回生成的代码和完整的 OpenAI 响应
+    // Return generated code and the full OpenAI response
     return {
-      code, // 返回生成的代码
-      rawResponse: response.data, // 返回完整的 OpenAI API 响应
+      code, // Return generated code
+      rawResponse: response.data, // Return the full OpenAI API response
     };
 
   } catch (error) {
@@ -472,14 +472,14 @@ const partCodefetchOpenAI = async (userMessage) => {
   }
 };
 //-------------------------------------
-//数据集管理
+//Dataset management
 //-------------------------------------
 
 const SC_datasets = ref([]);
 
 onMounted(async () => {
   try {
-    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_sc.php'); // 假设这是你的后端接口
+    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_sc.php'); // Assume this is your backend endpoint
     SC_datasets.value = response.data.datasets;
   } catch (error) {
     console.error('Error fetching datasets:', error);
@@ -489,7 +489,7 @@ const ST_datasets = ref([]);
 
 onMounted(async () => {
   try {
-    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_st.php'); // 假设这是你的后端接口
+    const response = await axios.post(config.apiUrl + 'ap_getDatasetList_st.php'); // Assume this is your backend endpoint
     ST_datasets.value = response.data.datasets;
   } catch (error) {
     console.error('Error fetching datasets:', error);
@@ -587,15 +587,15 @@ const removeDataset = (index) => {
 
 
 //-------------------------------------
-//聊天相关
+//Chat
 //-------------------------------------
-const isInputExpand = ref(true); // 默认显示数据集管理按钮
+const isInputExpand = ref(true); // Show the dataset management button by default
 
-const timer = ref(null); // 用于存储延时操作的定时器
+const timer = ref(null); // Timer for delayed actions
 
-// 输入框聚焦时触发
+// Triggered when the input gains focus
 const onFocus = () => {
-  // 清除可能存在的延时操作
+  // Clear any pending delayed action
   if (timer.value) {
     clearTimeout(timer.value);
     timer.value = null;
@@ -603,13 +603,13 @@ const onFocus = () => {
   isInputExpand.value = false;
 };
 
-// 输入框失去焦点时触发
+// Triggered when the input loses focus
 const onBlur = () => {
-  // 设置延时操作
+  // Set delayed action
   timer.value = setTimeout(() => {
     isInputExpand.value = true;
     timer.value = null;
-  }, 300); // 延时 300 毫秒
+  }, 300); // Delay 300 ms
 };
 
 const chatMessages = ref([])
@@ -667,7 +667,7 @@ const sendMessage = async () => {
       isLoading2.value = true
     
       try {
-        const response = await fetchOpenAI(prompt.value) // 替换为你的API调用
+        const response = await fetchOpenAI(prompt.value) // Replace with your API call
         prompt.value=""
         console.log(response)
         const generatedCode = response.code
@@ -694,47 +694,47 @@ const sendMessage = async () => {
 
 
 //-------------------------------------
-//openai接口
+//OpenAI API
 //-------------------------------------
 
 
 const systemMessage = `你是一个专业的JavaScript绘图程序员，请始终以代码块形式返回代码，每次用户提出要求后都需要给出完整的代码，不要只给出更改的部分，只生成代码不要解释。如果需要绘图使用plotly库，将图片绘制到myCanvas元素，仅返回js代码，不返回html元素`;
 
-// 使用 Vue 的 ref 来存储聊天记录
+// Use a Vue ref to store chat history
 const chatHistory = ref([{ role: 'system', content: systemMessage }]);
 
-// 发送请求到 OpenAI，并获取代码
+// Send request to OpenAI and get code
 const fetchOpenAI = async (userMessage) => {
-  // 将用户消息添加到聊天记录
+  // Add user message to chat history
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // 发送请求到后端 (PHP)
+    // Send request to backend (PHP)
     const response = await axios.post(config.apiUrl + 'openai_proxy.php', {
-      messages: chatHistory.value // 发送聊天记录
+      messages: chatHistory.value // Send chat history
     }, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
 
-    // 处理并返回 OpenAI 响应
+    // Process and return OpenAI response
     const { choices } = response.data;
     const code = choices && choices[0] ? choices[0].message.content : '';
 
-    // 将 OpenAI 的响应（助手的回复）加入聊天记录
+    // Add OpenAI's response (assistant reply) to chat history
     chatHistory.value.push({ role: 'assistant', content: code });
 
-    // 保证聊天记录最多保存10条
+    // Keep at most 10 chat records
     if (chatHistory.value.length > 10) {
-      chatHistory.value.shift(); // 删除最早的记录
+      chatHistory.value.shift(); // Remove the oldest record
     }
 
-    // 返回生成的代码和完整的 OpenAI 响应
+    // Return generated code and the full OpenAI response
     return {
-      code, // 返回生成的代码
-      rawResponse: response.data, // 返回完整的 OpenAI API 响应
-      chatHistory // 返回当前聊天记录
+      code, // Return generated code
+      rawResponse: response.data, // Return the full OpenAI API response
+      chatHistory // Return current chat history
     };
 
   } catch (error) {
@@ -748,18 +748,18 @@ const fetchOpenAI = async (userMessage) => {
 
 
 //-------------------------------------
-//工具栏
+//Toolbar
 //-------------------------------------
 //const isFullscreen = ref(false)
 
 const handleNew = () => {
   console.log('新建操作')
-  // 触发新建逻辑
+  // Trigger new-file logic
 }
 
 const handleSave = () => {
   console.log('保存操作')
-  // 触发保存逻辑
+  // Trigger save logic
 }
 
 /*
@@ -775,7 +775,7 @@ const toggleFullscreen = () => {
 }
 */
 //-------------------------------------
-//工具栏拖动
+//Toolbar dragging
 //-------------------------------------
 /*
 const toolbarRef = ref(null)
@@ -785,9 +785,9 @@ const dragStartY = ref(0)
 const initialX = ref(0)
 const initialY = ref(0)
 const posX = ref(500)
-const posY = ref(0) // 初始顶部间距
+const posY = ref(0) // Initial top offset
 
-// 从本地存储读取位置
+// Read position from localStorage
 onMounted(() => {
   const savedPos = localStorage.getItem('toolbarPosition')
   if (savedPos) {
@@ -797,15 +797,15 @@ onMounted(() => {
   }
 })
 
-// 动态计算样式
+// Compute style dynamically
 const toolbarStyle = computed(() => ({
   top: `${posY.value}px`,
   left: `${posX.value}px`,
-  transform: 'translate(-50%, 0)', // 保持水平居中
+  transform: 'translate(-50%, 0)', // Keep horizontally centered
   cursor: isDragging.value ? 'grabbing' : 'grab'
 }))
 
-// 开始拖动
+// Start dragging
 const startDrag = (e) => {
   isDragging.value = true
   dragStartX.value = e.clientX
@@ -813,42 +813,42 @@ const startDrag = (e) => {
   initialX.value = posX.value
   initialY.value = posY.value
 
-  // 添加全局事件监听
+  // Add global event listeners
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', stopDrag)
-  document.body.style.userSelect = 'none' // 防止文本选中
+  document.body.style.userSelect = 'none' // Prevent text selection
 }
 
-// 拖动中
+// While dragging
 const onDrag = (e) => {
   if (!isDragging.value) return
   
   const deltaX = e.clientX - dragStartX.value
   const deltaY = e.clientY - dragStartY.value
   
-  // 计算新位置（限制在可视区域内）
+  // Compute new position (clamped to the visible area)
   const newX = Math.max(0, Math.min(window.innerWidth, initialX.value + deltaX))
-  const newY = Math.max(0, Math.min(window.innerHeight - 50, initialY.value + deltaY)) // 限制底部位置
+  const newY = Math.max(0, Math.min(window.innerHeight - 50, initialY.value + deltaY)) // Clamp bottom position
 
   posX.value = newX
   posY.value = newY
 }
 
-// 停止拖动
+// Stop dragging
 const stopDrag = () => {
   isDragging.value = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
   document.body.style.userSelect = ''
   
-  // 保存位置到本地存储
+  // Save position to localStorage
   localStorage.setItem('toolbarPosition', JSON.stringify({
     x: posX.value,
     y: posY.value
   }))
 }
 
-// 组件卸载时清理
+// Clean up when component unmounts
 onUnmounted(() => {
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
@@ -864,7 +864,7 @@ onUnmounted(() => {
 @import 'css/MainStyles.css';
 .page-section {
   padding: 0px;
-  flex: 1; /* 占据剩余的空间 */
+  flex: 1; /* Fill the remaining space */
 }
 .container {
   display: flex;
@@ -873,14 +873,14 @@ onUnmounted(() => {
   overflow: hidden;
   background: linear-gradient(
     135deg,
-    #f5f7fa 0%,     /* 柔和的云朵白 */
-    #e3e9ff 25%,    /* 浅薰衣草灰 */
-    #d8e4ff 50%,    /* 极淡的婴儿蓝 */
-    #eceffd 75%,    /* 细腻的月光银 */
-    #f5f7fa 100%    /* 与起始颜色呼应形成无缝循环 */
+    #f5f7fa 0%,     /* Soft cloud white */
+    #e3e9ff 25%,    /* Light lavender gray */
+    #d8e4ff 50%,    /* Very pale baby blue */
+    #eceffd 75%,    /* Delicate moonlight silver */
+    #f5f7fa 100%    /* Matches the start color for a seamless loop */
   );
-  background-size: 100% 100%; /* 更紧凑的背景尺寸提升细腻度 */
-  animation: gradient 5s ease infinite; /* 更缓和的动画节奏 */
+  background-size: 100% 100%; /* Smaller background size for finer detail */
+  animation: gradient 5s ease infinite; /* Gentler animation pace */
 }
 @keyframes gradient {
   0% {
@@ -918,11 +918,11 @@ onUnmounted(() => {
   flex: 2;
   border: 1px solid #eee;
   padding: 10px;
-  border-radius: 15px; /* 圆角边框 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
-  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
-  backdrop-filter: blur(10px); /* 毛玻璃效果 */
-  background: rgba(245, 245, 245, 0.4); /* 半透明背景 */
+  border-radius: 15px; /* Rounded border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow effect */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* Add a visible border */
+  backdrop-filter: blur(10px); /* Frosted-glass effect */
+  background: rgba(245, 245, 245, 0.4); /* Semi-transparent background */
 }
 
 .terminal {
@@ -937,12 +937,12 @@ onUnmounted(() => {
 }
 
 /* ############################## */
-/* 代码编辑器样式 */
+/* Code editor styles */
 /* ############################## */
 .editor-panel{
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中 */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
   flex-direction: column;
   gap:10px;
 }
@@ -950,20 +950,20 @@ onUnmounted(() => {
 
 .code-editor {
 
-  width: 95%; /* 占满父容器的宽度 */
-  height: 85%; /* 占满父容器的高度 */
-  border-radius: 15px; /* 圆角边框 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
-  padding: 10px; /* 可选的内边距 */
-  font-family: monospace; /* 编辑器字体 */
-  font-size: 14px; /* 字体大小 */
-  white-space: pre-wrap; /* 保留换行符和空格 */
-  overflow: hidden; /* 如果内容超出高度，允许滚动 */
-  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
+  width: 95%; /* Fill the parent container's width */
+  height: 85%; /* Fill the parent container's height */
+  border-radius: 15px; /* Rounded border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow effect */
+  padding: 10px; /* Optional padding */
+  font-family: monospace; /* Editor font */
+  font-size: 14px; /* Font size */
+  white-space: pre-wrap; /* Preserve line breaks and spaces */
+  overflow: hidden; /* Allow scrolling if content exceeds the height */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* Add a visible border */
   padding: 10px;
 }
 /* ############################## */
-/* 聊天信息容器 */
+/* Chat message container */
 /* ############################## */
 .chat-container {
   display: flex;
@@ -973,78 +973,78 @@ onUnmounted(() => {
 }
 
 .chat-title {
-  font-size: 1.5rem; /* 标题字体大小 */
-  font-weight: bold; /* 加粗字体 */
-  margin-bottom: 10px; /* 与下方内容的间距 */
-  text-align: center; /* 居中对齐 */
-  color: #333; /* 标题颜色 */
+  font-size: 1.5rem; /* Title font size */
+  font-weight: bold; /* Bold font */
+  margin-bottom: 10px; /* Spacing below */
+  text-align: center; /* Center alignment */
+  color: #333; /* Title color */
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  background: rgba(245, 245, 245, 0.4); /* 半透明背景 */
-  backdrop-filter: blur(10px); /* 毛玻璃效果 */
-  border-radius: 16px; /* 圆角效果 */
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  background: rgba(245, 245, 245, 0.4); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Frosted-glass effect */
+  border-radius: 16px; /* Rounded corners */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Shadow effect */
   box-sizing: border-box;
-  border: 2px solid rgba(0, 0, 0, 0.1); /* 添加一个明显的边框 */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* Add a visible border */
 }
-/* 滚动条美化（iOS 风格） */
+/* Scrollbar styling (iOS style) */
 .chat-messages::-webkit-scrollbar {
-  width: 8px; /* 滚动条宽度 */
+  width: 8px; /* Scrollbar width */
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: transparent; /* 轨道背景透明 */
-  border-radius: 10px; /* 与容器的圆角边框一致 */
+  background: transparent; /* Transparent track background */
+  border-radius: 10px; /* Match the container's rounded border */
   margin: 10px 0;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2); /* 滚动条颜色 */
-  border-radius: 10px; /* 滚动条圆角与容器一致 */
+  background: rgba(0, 0, 0, 0.2); /* Scrollbar color */
+  border-radius: 10px; /* Scrollbar corner radius matches the container */
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4); /* 滚动条悬停时的颜色 */
+  background: rgba(0, 0, 0, 0.4); /* Scrollbar color on hover */
 }
 .message {
   margin: 10px 0;
   padding: 8px;
-  border-radius: 16px; /* 增大圆角以符合 iOS 风格 */
-  max-width: 60%; /* 限制消息宽度 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加轻微阴影 */
-  font-size: 14px; /* 使用较小的字体大小 */
-  line-height: 1.4; /* 调整行高 */
+  border-radius: 16px; /* Larger corner radius for an iOS look */
+  max-width: 60%; /* Limit message width */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  font-size: 14px; /* Use a smaller font size */
+  line-height: 1.4; /* Adjust line height */
   position: relative;
   display: block;
   width: fit-content;
 }
 
 .message.user {
-  background: #e3f2fd; /* 用户消息背景色 */
-  margin-left: auto; /* 使用 flexbox 右对齐 */
-  margin-right: 20px; /* 右边距 */
-  color: #333; /* 文字颜色 */
+  background: #e3f2fd; /* User message background color */
+  margin-left: auto; /* Right-align with flexbox */
+  margin-right: 20px; /* Right margin */
+  color: #333; /* Text color */
   text-align: left;
   padding-left: 30px;
   padding-right: 30px;
 }
 
 .message.assistant {
-  background: #fff; /* 助手消息背景色 */
-  margin-left: 20px; /* 左边距 */
-  margin-right: auto; /* 使用 flexbox 左对齐 */
-  color: #666; /* 文字颜色 */
+  background: #fff; /* Assistant message background color */
+  margin-left: 20px; /* Left margin */
+  margin-right: auto; /* Left-align with flexbox */
+  color: #666; /* Text color */
   text-align: left;
   padding-right: 20px;
   padding-left: 20px;
 }
 
 /* ############################## */
-/* 用户输入 */
+/* User input */
 /* ############################## */
 .chat-input-container {
   display: flex;
@@ -1052,77 +1052,77 @@ onUnmounted(() => {
 }
 .chat-input {
   display: inline-flex;
-  width: fit-content; /* 确保宽度根据内容动态调整 */
+  width: fit-content; /* Let the width adjust to the content */
   padding: 10px;
-  background: rgba(245, 245, 245, 0.5); /* 半透明背景 */
-  backdrop-filter: blur(10px); /* 毛玻璃模糊效果 */
-  border-radius: 20px; /* 更圆润的边角 */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* 轻微的阴影 */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* 淡雅的边框 */
+  background: rgba(245, 245, 245, 0.5); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Frosted-glass blur effect */
+  border-radius: 20px; /* Rounder corners */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Soft border */
   gap:5px;
   
 }
 
 .chat-input input {
   padding: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* 淡雅的输入框边框 */
-  border-radius: 10px; /* 圆润的输入框边角 */
-  background-color: rgba(255, 255, 255, 0.2); /* 输入框背景 */
-  color: #333; /* 输入文字颜色 */
-  font-size: 14px; /* 字体大小 */
-  outline: none; /* 去掉焦点时的边框 */
-  transition: width 0.5s ease; /* 平滑过渡效果 */
-  width: 8vw; /* 初始宽度更小 */
-  max-width: 30vw; /* 限制最大宽度 */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Soft input border */
+  border-radius: 10px; /* Rounded input corners */
+  background-color: rgba(255, 255, 255, 0.2); /* Input background */
+  color: #333; /* Input text color */
+  font-size: 14px; /* Font size */
+  outline: none; /* Remove the border on focus */
+  transition: width 0.5s ease; /* Smooth transition */
+  width: 8vw; /* Smaller initial width */
+  max-width: 30vw; /* Limit maximum width */
 }
 
 .chat-input input:focus {
-  width: 20vw; /* 聚焦时变宽 */
-  padding: 10px 20px; /* 可选：调整内边距 */
+  width: 20vw; /* Widen on focus */
+  padding: 10px 20px; /* Optional: adjust padding */
 }
 
 .chat-input input::placeholder {
-  color: #aaa; /* 输入框占位符颜色 */
+  color: #aaa; /* Input placeholder color */
 }
 
 .chat-input button {
-  padding: 10px 20px; /* 调整按钮大小 */
+  padding: 10px 20px; /* Adjust button size */
   border: none;
   background: linear-gradient(135deg, #e3f2fd, #d1e8ff);
   color: black;
-  border-radius: 20px; /* 适中的圆角设计 */
+  border-radius: 20px; /* Moderate corner radius */
   cursor: pointer;
-  font-size: 14px; /* 字体大小 */
-  transition: background-color 0.3s ease, transform 0.3s ease; /* 背景颜色和点击效果的过渡 */
-  font-weight: 500; /* 字体稍显粗体，更清晰 */
-  box-shadow: none; /* 移除阴影 */
-  transition: width 0.3s ease; /* 平滑过渡效果 */
+  font-size: 14px; /* Font size */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Transition for background color and click effect */
+  font-weight: 500; /* Slightly bolder font for clarity */
+  box-shadow: none; /* Remove shadow */
+  transition: width 0.3s ease; /* Smooth transition */
 }
 
 .chat-input button:hover {
-  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* 悬停时渐变反转 */
-  box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3); /* 更显眼的阴影 */
-  transform: translateY(-1px); /* 悬停时的轻微上浮效果 */
+  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* Reverse the gradient on hover */
+  box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3); /* More prominent shadow */
+  transform: translateY(-1px); /* Slight lift on hover */
 }
 
 .chat-input button:active {
-  transform: translateY(1px); /* 按钮点击时轻微下沉效果 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* 细致的阴影 */
-  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* 点击时保持反转渐变 */
+  transform: translateY(1px); /* Slight press-down effect on click */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Fine shadow */
+  background: linear-gradient(135deg, #d1e8ff, #e3f2fd); /* Keep the reversed gradient while pressed */
 }
 
 
 
 /* ############################## */
-/* 浮动工具栏 */
+/* Floating toolbar */
 /* ############################## */
 .floating-toolbar:dragging {
   z-index: 9999;
 }
 
 .floating-toolbar {
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中 */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
   background: rgba(093, 116, 162, 0.3);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: 14px;
@@ -1130,15 +1130,15 @@ onUnmounted(() => {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
   display: inline-flex;
-  width: fit-content; /* 确保宽度根据内容动态调整 */
+  width: fit-content; /* Let the width adjust to the content */
 }
 
 .toolbar-content {
   display: flex;
   gap: 12px;
   align-items: center;
-    white-space: nowrap; /* 禁用自动换行 */
-  flex-wrap: nowrap;   /* 禁用flex换行 */
+    white-space: nowrap; /* Disable text wrapping */
+  flex-wrap: nowrap;   /* Disable flex wrapping */
 }
 
 .toolbar-btn {
@@ -1176,13 +1176,13 @@ onUnmounted(() => {
   margin: 0 8px;
 }
 
-/* 全屏模式适配 */
+/* Fullscreen mode adjustments */
 .fullscreen-mode {
   top: 40px;
   background: rgba(255, 255, 255, 0.8);
 }
 
-/* 移动端适配 */
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .floating-toolbar {
     top: 10px;
@@ -1199,7 +1199,7 @@ onUnmounted(() => {
   }
 }
 
-/* 兼容性备用方案 */
+/* Compatibility fallback */
 @supports not (backdrop-filter: blur(20px)) {
   .floating-toolbar {
     background: rgba(255, 255, 255, 0.95);
@@ -1208,11 +1208,11 @@ onUnmounted(() => {
 
 
 /* ############################## */
-/* ai模态窗 */
+/* AI modal */
 /* ############################## */
 
 
-/* 模态窗遮罩层 */
+/* Modal overlay */
 .context-modal {
   position: absolute;
   width: 320px;
@@ -1226,7 +1226,7 @@ onUnmounted(() => {
   animation: slideIn 0.25s ease-out;
 }
 
-/* 模态窗容器 */
+/* Modal container */
 .modal-container {
   max-width: 320px;
   backdrop-filter: blur(20px) saturate(180%);
@@ -1236,7 +1236,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* 模态窗头部 */
+/* Modal header */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -1260,7 +1260,7 @@ onUnmounted(() => {
   padding: 0 8px;
 }
 
-/* 内容区域 */
+/* Content area */
 .modal-content {
   padding: 16px;
 }
@@ -1281,7 +1281,7 @@ onUnmounted(() => {
   color: #333;
 }
 
-/* 输入区域 */
+/* Input area */
 .input-group {
   display: flex;
   gap: 12px;
@@ -1322,7 +1322,7 @@ onUnmounted(() => {
   opacity: 0.8;
 }
 
-/* 动画效果 */
+/* Animations */
 .modal-container {
   animation: modalEnter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -1338,7 +1338,7 @@ onUnmounted(() => {
   }
 }
 
-/* 兼容性处理 */
+/* Compatibility handling */
 @supports not (backdrop-filter: blur(20px)) {
   .modal-container {
     background: rgba(255, 255, 255, 0.95);
@@ -1346,7 +1346,7 @@ onUnmounted(() => {
 }
 
 /* ############################## */
-/* 数据集管理模态窗 */
+/* Dataset management modal */
 /* ############################## */
 
 .dataset-modal {
@@ -1363,9 +1363,9 @@ onUnmounted(() => {
 }
 
 .dataset-modal-content {
-  display: flex; /* 使用 Flexbox 布局 */
+  display: flex; /* Use flexbox layout */
   justify-content: center;
-  align-items: center; /* 垂直居中 */
+  align-items: center; /* Center vertically */
   flex-direction: column;
   background: rgb(255, 255, 255);
   padding: 20px;
@@ -1375,51 +1375,51 @@ onUnmounted(() => {
 
 }
 .dataset-modal-header {
-    display: flex; /* 使用 Flexbox 布局 */
+    display: flex; /* Use flexbox layout */
     justify-content: center;
-    align-items: center; /* 垂直居中 */
-    padding: 10px; /* 添加内边距 */
+    align-items: center; /* Center vertically */
+    padding: 10px; /* Add padding */
     width: 100%;
 }
 
 .dataset-modal-header h2 {
     position: fixed;
-    margin: 0; /* 移除默认的外边距 */
-    font-size: 1.5rem; /* 标题字体大小 */
-    text-align: center; /* 标题居中 */
-    flex: 1; /* 让标题占据剩余空间 */
+    margin: 0; /* Remove default margin */
+    font-size: 1.5rem; /* Title font size */
+    text-align: center; /* Center the title */
+    flex: 1; /* Let the title fill the remaining space */
     
 }
 
 .dataset-modal-header button {
-    margin: 0; /* 移除默认的外边距 */
-    padding: 5px 10px; /* 添加按钮内边距 */
+    margin: 0; /* Remove default margin */
+    padding: 5px 10px; /* Add button padding */
     margin-left: auto;
-    font-size: 1rem; /* 按钮字体大小 */
-    cursor: pointer; /* 鼠标悬停时显示指针 */
-    border: 0px; /* 按钮边框 */
-    background-color: #fff; /* 按钮背景颜色 */
+    font-size: 1rem; /* Button font size */
+    cursor: pointer; /* Show pointer cursor on hover */
+    border: 0px; /* Button border */
+    background-color: #fff; /* Button background color */
 }
 .add-dataset-content {
-    border: 1px solid #ccc; /* 添加灰色边框 */
-    padding: 10px; /* 添加内边距 */
-    margin-bottom: 10px; /* 添加外边距 */
-    border-radius: 5px; /* 添加圆角边框 */
-    background-color: #f9f9f9; /* 添加背景颜色 */
+    border: 1px solid #ccc; /* Add a gray border */
+    padding: 10px; /* Add padding */
+    margin-bottom: 10px; /* Add margin */
+    border-radius: 5px; /* Add rounded border */
+    background-color: #f9f9f9; /* Add background color */
     width: 80%;
     justify-content: center;
-    display: flex; /* 使用 Flexbox 布局 */
+    display: flex; /* Use flexbox layout */
     flex-direction: column;
 }
 
 
 .add-dataset-content h3{
-     display: flex; /* 使用 Flexbox 布局 */
-    margin: 0; /* 移除默认的外边距 */
+     display: flex; /* Use flexbox layout */
+    margin: 0; /* Remove default margin */
     justify-content: center;
 }
 .add-dataset-div{
-    display: flex; /* 使用 Flexbox 布局 */
+    display: flex; /* Use flexbox layout */
     flex-direction: row;
     gap: 10px;
     
@@ -1438,17 +1438,17 @@ onUnmounted(() => {
     color: #333;
     outline: none;
     box-sizing: border-box;
-     border-radius: 15px; /* 添加圆角边框 */
+     border-radius: 15px; /* Add rounded border */
 }
 
 .add-dataset button {
-    margin: 0; /* 移除默认的外边距 */
-    padding: 5px 10px; /* 添加按钮内边距 */
+    margin: 0; /* Remove default margin */
+    padding: 5px 10px; /* Add button padding */
     margin-left: auto;
-    font-size: 1rem; /* 按钮字体大小 */
-    cursor: pointer; /* 鼠标悬停时显示指针 */
-    border: 0px; /* 按钮边框 */
-    background-color: #f9f9f9; /* 添加背景颜色 */
+    font-size: 1rem; /* Button font size */
+    cursor: pointer; /* Show pointer cursor on hover */
+    border: 0px; /* Button border */
+    background-color: #f9f9f9; /* Add background color */
 }
 
 .dataset-list {
@@ -1466,12 +1466,12 @@ onUnmounted(() => {
   border-radius: 6px;
 }
 .dataset-list button{
-    margin: 0; /* 移除默认的外边距 */
-    padding: 5px 10px; /* 添加按钮内边距 */
+    margin: 0; /* Remove default margin */
+    padding: 5px 10px; /* Add button padding */
     margin-left: auto;
-    font-size: 1rem; /* 按钮字体大小 */
-    cursor: pointer; /* 鼠标悬停时显示指针 */
-    border: 0px; /* 按钮边框 */
-    background-color: #fff; /* 按钮背景颜色 */
+    font-size: 1rem; /* Button font size */
+    cursor: pointer; /* Show pointer cursor on hover */
+    border: 0px; /* Button border */
+    background-color: #fff; /* Button background color */
 }
 </style>

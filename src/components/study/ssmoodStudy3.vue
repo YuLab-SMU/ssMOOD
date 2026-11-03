@@ -53,13 +53,13 @@ const goToPage = (study) => {
 .navigation-container {
   position: relative;
   display: inline-block;
-  /* 让容器大小跟随图片 */
+  /* Size the container to the image */
 }
 
 .navigation-image {
   display: block;
   width: 100%;
-  /* 或者固定宽高 */
+  /* Or use a fixed width/height */
   height: auto;
 }
 
@@ -69,15 +69,15 @@ const goToPage = (study) => {
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.65);
-  /* 半透明底，防止图片干扰文字 */
+  /* Semi-transparent backdrop so the image doesn't interfere with the text */
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   white-space: nowrap;
-  /* 防止换行 */
+  /* Prevent wrapping */
 }
 
-/* 根据脑区在图上的实际位置微调 left / top */
+/* Fine-tune left / top based on the brain region's actual position in the image */
 .ba9 {
   top: 10%;
   left: 35%;
@@ -102,21 +102,21 @@ const goToPage = (study) => {
 .nav-btn {
   padding: 5px 10px;
   background-color: rgba(0, 0, 0, 0.4);
-  /* 半透明背景 */
+  /* Semi-transparent background */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-/* 鼠标悬浮时的效果 */
+/* Hover effect */
 .nav-btn:hover {
   background-color: rgba(0, 0, 0, 0.6);
-  /* 悬浮时背景颜色加深 */
+  /* Darken background on hover */
   transform: scale(1.1);
-  /* 放大按钮 */
+  /* Enlarge button */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  /* 添加阴影 */
+  /* Add shadow */
 }
 .button-11{
   bottom: 90px;
@@ -126,20 +126,20 @@ const goToPage = (study) => {
   position: absolute;
   padding: 5px 10px;
   background-color: rgba(0, 0, 0, 0.4);
-  /* 半透明背景 */
+  /* Semi-transparent background */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-/* 鼠标悬浮时的效果 */
+/* Hover effect */
 .navigation-button:hover {
   background-color: rgba(0, 0, 0, 0.6);
-  /* 悬浮时背景颜色加深 */
+  /* Darken background on hover */
   transform: scale(1.1);
-  /* 放大按钮 */
+  /* Enlarge button */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  /* 添加阴影 */
+  /* Add shadow */
 }
 </style>

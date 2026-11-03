@@ -1,27 +1,27 @@
 <?php
 include 'config.php';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
-    // 将数据库连接错误写入日志文件
+    // Write database connection errors to the log file
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
     exit;
 }
 
-// 获取 GET 参数
+// Get GET parameters
 $studyId = $_GET['id'] ?? '';
 $gene = $_GET['gene'] ?? '';
 
-// 检查参数是否为空
+// Check whether parameters are empty
 if (empty($studyId) || empty($gene)) {
     echo json_encode(['error' => 'Missing required parameters']);
     exit;
 }
 
-// 查询 study 表获取 datasets 字段
+// Query the study table for the datasets field
 $sql = "SELECT datasets FROM study WHERE study_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $studyId);
@@ -30,13 +30,13 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
 if ($row) {
-    // 获取 datasets 字段并按逗号分割
+    // Get the datasets field and split by comma
     $datasets = explode(",", $row['datasets']);
-    $expressionData = []; // 初始化数组
+    $expressionData = []; // Initialize array
 
-    // 遍历每个 dataset_id 并查询 sc_expression 表
+    // Iterate over each dataset_id and query the sc_expression table
     foreach ($datasets as $dataset_id) {
-        $dataset_id = trim($dataset_id); // 去除可能的空格
+        $dataset_id = trim($dataset_id); // Trim possible whitespace
         $sql = "SELECT bin_data FROM sc_expression WHERE dataset_id = ? AND gene_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ss", $dataset_id, $gene);
@@ -45,32 +45,32 @@ if ($row) {
 
         if ($result->num_rows > 0) {
             $binDataRow = $result->fetch_assoc();
-            $expressionData[] = $binDataRow['bin_data']; // 将 bin_data 添加到数组
+            $expressionData[] = $binDataRow['bin_data']; // Append bin_data to the array
         } else {
         }
     }
 
-    // 设置适当的 HTTP 头
+    // Set appropriate HTTP headers
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="expression_data.bin"');
 
-    // 清除缓冲区并关闭输出缓冲
+    // Clear the buffer and turn off output buffering
     ob_clean();
     flush();
 
-    // 输出二进制数据
+    // Output binary data
     foreach ($expressionData as $binData) {
-        echo pack("N", strlen($binData)); // 输出数据长度（4字节）
-        echo $binData; // 输出二进制数据
+        echo pack("N", strlen($binData)); // Output data length (4 bytes)
+        echo $binData; // Output binary data
         //file_put_contents($logFile, strlen($binData).'\n', FILE_APPEND);
     }
 } else {
     echo json_encode(['error' => "No datasets found for study ID: $studyId"]);
 }
 
-// 关闭语句
+// Close statement
 $stmt->close();
 
-// 关闭连接
+// Close connection
 $conn->close();
 ?>

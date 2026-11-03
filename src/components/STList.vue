@@ -12,10 +12,10 @@
                         <ssmoodStudy4 />
                     </div>
                     <h3>{{ $t('bst2-2') }}</h3>
-                    <!-- 筛选逻辑 -->
+                    <!-- Filter logic -->
                     <el-card class="filter-box" shadow="never">
                         <el-row :gutter="20" align="middle" class="filter-row">
-                            <!-- 物种 -->
+                            <!-- Species -->
                             <el-col :span="1" class="filter-label">
                                 {{ $t('bsc3') }}
                             </el-col>
@@ -28,7 +28,7 @@
                                 </el-select>
                             </el-col>
 
-                            <!-- 区域 -->
+                            <!-- Region -->
                             <el-col :span="1" class="filter-label">
                                 {{ $t('bsc4') }}
                             </el-col>
@@ -36,7 +36,7 @@
                                 <el-select v-model="filters.area" size="default" class="filter-select"
                                     placeholder="Select Area">
                                     <el-option label="All" value="all" />
-                                    <!-- Mouse / All 可见 -->
+                                    <!-- Visible for Mouse / All -->
                                     <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="I"
                                         value="I" />
                                     <el-option v-if="filters.species === 'mouse' || filters.species === 'all'"
@@ -47,7 +47,7 @@
                                         label="IV" value="IV" />
                                     <el-option v-if="filters.species === 'mouse' || filters.species === 'all'" label="V"
                                         value="V" />
-                                    <!-- Human / All 可见 -->
+                                    <!-- Visible for Human / All -->
                                     <el-option v-if="filters.species === 'human' || filters.species === 'all'"
                                         label="BA12" value="BA12" />
                                     <el-option v-if="filters.species === 'human' || filters.species === 'all'"
@@ -55,7 +55,7 @@
                                 </el-select>
                             </el-col>
 
-                            <!-- 性别 -->
+                            <!-- Sex -->
                             <el-col :span="1" class="filter-label">
                                 {{ $t('bsc5') }}
                             </el-col>
@@ -70,10 +70,10 @@
                         </el-row>
                     </el-card>
 
-                    <!-- 数据集列表 -->
+                    <!-- Dataset list -->
 
                     <el-table :data="filteredDatasets" stripe style="width: 100%;">
-                        <!-- 数据集编号（可点击跳转） -->
+                        <!-- Dataset ID (clickable link) -->
                         <el-table-column prop="dataset_id" :label="$t('bsc6.1')" width="180">
                             <template #default="{ row }">
                                 <span class="clickable" @click="goToDatasetDetails(row.dataset_id)">
@@ -101,11 +101,11 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import ssmoodStudy2 from './study/ssmoodStudy2.vue';
 import ssmoodStudy4 from './study/ssmoodStudy4.vue';
-//----------以下为一个ssmood页面需要的最基础的东西--------------
+//----------Below is the bare minimum needed for an ssmood page--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import config from '@/config';
-//----------以上为一个ssmood页面需要的最基础的东西--------------
+//----------Above is the bare minimum needed for an ssmood page--------------
 
 const datasets = ref([]);
 const filters = ref({
@@ -233,12 +233,12 @@ button:hover {
     cursor: pointer;
     text-decoration: underline;
     color: rgb(093, 116, 162);
-    /* 你可以根据需要更改颜色 */
+    /* Change the color as needed */
 }
 
 .clickable:hover {
     text-decoration: none;
     color: rgba(093, 116, 162, 0.8);
-    /* 悬浮时的颜色 */
+    /* Color on hover */
 }
 </style>

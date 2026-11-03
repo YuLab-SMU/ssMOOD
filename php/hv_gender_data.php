@@ -9,17 +9,17 @@ if ($conn->connect_error) {
 }
 
 
-// 查询 mouse 和 human 的数量
+// Query the counts for mouse and human
 $query = "SELECT species, COUNT(*) as count FROM datasets WHERE species IN ('mouse', 'human') GROUP BY species";
 $result = $conn->query($query);
 
-// 初始化结果数组
+// Initialize result array
 $resultArray = [
     'mouse' => 0,
     'human' => 0
 ];
 
-// 获取查询结果
+// Get query results
 if ($result) {
     while ($row = $result->fetch_assoc()) {
         $resultArray[$row['species']] = $row['count'];
@@ -27,7 +27,7 @@ if ($result) {
     $result->free();
 }
 
-// 关闭数据库连接
+// Close database connection
 $conn->close();
 
 echo json_encode($resultArray);

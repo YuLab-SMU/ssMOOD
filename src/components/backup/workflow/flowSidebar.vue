@@ -21,15 +21,15 @@ aside {
   font-weight: 700;
   border-right: 1px solid #eee;
   padding: 15px 10px;
-  font-size: 14px; /* 增加字体大小 */
+  font-size: 14px; /* Larger font size */
   background-color: #f9f9f9;
   -webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.3);
   box-shadow: 0 5px 10px #0000004d;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 设置子元素之间的间隙 */
-  border-radius: 8px; /* 添加圆角 */
-  overflow: hidden; /* 隐藏超出部分 */
+  gap: 10px; /* Gap between child elements */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Hide overflow */
 }
 
 aside .nodes {
@@ -42,28 +42,28 @@ aside .nodes {
 aside .nodes>* {
   cursor: grab;
   font-weight: 500;
-  background: white; /* 添加半透明背景 */
-  border: 1px solid #ffffff26; /* 添加边框 */
-  padding: 10px 15px; /* 增加内边距 */
-  border-radius: 5px; /* 添加圆角 */
-  transition: transform 0.3s ease-in-out; /* 添加过渡效果 */
+  background: white; /* Semi-transparent background */
+  border: 1px solid #ffffff26; /* Add border */
+  padding: 10px 15px; /* More padding */
+  border-radius: 5px; /* Rounded corners */
+  transition: transform 0.3s ease-in-out; /* Add transition effect */
 }
 
 aside .nodes>*:hover {
-  transform: translateY(-5px); /* 鼠标悬停时上移 */
+  transform: translateY(-5px); /* Lift up on hover */
 }
 .vue-flow__node-start-node{
     color: #42b983; 
 }
 .vue-flow__node-dataset-select {
-  color: #42b983; /* 设置特定元素的文本颜色 */
+  color: #42b983; /* Set the text color of a specific element */
 }
 
 .vue-flow__node-webr-node {
-  color: #35495e; /* 设置另一个元素的文本颜色 */
+  color: #35495e; /* Set the text color of another element */
 }
 
 .vue-flow__node-delay-node {
-  color: #f44336; /* 设置另一个元素的文本颜色 */
+  color: #f44336; /* Set the text color of another element */
 }
 </style>

@@ -38,7 +38,7 @@ export
 default {
     name: 'WebRWindows',
       components: {
-    // 在 components 对象中注册 TerminalDisplay 组件
+    // Register the TerminalDisplay component in the components object
     TerminalDisplay
   },
     data() {
@@ -74,7 +74,7 @@ default {
         }
     },
     async mounted() {
-        // 创建WebR实例
+        // Create the WebR instance
         this.newwebR = new WebR();
         await this.runCodeWithRetries();
         console.log('Code updated:1');
@@ -165,7 +165,7 @@ dev.off()`);
 </script>
 <style scoped>
 .webr-modal-overlay {
-    position: fixed; /* 确保覆盖整个视口 */
+    position: fixed; /* Ensure it covers the entire viewport */
     top: 0;
     left: 0;
     width: 100%;
@@ -177,8 +177,8 @@ dev.off()`);
 }
 
 .webr-modal {
-    width: 100%; /* 占据整个宽度 */
-    height: 100%; /* 占据整个高度 */
+    width: 100%; /* Take up the full width */
+    height: 100%; /* Take up the full height */
     background-color: white;
     padding: 20px;
     border-radius: 5px;
@@ -187,20 +187,20 @@ dev.off()`);
 }
 
 .webr-modal-limited {
-    width: 100%; /* 占据整个宽度 */
-    height: 100%; /* 减去 header 的高度 */
+    width: 100%; /* Take up the full width */
+    height: 100%; /* Subtract the header height */
     overflow: auto;
 }
 .webr-modal-header {
-    display: flex; /* 使用 flex 布局 */
-    justify-content: space-between; /* 子元素两端对齐 */
-    align-items: center; /* 子元素垂直居中 */
-    padding: 1em; /* 添加一些内边距以便更好的视觉效果 */
-    background-color: white; /* 确保背景颜色 */
-    color: black; /* 确保文本颜色 */
+    display: flex; /* Use flex layout */
+    justify-content: space-between; /* Justify children to both ends */
+    align-items: center; /* Center children vertically */
+    padding: 1em; /* Add some padding for better visuals */
+    background-color: white; /* Ensure background color */
+    color: black; /* Ensure text color */
     z-index: 1002;
     height: 60px; 
-    padding: 120px 60px 0 20px;/*内边距padding: top right bottom left;*/
+    padding: 120px 60px 0 20px;/*padding: top right bottom left;*/
 }
 
 .webr-modal-header h2 {
@@ -214,20 +214,20 @@ dev.off()`);
     font-size: 1.2em;
     transition: background-color 0.2s, transform 0.2s;
     border: none;
-    border-radius: 50%; /* 圆形按钮 */
-    width: 40px; /* 固定宽度 */
-    height: 40px; /* 固定高度 */
+    border-radius: 50%; /* Circular button */
+    width: 40px; /* Fixed width */
+    height: 40px; /* Fixed height */
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影 */
-    cursor: pointer; /* 鼠标悬停时显示手型指针 */
-    display: flex; /* 使按钮居中 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    cursor: pointer; /* Show hand cursor on hover */
+    display: flex; /* Center the button */
 }
 
 .webr-modal-close:hover {
     background-color: rgba(93, 116, 162, 0.7);
-    transform: scale(1.1); /* 鼠标悬停时放大 */
+    transform: scale(1.1); /* Enlarge on hover */
 }
 
 .webr-modal-close::before {
@@ -239,11 +239,11 @@ dev.off()`);
 .webr-modal-body {
     padding-top: 120px;
     display: flex;
-    /* 确保是flex布局 */
+    /* Ensure flex layout */
     flex-direction: row;
-    /* 水平排列 */
+    /* Horizontal layout */
     align-items: center;
-    /* 垂直居中对齐 */
+    /* Center vertically */
 }
 .modal-enter-active, .modal-leave-active {
     transition: opacity 0.5s;
@@ -253,26 +253,26 @@ dev.off()`);
 }
 .Rcontainer {
   display: flex;
-  flex-direction: column; /* 子元素垂直排列 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
+  flex-direction: column; /* Stack child elements vertically */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
 }
 
 .Rrow {
   display: flex;
   gap: 20px; 
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
-  width: 100%; /* 行宽度为容器宽度 */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%; /* Row width equals container width */
 }
 
 .Rrow .text {
-  max-width: 800px; /* 限制文字宽度 */
-  word-wrap: break-word; /* 自动换行 */
+  max-width: 800px; /* Limit text width */
+  word-wrap: break-word; /* Wrap text automatically */
 }
 
 .Rrow .image {
-  margin-right: 20px; /* 图片与文字之间的间距 */
+  margin-right: 20px; /* Spacing between image and text */
 }
         
 .execute-button {
@@ -284,13 +284,13 @@ dev.off()`);
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    /* 鼠标悬停时显示手型指针 */
+    /* Show hand cursor on hover */
     outline: none;
-    /* 移除焦点时的轮廓 */
+    /* Remove outline on focus */
 }
 .execute-button:hover {
     background-color: rgba(093, 116, 162, 0.8);
-    /* 鼠标悬停时的背景颜色 */
+    /* Background color on hover */
 }
 .ace_editor {
     border: 1px solid #ccc;
@@ -298,6 +298,6 @@ dev.off()`);
 }
 #plot-canvas {
     border: 2px solid rgb(093, 116, 162);
-    border-radius: 10px; /* 设置边框圆角的半径 */
+    border-radius: 10px; /* Set the border radius */
 }
 </style>

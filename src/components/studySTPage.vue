@@ -5,7 +5,7 @@
       <section class="page-section">
         <div class="main-container">
           <!--##################################################-->
-          <!--详细信息容器-->
+          <!--Details container-->
           <div class="information-container">
             <div class="title-bar">
               <div class="title-bar-header">
@@ -58,7 +58,7 @@
           </div>
 
           <!--##################################################-->
-          <!--细胞分类容器-->
+          <!--Cell type container-->
           <div class="information-container">
             <div class="title-bar">
               <div class="title-bar-header">
@@ -79,9 +79,9 @@
                     </template>
                   </el-input>
                 </div>
-                <!-- coord_chart的容器 -->
+                <!-- coord_chart container -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
-                  <!-- 加载图 -->
+                  <!-- Loading image -->
                   <ChartLoading v-if="coord_chartLoading" />
                   <div id="coord_chart"
                     :style="{ width: '100%', aspectRatio: '1 / 1', visibility: coord_chartLoading ? 'hidden' : 'visible' }">
@@ -101,7 +101,7 @@
                       </el-button>
                     </template>
                   </el-input>
-                  <!--虚拟下拉列表-->
+                  <!--Virtual dropdown list-->
                   <div v-show="showScroller" class="scroller-wrapper" ref="scrollContainer">
                     <VirtualList :data-key="'id'" :data-sources="filteredGenes" :keeps="100" :estimate-size="50"
                       :data-component="VirtualListItem" style="height: 400px; overflow-y: auto" class="scroller">
@@ -113,12 +113,12 @@
                       controls-position="" @change="updateUmap2" />
                   </div>
                 </div>
-                <!-- 空间基因表达量图的容器 -->
+                <!-- Spatial gene expression plot container -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
-                  <!-- 加载图 -->
+                  <!-- Loading image -->
                   <ChartLoading v-if="coord_chartGeneLoading" />
 
-                  <!-- Plotly 图表容器 -->
+                  <!-- Plotly chart container -->
                   <div id="coord_chart_gene"
                     :style="{ width: '100%', aspectRatio: '1 / 1', visibility: coord_chartGeneLoading ? 'hidden' : 'visible' }">
                   </div>
@@ -126,7 +126,7 @@
               </div>
             </div>
             <div class="information-second">
-              <!-- 🔔自定义图例，官方图例会影响图的比例 -->
+              <!-- 🔔Custom legend; the built-in legend distorts the plot's aspect ratio -->
               <div class="legend-wrapper">
                 <el-checkbox v-model="checkAllFlag" :indeterminate="isIndeterminate" @change="toggleAll"
                   class="select-all">
@@ -147,13 +147,13 @@
               <div id="myClusterChart" style="width: auto; height: 100%;"></div>
             </div>
             <!-- ################################ -->
-            <!-- 第二列 -->
+            <!-- Second column -->
             <div class="information-second">
               <div id="expressionHeatmap" style="width: auto; height: 100%;"></div>
             </div>
           </div>
           <!--##################################################-->
-          <!--差异表达分析容器-->
+          <!--Differential expression analysis container-->
           <div class="information-container">
             <div class="title-bar">
               <div class="title-bar-header">
@@ -179,12 +179,12 @@
                         <el-option v-for="type in cellTypes" :key="type" :label="type" :value="type" />
                       </el-select>
                     </div>
-                    <!-- 标签 -->
+                    <!-- Labels -->
                     <label style="white-space: nowrap; font-weight: 600;">
                       {{ $t('scd29') }}
                     </label>
                     <div class="log2fc" style="display: flex; align-items: center; gap: 12px;">
-                      <!-- 滑动条 -->
+                      <!-- Slider -->
                       <el-slider v-model="log2fc" :min="0" :max="10" :step="0.1" :format-tooltip="val => val.toFixed(1)"
                         show-tooltip tooltip-class="always-show-tooltip custom-tooltip" style="flex: 1;" />
 
@@ -201,7 +201,7 @@
 
                     <div class="adjusted-pvalue">
                       <label>{{ $t('scd30') }}</label>
-                      <!-- 对数刻度滑动条 -->
+                      <!-- Log-scale slider -->
                       <el-slider v-model="pValueSliderIndex" :aria-hidden="null" :min="0" :max="7" :marks="pValueMarks"
                         :step="1" :show-tooltip="false" class="mt-4" />
 
@@ -227,7 +227,7 @@
 
                   <div class="de-analysis  modern-ui">
                     <el-input v-model="filterDEGGenes" :placeholder="$t('scd31')" clearable size="default" />
-                    <!-- 表格 -->
+                    <!-- Table -->
                     <div class="table-container">
                       <el-table :data="paginatedData" v-loading="loadingDEG" @sort-change="handleSortChange"
                         style="width: 100%;" :default-sort="{ prop: sortProp, order: sortOrder }">
@@ -272,7 +272,7 @@
                         </el-table-column>
                       </el-table>
                       <div class="pagination">
-                        <!-- 翻页 -->
+                        <!-- Pagination -->
                         <div class="left-section">
                           <el-pagination layout="prev, pager, next" :current-page="currentPage" :page-size="pageSize"
                             :total="filteredData.length" @current-change="handlePageChange" size="small" background
@@ -289,9 +289,9 @@
 
 
               <!--##################################################-->
-              <!--KEGG分析-->
+              <!--KEGG analysis-->
               <el-card class="kegg-card" shadow="never">
-                <!-- 折叠面板头 -->
+                <!-- Collapse panel header -->
                 <el-collapse v-model="isenrichmentExpanded1" @change="getKEGG" accordion>
                   <el-collapse-item :title="$t('scd42')" name="1">
                     <el-text type="info">{{ $t('scd42-help') }}</el-text>
@@ -322,7 +322,7 @@
                       </el-table-column>
                     </el-table>
 
-                    <!-- 分页 -->
+                    <!-- Pagination -->
                     <div class="pagination"
                       style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
                       <el-pagination background layout="prev, pager, next" :current-page="KEGGcurrentPage"
@@ -335,7 +335,7 @@
                   </el-collapse-item>
                 </el-collapse>
 
-                <!-- 模态框 -->
+                <!-- Modal -->
                 <el-dialog v-model="isKeggModalOpen" width="50%" :title="$t('scd48')">
                   <el-table :data="selectedKeggGene" style="width: 100%" size="default">
                     <el-table-column :label="$t('scd50')">
@@ -359,9 +359,9 @@
               </el-card>
 
               <!--##################################################-->
-              <!--GO_BP分析-->
+              <!--GO_BP analysis-->
               <el-card class="gobp-card" shadow="never">
-                <!-- 折叠面板头 -->
+                <!-- Collapse panel header -->
                 <el-collapse v-model="isenrichmentExpanded2" @change="getGO_BP" accordion>
                   <el-collapse-item :title="$t('scd52')" name="1">
                     <el-text type="info">{{ $t('scd42-help') }}</el-text>
@@ -392,7 +392,7 @@
                       </el-table-column>
                     </el-table>
 
-                    <!-- 分页 -->
+                    <!-- Pagination -->
                     <div class="pagination"
                       style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
                       <el-pagination background layout="prev, pager, next" :current-page="GOBPcurrentPage"
@@ -405,7 +405,7 @@
                   </el-collapse-item>
                 </el-collapse>
 
-                <!-- 模态框 -->
+                <!-- Modal -->
                 <el-dialog v-model="isGOBPModalOpen" width="50%" :title="$t('scd48')">
                   <el-table :data="selectedGOBPGene" style="width: 100%" size="default">
                     <el-table-column :label="$t('scd50')">
@@ -428,9 +428,9 @@
                 </el-dialog>
               </el-card>
               <!--##################################################-->
-              <!--GO_MF分析-->
+              <!--GO_MF analysis-->
               <el-card class="gomf-card" shadow="never">
-                <!-- 折叠面板头 -->
+                <!-- Collapse panel header -->
                 <el-collapse v-model="isenrichmentExpanded3" @change="getGO_MF" accordion>
                   <el-collapse-item :title="$t('scd54')" name="1">
                     <el-text type="info">{{ $t('scd42-help') }}</el-text>
@@ -461,7 +461,7 @@
                       </el-table-column>
                     </el-table>
 
-                    <!-- 分页 -->
+                    <!-- Pagination -->
                     <div class="pagination"
                       style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
                       <el-pagination background layout="prev, pager, next" :current-page="GOMFcurrentPage"
@@ -474,7 +474,7 @@
                   </el-collapse-item>
                 </el-collapse>
 
-                <!-- 模态框 -->
+                <!-- Modal -->
                 <el-dialog v-model="isGOMFModalOpen" width="50%" :title="$t('scd48')">
                   <el-table :data="selectedGOMFGene" style="width: 100%" size="default">
                     <el-table-column :label="$t('scd50')">
@@ -497,9 +497,9 @@
                 </el-dialog>
               </el-card>
               <!--##################################################-->
-              <!--GO_CC分析-->
+              <!--GO_CC analysis-->
               <el-card class="gocc-card" shadow="never">
-                <!-- 折叠面板头 -->
+                <!-- Collapse panel header -->
                 <el-collapse v-model="isenrichmentExpanded4" @change="getGO_CC" accordion>
                   <el-collapse-item :title="$t('scd55')" name="1">
                     <el-text type="info">{{ $t('scd42-help') }}</el-text>
@@ -530,7 +530,7 @@
                       </el-table-column>
                     </el-table>
 
-                    <!-- 分页 -->
+                    <!-- Pagination -->
                     <div class="pagination"
                       style="margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
                       <el-pagination background layout="prev, pager, next" :current-page="GOCCcurrentPage"
@@ -543,7 +543,7 @@
                   </el-collapse-item>
                 </el-collapse>
 
-                <!-- 模态框 -->
+                <!-- Modal -->
                 <el-dialog v-model="isGOCCModalOpen" width="50%" :title="$t('scd48')">
                   <el-table :data="selectedGOCCGene" style="width: 100%" size="default">
                     <el-table-column :label="$t('scd50')">
@@ -586,18 +586,18 @@ import { ref, onMounted, computed, watch, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 //import debounce from 'lodash.debounce';
 import { QuestionFilled } from '@element-plus/icons-vue'
-//----------以下为一个ssmood页面需要的最基础的东西--------------
+//----------Below is the bare minimum needed for an ssmood page--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import ChartLoading from './general/ChartLoading.vue';
 import config from '@/config';
-//----------以上为一个ssmood页面需要的最基础的东西--------------
+//----------Above is the bare minimum needed for an ssmood page--------------
 import colorMap from './color_map.js';
 const route = useRoute();
 const router = useRouter();
 
 //------------------------------------------------------
-//加载数据集详细信息
+//Load dataset details
 //------------------------------------------------------
 const dataset = ref({
   dataset_id: '',
@@ -627,7 +627,7 @@ function goToDataset(id) {
 const datasetList = ref([])
 onMounted(() => {
   const params = new URLSearchParams({
-    id: route.params.study // 使用 route.params 获取路由参数
+    id: route.params.study // Get route params via route.params
   });
 
   fetch(`${config.apiUrl}study_getDatasetDetail.php?${params}`)
@@ -635,16 +635,16 @@ onMounted(() => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json(); // 直接解析为 JSON，而不是 text
+      return response.json(); // Parse directly as JSON instead of text
     })
     .then(dataArray => {
       if (dataArray && dataArray.length > 0 && dataArray[0].information) {
         const parsedData = JSON.parse(dataArray[0].information);
-        dataset.value = { ...dataArray[0], information: parsedData }; // 使用 ref 的 value 更新数据
+        dataset.value = { ...dataArray[0], information: parsedData }; // Update data through the ref's value
         datasetList.value = dataset.value.datasets.split(',');
       }
 
-      //console.log(dataset.value); // 打印更新后的 dataset
+      //console.log(dataset.value); // Log the updated dataset
     })
     .catch(error => {
       console.error('Error fetching dataset details:', error);
@@ -652,7 +652,7 @@ onMounted(() => {
 });
 
 //------------------------------------------------------
-//加载空间位置图
+//Load spatial coordinate plot
 //------------------------------------------------------
 const coordinate_data = ref([]);
 const markerSize1 = ref(2);
@@ -666,7 +666,7 @@ const coord_chartLoading = ref(true)
 const isSyncingZoom = ref(false)
 const isSelectZoom = ref(false)
 
-// 全选/全不选
+// Select all / deselect all
 const toggleAll = () => {
   if (checkAllFlag.value) {
     visibleLabels.value = [...global_clusterLabels.value]
@@ -675,12 +675,12 @@ const toggleAll = () => {
   }
 }
 
-// 单个复选框变动时
+// When a single checkbox changes
 const onCheckboxChange = () => {
-  // 如果是自动选择操作，不更新图表
+  // Don't update the chart if the selection was automatic
   if (isSelectZoom.value) return;
 
-  // 手动选择时，左侧图复原到初始状态
+  // On manual selection, reset the left plot to its initial state
   nextTick(() => {
     Plotly.relayout('coord_chart', {
       'xaxis.autorange': true,
@@ -688,12 +688,12 @@ const onCheckboxChange = () => {
     });
   });
 
-  // 这里只处理图更新，选中状态由 watch 管
+  // Only handle plot updates here; selection state is managed by the watcher
   updatePlot()
   updateGenePlot()
 }
 
-// 根据缩放范围自动勾选/取消勾选细胞类型
+// Auto check/uncheck cell types based on the zoom range
 const selectVisibleCellTypes = (xRange, yRange) => {
   if (!xRange || !yRange || !coordinate_data.value || Object.keys(coordinate_data.value).length === 0) return;
   isSelectZoom.value = true;
@@ -723,22 +723,22 @@ const selectVisibleCellTypes = (xRange, yRange) => {
     });
   });
 
-  // 更新可见的细胞类型 - 使用 nextTick 确保 DOM 更新完成
+  // Update visible cell types - use nextTick to ensure the DOM has updated
   if (visibleTypes.size > 0) {
     nextTick(() => {
       visibleLabels.value = Array.from(visibleTypes);
-      // 在 DOM 更新后重置标志位
+      // Reset the flag after the DOM updates
       setTimeout(() => {
         isSelectZoom.value = false;
       }, 50);
     });
   } else {
-    // 如果没有找到可见类型，立即重置标志位
+    // If no visible types were found, reset the flag immediately
     isSelectZoom.value = false;
   }
 };
 
-// 自动追踪 visibleLabels 的变化，更新全选与半选中状态
+// Track changes to visibleLabels and update the select-all and indeterminate states
 watch(visibleLabels, (val) => {
   const total = global_clusterLabels.value.length
   const checkedCount = val.length
@@ -746,7 +746,7 @@ watch(visibleLabels, (val) => {
   checkAllFlag.value = checkedCount === total
   isIndeterminate.value = checkedCount > 0 && checkedCount < total
 
-  // 只有在非缩放选择的情况下才更新图表
+  // Only update the chart when the selection was not triggered by zooming
   if (!isSelectZoom.value) {
     updatePlot()
     updateGenePlot()
@@ -808,7 +808,7 @@ const updateGenePlot = () => {
 
   Plotly.react('coord_chart_gene', traces, genelayout);
 
-  // 确保在react后重新添加事件监听
+  // Make sure the event listener is re-attached after react
   nextTick(() => {
     const rightPlot = document.getElementById('coord_chart_gene');
     if (rightPlot) {
@@ -816,7 +816,7 @@ const updateGenePlot = () => {
         if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
           isSyncingZoom.value = true;
 
-          // 根据缩放范围自动勾选/取消勾选细胞类型
+          // Auto check/uncheck cell types based on the zoom range
           const xRange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
           const yRange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
           selectVisibleCellTypes(xRange, yRange);
@@ -832,7 +832,7 @@ const updateGenePlot = () => {
       });
 
       rightPlot.on('plotly_doubleclick', function() {
-        // 重置为全选状态
+        // Reset to all selected
         visibleLabels.value = [...global_clusterLabels.value];
 
         Plotly.relayout('coord_chart', {
@@ -864,7 +864,7 @@ const updatePlot = () => {
     const gridX = index % cols;
     const gridY = Math.floor(index / cols);
     const offsetX = gridX * OFFSET_STEP;
-    const offsetY = (rows - 1 - gridY) * OFFSET_STEP; // 反转 Y
+    const offsetY = (rows - 1 - gridY) * OFFSET_STEP; // Flip Y
 
     for (const label of global_clusterLabels.value) {
       const show = visibleLabels.value.includes(label);
@@ -914,7 +914,7 @@ const updatePlot = () => {
 
 
 onMounted(async () => {
-  await nextTick(); // 确保 DOM 渲染完成
+  await nextTick(); // Ensure the DOM has finished rendering
   coord_chartLoading.value = true;
 
   const params = new URLSearchParams({
@@ -929,12 +929,12 @@ onMounted(async () => {
   const jsonString = new TextDecoder("utf-8").decode(decompressed);
   const data = JSON.parse(jsonString);
 
-  // 存储解压后的数据
+  // Store the decompressed data
   coordinate_data.value = data.coordinate_data;
 
   const clusterLabels = data.cluster_labels;
 
-  // 排序 clusterLabels（含数字优先排序）
+  // Sort clusterLabels (numeric labels first)
   clusterLabels.sort((a, b) => {
     const partsA = a.match(/\d+/);
     const partsB = b.match(/\d+/);
@@ -952,7 +952,7 @@ onMounted(async () => {
   global_clusterLabels.value = clusterLabels;
   visibleLabels.value = [...clusterLabels];
 
-  // 构建颜色映射
+  // Build the color map
   colors.value = clusterLabels.reduce((acc, label) => {
     acc[label] = colorMap[label] || "rgb(128,128,128)";
     return acc;
@@ -961,15 +961,15 @@ onMounted(async () => {
   await nextTick();
 
 
-  // ========= 多数据集合并为一张图，并使用网格偏移 =========
+  // ========= Merge multiple datasets into one plot using grid offsets =========
 
-  const OFFSET_STEP = 22000; // 每个网格单元的宽/高，依据原始数据大小可调
+  const OFFSET_STEP = 22000; // Width/height of each grid cell; tune based on the raw data size
   const traces = [];
 
   const datasetIds = Object.keys(coordinate_data.value);
   const totalDatasets = datasetIds.length;
 
-  // 动态计算网格行列数
+  // Dynamically compute grid rows and columns
   const cols = Math.ceil(Math.sqrt(totalDatasets));
   const rows = Math.ceil(totalDatasets / cols);
 
@@ -986,7 +986,7 @@ onMounted(async () => {
     const gridX = index % cols;
     const gridY = Math.floor(index / cols);
     const offsetX = gridX * OFFSET_STEP;
-    const offsetY = (rows - 1 - gridY) * OFFSET_STEP; // 反转 Y
+    const offsetY = (rows - 1 - gridY) * OFFSET_STEP; // Flip Y
 
     for (const label of clusterLabels) {
       const x = [];
@@ -1008,7 +1008,7 @@ onMounted(async () => {
           mode: "markers",
           type: "scattergl",
           name: label,
-          legendgroup: datasetId, // legend 分组
+          legendgroup: datasetId, // legend group
           text,
           marker: {
             size: markerSize1.value,
@@ -1025,13 +1025,13 @@ onMounted(async () => {
     showlegend: false,
     xaxis: {
       title: "coords_X",
-      zeroline: false,       // 不显示零线
+      zeroline: false,       // Hide the zero line
       showline: false,
     },
     yaxis: {
       title: "coords_Y",
       scaleanchor: "x",
-      zeroline: false,       // 不显示零线
+      zeroline: false,       // Hide the zero line
       showline: false,
     },
     paper_bgcolor: "rgba(0,0,0,0)",
@@ -1041,12 +1041,12 @@ onMounted(async () => {
 
   Plotly.newPlot('coord_chart', traces, layout);
 
-  // 添加缩放事件监听，让左边图的缩放同步到右边图
+  // Listen for zoom events to sync the left plot's zoom to the right plot
   document.getElementById('coord_chart').on('plotly_relayout', function(eventdata) {
     if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
       isSyncingZoom.value = true;
 
-      // 根据缩放范围自动勾选/取消勾选细胞类型
+      // Auto check/uncheck cell types based on the zoom range
       const xRange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
       const yRange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
       selectVisibleCellTypes(xRange, yRange);
@@ -1063,9 +1063,9 @@ onMounted(async () => {
     }
   });
 
-  // 添加双击复原事件监听，让左边图的双击同步到右边图
+  // Add a double-click reset listener so double-clicking the left plot syncs to the right plot
   document.getElementById('coord_chart').on('plotly_doubleclick', function() {
-    // 重置为全选状态
+    // Reset to all selected
     visibleLabels.value = [...global_clusterLabels.value];
 
     if (isSearchgene.value === true) {
@@ -1086,21 +1086,21 @@ const updateUmap1 = () => {
 
 
 //------------------------------------------------------
-//分类表
+//Cell type table
 //------------------------------------------------------
 onMounted(async () => {
   const params = new URLSearchParams({
     id: route.params.study
   });
-  // 绘制各数据集分布
+  // Plot the distribution across datasets
   fetch(config.apiUrl + `sst_getNumberOfCluster.php?${params}`)
     .then(response => response.json())
     .then(dataFromPhp => {
-      // 提取标签和细胞数量
+      // Extract labels and cell counts
       const labels = Object.keys(dataFromPhp);
       const cellCounts = Object.values(dataFromPhp);
 
-      // 创建条形图数据
+      // Build bar chart data
       const trace = {
         x: labels,
         y: cellCounts,
@@ -1114,14 +1114,14 @@ onMounted(async () => {
         }
       };
 
-      // 创建布局
+      // Build the layout
       const layout = {
         title: 'Cell Counts per Cluster',
         xaxis: {
           title: '',
-          tickangle: 45, // 将标签旋转45度
-          tickmode: 'linear', // 确保标签均匀分布
-          tickfont: { size: 7 } // 调整字体大小
+          tickangle: 45, // Rotate labels 45 degrees
+          tickmode: 'linear', // Keep labels evenly spaced
+          tickfont: { size: 7 } // Adjust font size
         },
         yaxis: {
           title: '',
@@ -1130,14 +1130,14 @@ onMounted(async () => {
         }
       };
 
-      // 绘制图表
+      // Draw the chart
       Plotly.newPlot('myClusterChart', [trace], layout);
     })
     .catch(error => console.error('Error fetching data from scd_getNumberOfCluster.php:', error));
 });
 
 //------------------------------------------------------
-//基因搜索框
+//Gene search box
 //------------------------------------------------------
 
 
@@ -1145,7 +1145,7 @@ const genes = ref([]);
 //const filteredGenes = ref([]);
 const searchQuery = ref('');
 const showScroller = ref(false);
-const markerSize2 = ref(2); // 默认点大小
+const markerSize2 = ref(2); // Default point size
 
 
 const filteredGenes = computed(() => {
@@ -1159,7 +1159,7 @@ const filteredGenes = computed(() => {
 });
 
 
-//加载基因
+//Load genes
 onMounted(async () => {
   const params = new URLSearchParams({
     id: route.params.study
@@ -1176,7 +1176,7 @@ onMounted(async () => {
       throw new Error('Invalid data structure received');
     }
     genes.value = data.genes.map((gene, index) => ({
-      id: index, // 使用数组索引作为 id
+      id: index, // Use the array index as the id
       content: gene
     }));
 
@@ -1187,8 +1187,8 @@ onMounted(async () => {
 
 
 //-------------------------------------------------------------
-//选中选项后的事件
-//⚠️vue3-virtual-scroll-list组件自带的有问题，这里使用全局事件总线
+//Handler after an option is selected
+//⚠️The vue3-virtual-scroll-list component's built-in handling is buggy, so a global event bus is used here
 //-------------------------------------------------------------
 import { inject } from 'vue';
 const eventBus = inject('eventBus')
@@ -1206,10 +1206,10 @@ const handleSelectItem = (item) => {
   showScroller.value = false;
 };
 
-// 处理失去焦点时的方法
+// Handle blur (focus lost)
 const handleBlur = () => {
   setTimeout(() => {
-    if (!document.activeElement.closest('.scroller')) { // 滚动容器类名 'scroller'
+    if (!document.activeElement.closest('.scroller')) { // Scroll container class name 'scroller'
       showScroller.value = false;
     }
   }, 100);
@@ -1217,14 +1217,14 @@ const handleBlur = () => {
 
 
 //-------------------------------------------------------------
-//颜色
+//Colors
 //-------------------------------------------------------------
 const maxNc = ref(0)
 
 const getColor = (value) => {
   if (value === 0) return 'rgba(222, 222, 222,0.7)';
   const t = Math.min(value / maxNc.value, 1);
-  const h = 0;                    // 红色
+  const h = 0;                    // Red
   const s = 60 + 40 * t;          // 60% → 100%
   const l = 80 - 35 * t;          // 80% → 45%
   return `hsl(${h}, ${s}%, ${l}%)`;
@@ -1255,7 +1255,7 @@ const searchgene = async () => {
         const arrayBuffer = await response.arrayBuffer();
         const dataView = new DataView(arrayBuffer);
         let offset = 0;
-        // 计算网格偏移
+        // Compute grid offset
         datasetIds = Object.keys(coordinate_data.value);
         const totalDatasets = datasetIds.length;
         cols = Math.ceil(Math.sqrt(totalDatasets));
@@ -1263,25 +1263,25 @@ const searchgene = async () => {
 
         let dataset_index = 0;
         while (offset < arrayBuffer.byteLength) {
-          // 读取数据块长度（4字节无符号整数）
+          // Read chunk length (4-byte unsigned integer)
           const length = dataView.getUint32(offset, false);
-          offset += 4; // 移动到数据块内容
+          offset += 4; // Move to chunk content
 
-          // 读取数据块内容
+          // Read chunk content
           const binData = new Uint8Array(arrayBuffer, offset, length);
-          offset += length; // 移动到下一个数据块
+          offset += length; // Move to the next chunk
 
-          // 解压数据块
+          // Decompress the chunk
           const decompressed = pako.ungzip(binData);
 
-          // 解码为字符串
+          // Decode to string
           const text = new TextDecoder('utf-8').decode(decompressed);
           const jsonData = JSON.parse(text);
           const datasetId = datasetIds[dataset_index];
           dataset_index++;
 
           jsonData.forEach(item => {
-            const fullId = `${datasetId}_${item.i}`; // 加前缀
+            const fullId = `${datasetId}_${item.i}`; // Add prefix
             expressionData.push({
               i: fullId,
               nc: item.nc
@@ -1291,10 +1291,10 @@ const searchgene = async () => {
         }
       } catch (error) {
         console.error('Error fetching or parsing data:', error);
-        // 如果发生任何错误，jsonData保持为默认的空数组
+        // On any error, jsonData stays as the default empty array
       }
 
-      // 构造表达量索引
+      // Build the expression index
       const ncMap = expressionData.reduce((acc, item) => {
         acc[item.i] = parseFloat(item.nc) || 0;
         return acc;
@@ -1302,7 +1302,7 @@ const searchgene = async () => {
 
       isSearchgene.value = true;
 
-      // 每个数据集合并表达数据
+      // Merge expression data for each dataset
       for (const datasetId in coordinate_data.value) {
         coordinate_data.value[datasetId] = coordinate_data.value[datasetId].map(item => ({
           ...item,
@@ -1314,7 +1314,7 @@ const searchgene = async () => {
 
 
 
-      // 所有轨迹
+      // All traces
       const traces = [];
 
       for (let i = 0; i < datasetIds.length; i++) {
@@ -1355,13 +1355,13 @@ const searchgene = async () => {
         title: '',
         xaxis: {
           title: 'coords_X',
-          zeroline: false,       // 不显示零线
+          zeroline: false,       // Hide the zero line
           showline: false,
         },
         yaxis: {
           title: 'coords_Y',
           scaleanchor: 'x',
-          zeroline: false,       // 不显示零线
+          zeroline: false,       // Hide the zero line
           showline: false,
         },
         paper_bgcolor: 'rgba(0,0,0,0)',
@@ -1369,7 +1369,7 @@ const searchgene = async () => {
         margin: { l: 40, r: 40, b: 60, t: 50 },
       });
 
-      // 搜索新基因后，左侧图复原到初始状态，同时勾选框恢复全选
+      // After searching a new gene, reset the left plot to its initial state and re-select all checkboxes
       nextTick(() => {
         Plotly.relayout('coord_chart', {
           'xaxis.autorange': true,
@@ -1378,12 +1378,12 @@ const searchgene = async () => {
         visibleLabels.value = [...global_clusterLabels.value];
       });
 
-      // 添加缩放事件监听，让右边图的缩放同步到左边图
+      // Listen for zoom events to sync the right plot's zoom to the left plot
       document.getElementById('coord_chart_gene').on('plotly_relayout', function(eventdata) {
         if (eventdata && eventdata['xaxis.range[0]'] !== undefined && !isSyncingZoom.value) {
           isSyncingZoom.value = true;
 
-          // 根据缩放范围自动勾选/取消勾选细胞类型
+          // Auto check/uncheck cell types based on the zoom range
           const xRange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
           const yRange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
           selectVisibleCellTypes(xRange, yRange);
@@ -1398,9 +1398,9 @@ const searchgene = async () => {
         }
       });
 
-      // 添加双击复原事件监听，让右边图的双击同步到左边图
+      // Add a double-click reset listener so double-clicking the right plot syncs to the left plot
       document.getElementById('coord_chart_gene').on('plotly_doubleclick', function() {
-        // 重置为全选状态
+        // Reset to all selected
         visibleLabels.value = [...global_clusterLabels.value];
 
         Plotly.relayout('coord_chart', {
@@ -1409,7 +1409,7 @@ const searchgene = async () => {
         });
       });
 
-      // === 热图仍基于合并数据 ===
+      // === Heatmap still uses the merged data ===
       const mergedArray = datasetIds.flatMap(id => coordinate_data.value[id]);
       mergedGeneArray.value = mergedArray;
 
@@ -1488,14 +1488,14 @@ const searchgene = async () => {
 };
 
 
-// 更新 UMAP 图2 的点大小
+// Update the point size of UMAP plot 2
 const updateUmap2 = () => {
   Plotly.restyle('coord_chart_gene', 'marker.size', [markerSize2.value]);
 };
 
 
 //###################################//
-//差异表达分析
+//Differential expression analysis
 //###################################//
 
 const group = ref('cellTypeSpecificGenes');
@@ -1513,8 +1513,8 @@ const itemsPerPage = ref(10);
 
 const filterDEGGenes = ref('');
 
-const pValueSliderIndex = ref(5)  // 默认 0.05
-// 定义 slider 的值及 label
+const pValueSliderIndex = ref(5)  // Default 0.05
+// Define the slider values and labels
 const logPValues = [1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.5]
 const pValueMarks = {
   0: '10⁻⁶',
@@ -1534,7 +1534,7 @@ const formattedPValue = computed(() => {
 
 const loadingDEG = ref(true);
 //----------------------------------
-//基因富集分析部分的变量
+//Variables for the gene enrichment analysis section
 const KEGGdata = ref([]);
 const isenrichmentExpanded1 = ref("");
 const isenrichmentExpanded2 = ref("");
@@ -1545,7 +1545,7 @@ const isenrichmentExpanded4 = ref("");
 
 
 //------------------------------------------------------//
-//默认加载第一个细胞类型的差异数据
+//Load DEG data for the first cell type by default
 //------------------------------------------------------//
 onMounted(() => {
   const params = new URLSearchParams({
@@ -1564,11 +1564,11 @@ onMounted(() => {
 });
 
 //------------------------------------------------------//
-//检测用户更换细胞类型
+//Detect when the user changes the cell type
 //------------------------------------------------------//
 watch(cellType, async (newcellType) => {
   loadingDEG.value = true;
-  //获取差异数据
+  //Fetch DEG data
   const params = new URLSearchParams({
     id: route.params.study,
     cluster: newcellType
@@ -1577,10 +1577,10 @@ watch(cellType, async (newcellType) => {
     .then((response) => response.arrayBuffer())
     .then((arrayBuffer) => {
       const compressed = new Uint8Array(arrayBuffer);
-      const decompressed = pako.ungzip(compressed); // 使用 pako 解压
+      const decompressed = pako.ungzip(compressed); // Decompress with pako
       const jsonString = new TextDecoder('utf-8').decode(decompressed);
       DEGdata.value = JSON.parse(jsonString);
-      currentPage.value = 1;//回到第一页
+      currentPage.value = 1;//Go back to the first page
       loadingDEG.value = false;
     })
     .catch((error) => {
@@ -1591,14 +1591,14 @@ watch(cellType, async (newcellType) => {
 
 
 //------------------------------------------------------
-//差异表达分析分页计算
+//Pagination for differential expression analysis
 //------------------------------------------------------
 const filteredData = computed(() => {
   return DEGdata.value.filter(item => {
     currentPage.value = 1;
     const logFoldChange = parseFloat(item.fc);
     const adjustedPvalue = parseFloat(item.a);
-    // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
+    // Lowercase both filterDEGGenes.value and item.i, then check for a match
     const lowerCaseFilter = filterDEGGenes.value.toLowerCase();
     const lowerCaseItemI = item.i.toLowerCase();
 
@@ -1617,10 +1617,10 @@ const filteredData = computed(() => {
 });
 function handlePageChange(page) {
   currentPage.value = page
-  // 你可以在这里重新 slice 数据用于渲染当前页内容
+  // You can re-slice the data here to render the current page
 }
 //------------------------------------------------------
-//数据发生变化，需要基因富集分析数据，折叠基因富集分析面板
+//Data changed; enrichment data must be reloaded, so collapse the gene enrichment panel
 //------------------------------------------------------
 watch(filteredData, () => {
   KEGGdata.value = [];
@@ -1635,12 +1635,12 @@ watch(filteredData, () => {
 
 /*
 const totalPages = computed(() => {
-  // 总页数基于筛选后的数据集计算
+  // Total pages are computed from the filtered dataset
   return Math.ceil(filteredData.value.length / itemsPerPage.value);
 });
 */
 const paginatedData = computed(() => {
-  // 分页应用于筛选后的数据集
+  // Apply pagination to the filtered dataset
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return sortedData.value.slice(start, end);
@@ -1661,50 +1661,50 @@ const nextPage = () => {
 */
 const headers = ['gene name', 'Adjusted p-value', 'Log fold-change', 'Pct.1', 'Pct.2'];
 const download = () => {
-  // 创建一个二维数组，每个元素都是表格的一行
+  // Build a 2D array where each element is a table row
   const dataForTable = filteredData.value.map((item) => {
     return Object.values(item);
   });
 
-  // 创建 CSV 字符串
+  // Build the CSV string
   const csvContent = [headers.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
 
-  // 创建一个下载链接
+  // Create a download link
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.study + "-deg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-deg.csv"; // Set the download filename
   link.click();
 };
 
 //------------------------------------------------------
-//差异数据排序
+//Sort DEG data
 //------------------------------------------------------
 
-const sortProp = ref('') // 当前排序字段
+const sortProp = ref('') // Current sort field
 const sortOrder = ref('') // asc / desc
 
-// 排序计算属性
+// Sorting computed property
 const sortedData = computed(() => {
   if (!sortProp.value || !sortOrder.value) {
     return filteredData.value
   }
-  // 排序逻辑
+  // Sorting logic
   return [...filteredData.value].sort((a, b) => {
     const prop = sortProp.value
     let res = 0
     if (prop === 'i') {
-      // 字符串排序
+      // String sort
       res = a.i.localeCompare(b.i)
     } else {
-      // 数字排序
+      // Numeric sort
       res = a[prop] - b[prop]
     }
     return sortOrder.value === 'ascending' ? res : -res
   })
 })
 
-// 监听排序变化
+// Watch for sort changes
 function handleSortChange({ prop, order }) {
   currentPage.value = 1;
   sortProp.value = prop
@@ -1712,12 +1712,12 @@ function handleSortChange({ prop, order }) {
 }
 
 //##########################################################################################//
-//KEGG分析
+//KEGG analysis
 //##########################################################################################//
 
 
-//const isenrichmentExpanded1 = ref(false);定义在差异部分
-//const KEGGdata = ref([]);定义在差异部分
+//const isenrichmentExpanded1 = ref(false); defined in the DEG section
+//const KEGGdata = ref([]); defined in the DEG section
 
 const KEGGcurrentPage = ref(1);
 const KEGGitemsPerPage = ref(10);
@@ -1731,16 +1731,16 @@ const KeggGenes = computed(() => {
 const loadingKEGG = ref(true);
 
 //------------------------------------------------------//
-//向服务器请求kegg数据
+//Request KEGG data from the server
 //------------------------------------------------------//
 const getKEGG = (activeNames) => {
-  // activeNames 是当前展开面板的 name 数组
+  // activeNames is the array of names of the currently expanded panels
   const isOpen = activeNames.includes('1')
 
   if (isOpen) {
-    // 1. 展开：开始加载
+    // 1. Expanded: start loading
     loadingKEGG.value = true
-    KEGGdata.value = []          // 先清空旧数据（防止闪旧值）
+    KEGGdata.value = []          // Clear old data first (avoid flashing stale values)
 
     const genesJson = JSON.stringify(KeggGenes.value)
     const params = new FormData()
@@ -1768,7 +1768,7 @@ const getKEGG = (activeNames) => {
         loadingKEGG.value = false
       })
   } else {
-    // 2. 折叠：仅清空
+    // 2. Collapsed: just clear
     KEGGdata.value = []
     loadingKEGG.value = false
   }
@@ -1778,12 +1778,12 @@ const getKEGG = (activeNames) => {
 
 
 //------------------------------------------------------//
-//按名字过滤通路
+//Filter pathways by name
 //------------------------------------------------------//
 const KEGGfilteredData = computed(() => {
   return KEGGdata.value.filter(item => {
     KEGGcurrentPage.value = 1;
-    // 将 filterDEGGenes.value 和 item.i 都转换为小写，然后检查是否包含
+    // Lowercase both filterDEGGenes.value and item.i, then check for a match
     const lowerCaseFilter = filterKEGG.value.toLowerCase();
     const lowerCaseItemI = item.t.toLowerCase();
 
@@ -1795,7 +1795,7 @@ const KEGGfilteredData = computed(() => {
 
 
 const KEGGpaginatedData = computed(() => {
-  // 分页应用于筛选后的数据集
+  // Apply pagination to the filtered dataset
   const start = (KEGGcurrentPage.value - 1) * KEGGitemsPerPage.value;
   const end = start + KEGGitemsPerPage.value;
   return KEGGsortedData.value.slice(start, end);
@@ -1809,7 +1809,7 @@ function handleKEGGPageChange(page) {
 const KEGGsortProp = ref('')
 const KEGGsortOrder = ref('')
 
-// 排序计算属性
+// Sorting computed property
 const KEGGsortedData = computed(() => {
   if (!KEGGsortProp.value || !KEGGsortOrder.value) {
     return KEGGfilteredData.value
@@ -1832,62 +1832,62 @@ const KEGGsortedData = computed(() => {
       if (res !== 0) {
         return KEGGsortOrder.value === 'ascending' ? res : -res
       }
-      // 如果当前字段相等，继续比较下一个字段
+      // If the current field is equal, compare the next field
     }
     return 0
   })
 })
 
-// 辅助函数：通过字符串路径访问嵌套对象属性
+// Helper: access a nested object property via a string path
 function getNestedValue(obj, path) {
   return path.split('.').reduce((acc, key) => acc?.[key], obj)
 }
 
 
-// 监听排序变化
+// Watch for sort changes
 function handleKEGGSortChange({ prop, order }) {
   KEGGcurrentPage.value = 1;
   KEGGsortProp.value = prop
   KEGGsortOrder.value = order
 }
 //------------------------------------------------------//
-//保存kegg数据为CSV
+//Save KEGG data as CSV
 //------------------------------------------------------//
 const KEGGheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
 const KEGGdownload = () => {
-  // 创建一个二维数组，每个元素都是表格的一行
+  // Build a 2D array where each element is a table row
   const dataForTable = KEGGfilteredData.value.map((item) => {
     return Object.values(item);
   });
 
-  // 创建 CSV 字符串
+  // Build the CSV string
   const csvContent = [KEGGheaders.join(",")].concat(dataForTable.map(e => e.join(","))).join("\n");
 
-  // 创建一个下载链接
+  // Create a download link
   const link = document.createElement("a");
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
   link.target = "_blank";
-  link.download = "ssMOOD-" + route.params.study + "-kegg.csv"; // 指定下载的文件名
+  link.download = "ssMOOD-" + route.params.study + "-kegg.csv"; // Set the download filename
   link.click();
 };
 
 
 //------------------------------------------------------//
-//基因列表模态窗
+//Gene list modal
 //------------------------------------------------------//
 
-// 模态窗状态
+// Modal state
 const isKeggModalOpen = ref(false);
 const selectedKeggGene = ref([]);
 
-// 打开模态窗
+// Open the modal
 const openKeggModal = (gene) => {
   selectedKeggGene.value = gene.split(';');
   isKeggModalOpen.value = true;
 };
 
 /*
-// 关闭模态窗
+// Close the modal
 const closeKeggModal = () => {
   isKeggModalOpen.value = false;
 };
@@ -1895,7 +1895,7 @@ const closeKeggModal = () => {
 
 
 //###############################################################################################//
-// GO_BP 分析
+// GO_BP analysis
 //###############################################################################################//
 
 const GOBPcurrentPage = ref(1);
@@ -1909,7 +1909,7 @@ const GOGenes = computed(() => {
 });
 
 //------------------------------------------------------//
-// 向服务器请求 GO BP 数据
+// Request GO BP data from the server
 //------------------------------------------------------//
 const getGO_BP = (activeNames) => {
   const isOpen = activeNames.includes('1');
@@ -1949,7 +1949,7 @@ const getGO_BP = (activeNames) => {
 };
 
 //------------------------------------------------------//
-// 搜索过滤
+// Search filtering
 //------------------------------------------------------//
 const GOBPfilteredData = computed(() => {
   //GOBPcurrentPage.value = 1;
@@ -1958,7 +1958,7 @@ const GOBPfilteredData = computed(() => {
 });
 
 //------------------------------------------------------//
-// 排序处理
+// Sorting
 //------------------------------------------------------//
 const GOBPsortProp = ref('');
 const GOBPsortOrder = ref('');
@@ -1992,7 +1992,7 @@ function handleGOBPSortChange({ prop, order }) {
 }
 
 //------------------------------------------------------//
-// 分页
+// Pagination
 //------------------------------------------------------//
 const GOBPpaginatedData = computed(() => {
   const start = (GOBPcurrentPage.value - 1) * GOitemsPerPage.value;
@@ -2005,7 +2005,7 @@ function handleGOBPPageChange(page) {
 }
 
 //------------------------------------------------------//
-// 下载 CSV
+// Download CSV
 //------------------------------------------------------//
 const GOBPheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
 const GOBPdownload = () => {
@@ -2020,7 +2020,7 @@ const GOBPdownload = () => {
 };
 
 //------------------------------------------------------//
-// 模态窗 - 显示基因列表
+// Modal - show gene list
 //------------------------------------------------------//
 const isGOBPModalOpen = ref(false);
 const selectedGOBPGene = ref([]);
@@ -2033,7 +2033,7 @@ const openGOBPModal = (gene) => {
 
 
 //###############################################################################################//
-// GO_MF 分析
+// GO_MF analysis
 //###############################################################################################//
 
 const GOMFcurrentPage = ref(1);
@@ -2041,13 +2041,13 @@ const filterGOMF = ref('');
 const loadingGOMF = ref(false);
 const GOMFdata = ref([]);
 
-/*无需重复定义
+/*No need to redefine
 const GOGenes = computed(() => {
   return filteredData.value.map(item => item.i);
 });
 */
 //------------------------------------------------------//
-// 向服务器请求 GO MF 数据
+// Request GO MF data from the server
 //------------------------------------------------------//
 const getGO_MF = (activeNames) => {
   const isOpen = activeNames.includes('1');
@@ -2087,7 +2087,7 @@ const getGO_MF = (activeNames) => {
 };
 
 //------------------------------------------------------//
-// 搜索过滤
+// Search filtering
 //------------------------------------------------------//
 const GOMFfilteredData = computed(() => {
   //GOMFcurrentPage.value = 1;
@@ -2096,7 +2096,7 @@ const GOMFfilteredData = computed(() => {
 });
 
 //------------------------------------------------------//
-// 排序处理
+// Sorting
 //------------------------------------------------------//
 const GOMFsortProp = ref('');
 const GOMFsortOrder = ref('');
@@ -2130,7 +2130,7 @@ function handleGOMFSortChange({ prop, order }) {
 }
 
 //------------------------------------------------------//
-// 分页
+// Pagination
 //------------------------------------------------------//
 const GOMFpaginatedData = computed(() => {
   const start = (GOMFcurrentPage.value - 1) * GOitemsPerPage.value;
@@ -2143,7 +2143,7 @@ function handleGOMFPageChange(page) {
 }
 
 //------------------------------------------------------//
-// 下载 CSV
+// Download CSV
 //------------------------------------------------------//
 const GOMFheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
 const GOMFdownload = () => {
@@ -2158,7 +2158,7 @@ const GOMFdownload = () => {
 };
 
 //------------------------------------------------------//
-// 模态窗 - 显示基因列表
+// Modal - show gene list
 //------------------------------------------------------//
 const isGOMFModalOpen = ref(false);
 const selectedGOMFGene = ref([]);
@@ -2169,7 +2169,7 @@ const openGOMFModal = (gene) => {
 };
 
 //###############################################################################################//
-// GO_CC 分析
+// GO_CC analysis
 //###############################################################################################//
 
 const GOCCcurrentPage = ref(1);
@@ -2177,13 +2177,13 @@ const filterGOCC = ref('');
 const loadingGOCC = ref(false);
 const GOCCdata = ref([]);
 
-/*无需重复定义，基因列表共用
+/*No need to redefine; the gene list is shared
 const GOGenes = computed(() => {
   return filteredData.value.map(item => item.i);
 });
 */
 //------------------------------------------------------//
-// 向服务器请求 GO CC 数据
+// Request GO CC data from the server
 //------------------------------------------------------//
 const getGO_CC = (activeNames) => {
   const isOpen = activeNames.includes('1');
@@ -2223,7 +2223,7 @@ const getGO_CC = (activeNames) => {
 };
 
 //------------------------------------------------------//
-// 搜索过滤
+// Search filtering
 //------------------------------------------------------//
 const GOCCfilteredData = computed(() => {
   //GOCCcurrentPage.value = 1;
@@ -2232,7 +2232,7 @@ const GOCCfilteredData = computed(() => {
 });
 
 //------------------------------------------------------//
-// 排序处理
+// Sorting
 //------------------------------------------------------//
 const GOCCsortProp = ref('');
 const GOCCsortOrder = ref('');
@@ -2266,7 +2266,7 @@ function handleGOCCSortChange({ prop, order }) {
 }
 
 //------------------------------------------------------//
-// 分页
+// Pagination
 //------------------------------------------------------//
 const GOCCpaginatedData = computed(() => {
   const start = (GOCCcurrentPage.value - 1) * GOitemsPerPage.value;
@@ -2279,7 +2279,7 @@ function handleGOCCPageChange(page) {
 }
 
 //------------------------------------------------------//
-// 下载 CSV
+// Download CSV
 //------------------------------------------------------//
 const GOCCheaders = ['Term', 'Adjusted p-value', 'Odds Ratio', 'Combined Score', 'Genes'];
 const GOCCdownload = () => {
@@ -2294,7 +2294,7 @@ const GOCCdownload = () => {
 };
 
 //------------------------------------------------------//
-// 模态窗 - 显示基因列表
+// Modal - show gene list
 //------------------------------------------------------//
 const isGOCCModalOpen = ref(false);
 const selectedGOCCGene = ref([]);
@@ -2308,7 +2308,7 @@ const openGOCCModal = (gene) => {
 
 
 
-//-------所有富集分析共用------------//
+//-------Shared by all enrichment analyses------------//
 const openLink = (gene, linkType) => {
   let url;
   if (linkType === 'link1') {
@@ -2320,7 +2320,7 @@ const openLink = (gene, linkType) => {
 };
 
 
-//------检测页面的宽度变化------------//
+//------Detect page width changes------------//
 onMounted(() => {
   window.addEventListener('resize', resizeMyChart);
 });
@@ -2353,7 +2353,7 @@ onUnmounted(() => {
 
 
 /* ----------------------------------------------------------- */
-/* 差异表达分析右容器表格,避免影响全局样式 */
+/* DEG right-panel table, scoped to avoid affecting global styles */
 .table-container {
   max-width: 100%;
   overflow-x: auto;
@@ -2382,7 +2382,7 @@ button {
 .st-coord-content {
   display: flex;
   flex-direction: column;
-  /* 子元素垂直排列 */
+  /* Stack child elements vertically */
   flex: 1;
   gap: 30px;
 }

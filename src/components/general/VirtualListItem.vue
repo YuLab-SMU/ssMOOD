@@ -30,7 +30,7 @@ function selectItem(value) {
 
 <style scoped>
 .gene-item {
-  height: 50px; /* 每个项的高度 */
+  height: 50px; /* Height of each item */
   display: flex;
   align-items: center;
   padding: 0 12px;

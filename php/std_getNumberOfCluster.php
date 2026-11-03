@@ -1,21 +1,21 @@
 <?php
 include 'config.php';
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($host, $username, $password, $dbname);
-// 指定的 dataset_id
+// Specified dataset_id
 $datasetId = $_GET['id'] ?? '';
 
-// 创建数据库连接
+// Create database connection
 $conn = new mysqli($host, $username, $password, $dbname);
 
-// 检查连接是否成功
+// Check whether the connection succeeded
 if ($conn->connect_error) {
     error_log("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
     die(json_encode(['error' => 'Database connection failed']));
 }
 
-// 查询各个细胞分类的数量
+// Query the count of each cell type
 $query = "
     SELECT cluster_label2, COUNT(*) as cell_count
     FROM spatial_cells
@@ -23,27 +23,27 @@ $query = "
     GROUP BY cluster_label2
 ";
 
-// 准备 SQL 语句
+// Prepare SQL statement
 $stmt = $conn->prepare($query);
 
-// 绑定参数
+// Bind parameters
 $stmt->bind_param('s', $datasetId);
 
-// 执行查询
+// Execute query
 $stmt->execute();
 
-// 获取结果
+// Get results
 $result = $stmt->get_result();
 
-// 初始化结果数组
+// Initialize result array
 $resultArray = [];
 
-// 获取查询结果
+// Get query results
 while ($row = $result->fetch_assoc()) {
     $resultArray[$row['cluster_label2']] = (int) $row['cell_count'];
 }
 
-// 关闭数据库连接
+// Close database connection
 $stmt->close();
 $conn->close();
 

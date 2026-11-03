@@ -21,7 +21,7 @@ import VueTerminal from 'vue-web-terminal';
 // Define reactive variables
 const terminal = ref(null);
 
-// 处理命令执行
+// Handle command execution
 const onExecCmd = async (key, command, success, failed) => {
   if(command === "ls"){
     success({

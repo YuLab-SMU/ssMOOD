@@ -1,9 +1,9 @@
-/* 全局生效的文本选择样式 */
+/* Global text selection style */
 ::selection {
   background: rgba(093, 116, 162, 0.8); 
-  color: white;         /* 深灰文字 */
+  color: white;         /* Dark gray text */
 }
-::-moz-selection { /* Firefox兼容 */
+::-moz-selection { /* Firefox compatibility */
   background: rgba(093, 116, 162, 0.8);
   color: white;
 }
@@ -20,41 +20,41 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* 确保页面至少占满整个视口高度 */
+  min-height: 100vh; /* Ensure the page fills at least the full viewport height */
 }
 
 
 main {
-  margin-top: 8vh; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+  margin-top: 8vh; /* Keep content from being hidden behind the navbar; value should match the header height */
   height: 92vh;
   overflow-y: auto; 
 }
 
 .page-section {
   padding: 20px;
-  flex: 1; /* 占据剩余的空间 */
+  flex: 1; /* Fill the remaining space */
   overflow-y: auto; 
 }
-/* 滚动条整体宽度 */
+/* Overall scrollbar width */
 main::-webkit-scrollbar {
-  width: 10px; /* 宽度 */
+  width: 10px; /* Width */
 }
 
-/* 滚动条的轨道背景 */
+/* Scrollbar track background */
 main::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 轨道背景颜色 */
-  border-radius: 10px; /* 轨道圆角 */
+  background: #f1f1f1; /* Track background color */
+  border-radius: 10px; /* Track corner radius */
 }
 
-/* 滚动条的滑块（可拖动部分） */
+/* Scrollbar thumb (draggable part) */
 main::-webkit-scrollbar-thumb {
-  background: rgba(093, 116, 162, 0.8); /* 滑块颜色 */
-  border-radius: 10px; /* 滑块圆角 */
+  background: rgba(093, 116, 162, 0.8); /* Thumb color */
+  border-radius: 10px; /* Thumb corner radius */
 }
 
-/* 滑块悬停时的样式 */
+/* Thumb hover style */
 main::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 悬停时的颜色 */
+  background: #555; /* Color on hover */
 }
 
 .NowPage{
@@ -64,12 +64,12 @@ main::-webkit-scrollbar-thumb:hover {
 
 .studys{
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中（如果需要） */
-  flex-direction: row; /* 子元素垂直排列 */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally (if needed) */
+  flex-direction: row; /* Stack child elements vertically */
 }
  /* ----------------------------------------------------------- */
- /* 竖屏响应*/
+ /* Portrait-orientation responsive styles*/
 @media (orientation: portrait) {
 
 }

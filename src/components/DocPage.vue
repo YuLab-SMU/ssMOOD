@@ -21,7 +21,7 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-light.css';
 
-// 配置 markdown-it
+// Configure markdown-it
 const md = new MarkdownIt({
     html: true,
     linkify: true,
@@ -77,7 +77,7 @@ watch(() => route.params.name, (newName) => {
 <style scoped>
 @import "css/MainStyles.css";
 
-/* 让 markdown 更美观 */
+/* Make Markdown look nicer */
 .prose {
     max-width: 90%;
     line-height: 1.8;
@@ -88,7 +88,7 @@ watch(() => route.params.name, (newName) => {
     margin: 0 auto;
 }
 
-/* 代码块样式优化 */
+/* Code block style tweaks */
 .md :deep(pre.hljs) {
     background: #f5f5f5;
     border-radius: 0.5rem;
@@ -109,7 +109,7 @@ watch(() => route.params.name, (newName) => {
     margin: 1rem auto;
 }
 
-/* 其他 Markdown 元素样式 */
+/* Styles for other Markdown elements */
 .md :deep(h1),
 .md :deep(h2),
 .md :deep(h3),

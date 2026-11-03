@@ -1,25 +1,25 @@
 <?php
 
 //------------------------------------------------------------------------------
-// 发布时去掉此处代码，仅用于生产和测试环境。
-// 跨域配置
+// Remove this code for release; only used in production and test environments.
+// CORS configuration
 header("Access-Control-Allow-Origin: *");
 //------------------------------------------------------------------------------
 
 
 header('Content-Type: application/json');
-// 数据库配置
+// Database configuration
 $servername = "localhost";
 
 /*
-/etc/ssmood/db.php示例：
+/etc/ssmood/db.php example:
 <?php
 return [
-    'user' => '数据库用户名',
-    'pass' => '数据库密码',
+    'user' => 'database username',
+    'pass' => 'database password',
 ];
 
-设置权限，避免泄漏
+Set permissions to prevent leaks
 sudo chown www-data:www-data /etc/ssmood/db.php
 sudo chmod 600       /etc/ssmood/db.php
 */
@@ -40,7 +40,7 @@ $logFile = "./logfile.log";
 //$url = 'https://api.deepseek.com/v1/chat/completions';
 //$model = 'deepseek-chat';
 
-// 豆包
+// Doubao
 $openaiApiKey = 'xxx'; 
 $url = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 $model = 'doubao-1-5-pro-32k-250115';

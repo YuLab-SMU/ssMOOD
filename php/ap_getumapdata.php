@@ -1,17 +1,17 @@
 <?php
 include 'config.php';
 
-// 数据库连接
+// Database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// 检查连接
+// Check connection
 if ($conn->connect_error) {
-    // 将数据库连接错误写入日志文件
+    // Write database connection errors to the log file
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);
     exit;
 }
 
-// 定义batch值
+// Define batch value
 $datasetId = $_GET['id'] ?? '';
 
 $sql = "SELECT c.cell_id, c.umap1, c.umap2, c.cluster_label2
@@ -23,12 +23,12 @@ $stmt->bind_param("s", $datasetId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// 创建数组来存储UMAP数据和分类信息
+// Create arrays to store UMAP data and category info
 $umap_data = array();
 $cluster_labels = array();
 
 if ($result->num_rows > 0) {
-    // 将数据存入数组
+    // Store data in the array
     while ($row = $result->fetch_assoc()) {
         $umap_data[] = array(
             'i' => $row['cell_id'],
@@ -45,11 +45,11 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 
-// 将数据和分类信息转换为JSON格式
+// Convert data and category info to JSON
 $response = json_encode($umap_data);
 
 $compressed = zlib_encode($response, ZLIB_ENCODING_GZIP);
-// 返回 JSON 数据
+// Return JSON data
 header('Content-Type: application/json');
 echo $compressed;
 ?>

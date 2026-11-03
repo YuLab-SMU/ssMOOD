@@ -6,10 +6,10 @@
   --el-color-primary-light-9: rgba(93, 116, 162, 0.25);
   --el-color-primary-dark-2: rgba(93, 116, 162, 0.9);
 }
-/* 在全局样式文件或 <style>（无 scoped）里写 */
+/* Put this in a global stylesheet or an unscoped <style> */
 .el-collapse-item__header {
-  font-weight: 700;      /* 加粗 */
-  font-size: 18px;       /* 字号，可按需调整 */
+  font-weight: 700;      /* Bold */
+  font-size: 18px;       /* Font size; adjust as needed */
 }
 
 /* v-loading mask (tables etc.): translucent with a light blur; spinner uses the primary color */

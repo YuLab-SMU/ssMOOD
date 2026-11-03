@@ -1,9 +1,9 @@
-/* 全局生效的文本选择样式 */
+/* Global text selection style */
 ::selection {
   background: rgba(093, 116, 162, 0.8); 
-  color: white;         /* 深灰文字 */
+  color: white;         /* Dark gray text */
 }
-::-moz-selection { /* Firefox兼容 */
+::-moz-selection { /* Firefox compatibility */
   background: rgba(093, 116, 162, 0.8);
   color: white;
 }
@@ -26,17 +26,17 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgb(093, 116, 162); /* 背景色 */
+    background: rgb(093, 116, 162); /* Background color */
     color: white;
     z-index: 1000;
-    height: 60px; /* 设置导航栏的高度 */
-    /*overflow: hidden;  隐藏超出区域 */
+    height: 60px; /* Set the navbar height */
+    /*overflow: hidden;  Hide overflow */
     display: flex;
-    align-items: center; /* 垂直居中对齐 */
-    padding: 0 20px; /* 右侧和左侧的内边距 */
+    align-items: center; /* Center vertically */
+    padding: 0 20px; /* Right and left padding */
 }
 
-/* 假设你的导航栏在一个特定的容器内，比如一个 ID 为 `navbar` 的 div */
+/* Assuming your navbar is inside a specific container, e.g. a div with ID `navbar` */
  nav {
     display: flex;
     align-items: center;
@@ -67,7 +67,7 @@ header {
     display: flex;
     align-items: center;
     padding: 0 10px;
-    position: relative; /* 添加相对定位 */
+    position: relative; /* Add relative positioning */
     height: 100%;
      
 }
@@ -90,10 +90,10 @@ header {
 
 
 main {
-    padding-top: -60px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+    padding-top: -60px; /* Keep content from being hidden behind the navbar; value should match the header height */
 }
 
-/* 也可以直接为<li>元素添加悬停效果 */
+/* A hover effect can also be added directly to the <li> element */
  nav > ul > li:hover {
     background: rgba(255, 255, 255, 0.1);
 }
@@ -101,7 +101,7 @@ main {
 
 
 .page-section {
-  flex: 1; /* 占据剩余的空间 */
+  flex: 1; /* Fill the remaining space */
 }
 
 .NowPage{
@@ -113,8 +113,8 @@ main {
   padding: 0px;
   background-color: #fff;
   z-index: 2000;
-  top: 100%; /* 父菜单项高度的100% */
-  left: 0; /* 根据需要调整 */
+  top: 100%; /* 100% of the parent menu item height */
+  left: 0; /* Adjust as needed */
   transition: opacity 0.3s, visibility 0.3s;
   border: 1px solid #eaeaea;
   border-radius: 8px;
@@ -139,31 +139,31 @@ main {
 }
 .submenu a {
     text-decoration: none;
-    /* 移除下划线 */
+    /* Remove underline */
     color: black;
     display: block;
     transition: background 0.3s, color 0.3s;
 }
  /* ----------------------------------------------------------- */
- /* 竖屏响应*/
+ /* Portrait-orientation responsive styles*/
  @media (orientation: portrait) or (max-width: 800px) {
     main {
-        padding-top: 120px; /* 使内容不会被导航栏遮挡，值应与 header 高度匹配 */
+        padding-top: 120px; /* Keep content from being hidden behind the navbar; value should match the header height */
     }
     header {
          justify-content: space-between; 
-        width: 100%; /* 宽度填满父元素 */
-        height: auto; /* 高度自动调整 */
+        width: 100%; /* Fill the parent width */
+        height: auto; /* Auto height */
     }
 
     nav {
          justify-content: space-between; 
-        height: auto; /* 高度自动调整 */
-        width: 100%; /* 宽度填满父元素 */
-        flex-wrap: wrap; /* 允许子元素在必要时换行 */
+        height: auto; /* Auto height */
+        width: 100%; /* Fill the parent width */
+        flex-wrap: wrap; /* Allow children to wrap when needed */
     }
     nav > ul {
-        flex-wrap: wrap; /* 允许子元素在必要时换行 */
+        flex-wrap: wrap; /* Allow children to wrap when needed */
     }
 
 }

@@ -7,7 +7,7 @@
           <!-- <div class="Top-container" @scroll="handleScroll"> -->
           <div class="Top-container">
 
-            <!-- 第一个容器 -->
+            <!-- First container -->
             <el-row :gutter="20">
               <el-col :span="24">
                 <div class="test">
@@ -26,18 +26,18 @@
                 <el-col :xs="0" :sm="2" :md="2" :lg="2"></el-col>
               </el-col>
             </el-row>
-            <!-- 第二个容器 -->
+            <!-- Second container -->
             <el-row :gutter="20" class="container">
               <el-col :xs="0" :sm="0" :md="2" :lg="2">
               </el-col>
-              <!-- 文本部分 -->
+              <!-- Text section -->
               <el-col :xs="20" :sm="20" :md="8" :lg="8">
                 <div class="text">
                   <h2>{{ $t('hv5') }}</h2>
                   <p>{{ $t('hv6') }}</p>
                 </div>
               </el-col>
-              <!-- 图像和图表切换部分 -->
+              <!-- Image and chart toggle section -->
               <el-col :xs="20" :sm="20" :md="12" :lg="12">
                 <div class="image">
                   <div class="chart-switch">
@@ -66,24 +66,24 @@
               </el-col>
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
             </el-row>
-            <!-- 第三个容器 -->
+            <!-- Third container -->
             <el-row :gutter="20" class="container" data-special="true">
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
-              <!-- 第一列：图表1 -->
+              <!-- Column 1: chart 1 -->
               <el-col :xs="24" :sm="12" :md="7" :lg="7">
                 <div class="chart-wrapper">
                   <div id="genderChart" style="width: auto; height: 100%;"></div>
                 </div>
               </el-col>
 
-              <!-- 第二列：图表2 -->
+              <!-- Column 2: chart 2 -->
               <el-col :xs="24" :sm="12" :md="7" :lg="7">
                 <div class="chart-wrapper">
                   <div id="genderChart2" style="width: auto; height: 100%;"></div>
                 </div>
               </el-col>
 
-              <!-- 第三列：文本内容 -->
+              <!-- Column 3: text content -->
               <el-col :xs="20" :sm="20" :md="6" :lg="6">
                 <div class="text-content">
                   <h2>{{ $t('hv7') }}</h2>
@@ -91,9 +91,9 @@
                 </div>
               </el-col>
             </el-row>
-            <!-- 第四个容器 -->
+            <!-- Fourth container -->
             <el-row :gutter="20" class="container">
-              <!-- 文本部分 -->
+              <!-- Text section -->
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="text">
@@ -109,7 +109,7 @@
                   </ul>
                 </div>
               </el-col>
-              <!-- 图像和图表切换部分 -->
+              <!-- Image and chart toggle section -->
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="image">
                   <div class="chart-switch">
@@ -130,12 +130,12 @@
                       <span>{{ $t('hv6-1') }}</span>
                     </div>
                   </div>
-                  <!-- UMAP图的容器 -->
+                  <!-- UMAP plot container -->
                   <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
-                    <!-- 加载图 -->
+                    <!-- Loading image -->
                     <ChartLoading v-if="umapLoading" />
 
-                    <!-- Plotly 图表容器 -->
+                    <!-- Plotly chart container -->
                     <div id="hv-umap-plot"
                       :style="{ width: '100%', aspectRatio: '1 / 1', visibility: umapLoading ? 'hidden' : 'visible' }">
                     </div>
@@ -145,16 +145,16 @@
               </el-col>
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
             </el-row>
-            <!-- 第五个容器 -->
+            <!-- Fifth container -->
             <el-row :gutter="20" class="container" data-special="true">
-              <!-- 图像部分 -->
+              <!-- Image section -->
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="image">
                   <img src="@/assets/demo1.png" width="80%" />
                 </div>
               </el-col>
-              <!-- 文本部分 -->
+              <!-- Text section -->
               <el-col :xs="20" :sm="20" :md="10" :lg="10">
                 <div class="text">
                   <h2>{{ $t('hv11') }}</h2>
@@ -163,7 +163,7 @@
               </el-col>
               <el-col :xs="0" :sm="0" :md="2" :lg="2"></el-col>
             </el-row>
-            <!-- 第六个容器 -->
+            <!-- Sixth container -->
             <!-- <div class="container">
                   <div class="text">
                     <h2>{{ $t('hv13') }}</h2>
@@ -195,14 +195,14 @@ import pako from 'pako';
 import { ref, onMounted } from 'vue';
 //import { useRouter } from 'vue-router';
 
-//----------以下为一个ssmood页面需要的最基础的东西--------------
+//----------Below is the bare minimum needed for an ssmood page--------------
 //import { useI18n } from 'vue-i18n';
 import BackToTop from './general/BackToTop.vue';
 //import LanguageSwitcher from './general/LanguageSwitcher.vue';
 import NavigationBar from './general/NavigationBar.vue';
 import ChartLoading from './general/ChartLoading.vue';
 import config from '@/config';
-//----------以上为一个ssmood页面需要的最基础的东西--------------
+//----------Above is the bare minimum needed for an ssmood page--------------
 
 import colorMap from './color_map.js';
 const video = ref(null)
@@ -215,12 +215,12 @@ function handleLoaded() {
 function handleEnded() {
   const el = video.value
 
-  // 防止闪屏做法：立即跳到0.01而不是0
+  // Avoid flicker: jump to 0.01 immediately instead of 0
   el.currentTime = 0.01
   el.play()
 }
 //-------------------
-//处理定位滚动逻辑
+//Handle scroll-positioning logic
 //-------------------
 /*
 import { throttle } from 'lodash';
@@ -241,23 +241,23 @@ const handleScroll = (event) => {
     }
   });
 
-  // 添加动画类
+  // Add animation class
   containers.forEach((container) => {
     container.classList.remove('fade-in');
   });
   closestContainer.classList.add('fade-in');
 };
 
-throttle(handleScroll, 300); // 限制每100ms内只执行一次
+throttle(handleScroll, 300); // Run at most once per 100ms
 */
 
 //-------------------
-//获取数据库基础信息
+//Fetch basic database info
 //-------------------
-// 初始化数据
+// Initialize data
 onMounted(async () => {
   try {
-    const response = await fetch(config.apiUrl + 'hv_dbInfo.php'); // 示例 API
+    const response = await fetch(config.apiUrl + 'hv_dbInfo.php'); // Example API
     const data = await response.json();
     cellNum.value = data.cellNum;
     geneNum.value = data.geneNum;
@@ -270,7 +270,7 @@ onMounted(async () => {
 
 
 
-const currentChart = ref(3); // 当前显示的图表索引
+const currentChart = ref(3); // Index of the currently displayed chart
 const cellNum = ref(0);
 const geneNum = ref(0);
 const clusterNum = ref(0);
@@ -281,21 +281,21 @@ const items = [
   { image: require('@/assets/image4.png'), alt: 'Image 4', textKey: 'hv4', value: spatialNum },
   { image: require('@/assets/image2.png'), alt: 'Image 2', textKey: 'hv2', value: geneNum }
 ];
-// 缓存图表数据
+// Cached chart data
 const chartDataCache = ref([]);
 
 const renderChart_title = ['snRNA-seq Datasets(Mouse)', 'ST Datasets(Mouse)', 'snRNA-seq Datasets(Human)', 'ST Datasets(Human)']
 
-// 绘制图表
+// Draw the chart
 const renderChart = (index) => {
   const data = chartDataCache.value[index];
-  if (!data) return; // 如果没有数据，直接返回
+  if (!data) return; // Return early if there is no data
 
-  // 提取标签和细胞数量
+  // Extract labels and cell counts
   const labels = Object.keys(data);
   const cellCounts = Object.values(data);
 
-  // 创建条形图数据
+  // Build bar chart data
   const trace = {
     x: labels,
     y: cellCounts,
@@ -309,14 +309,14 @@ const renderChart = (index) => {
     }
   };
 
-  // 创建布局
+  // Build the layout
   const layout = {
     title: renderChart_title[index],
     xaxis: {
       title: '',
-      tickangle: -45, // 将标签旋转45度
-      tickmode: 'linear', // 确保标签均匀分布
-      tickfont: { size: 8 } // 调整字体大小
+      tickangle: -45, // Rotate labels 45 degrees
+      tickmode: 'linear', // Keep labels evenly spaced
+      tickfont: { size: 8 } // Adjust font size
     },
     yaxis: {
       title: '',
@@ -325,18 +325,18 @@ const renderChart = (index) => {
     }
   };
 
-  // 绘制图表
+  // Draw the chart
   Plotly.newPlot('myClusterChart', [trace], layout);
 };
 
-// 切换图表
+// Switch chart
 const switchChart = (index) => {
   currentChart.value = index;
   renderChart(index);
 };
 
 
-// 加载数据
+// Load data
 onMounted(async () => {
   try {
     const response = await fetch(config.apiUrl + 'hv_datasets.php');
@@ -346,7 +346,7 @@ onMounted(async () => {
     const jsonString = new TextDecoder('utf-8').decode(decompressed);
     const data = JSON.parse(jsonString);
     chartDataCache.value = data;
-    renderChart(3); // 默认渲染第0张表
+    renderChart(3); // Render chart 0 by default
   } catch (error) {
     console.error('Error fetching and decompressing UMAP data:', error);
   }
@@ -355,7 +355,7 @@ onMounted(async () => {
 
 
 //-------------------
-//获取物种比例
+//Fetch species proportions
 //-------------------
 onMounted(async () => {
   fetch(config.apiUrl + 'hv_gender_data.php')
@@ -388,8 +388,8 @@ onMounted(async () => {
             color: 'black'
           }
         },
-        paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
-        plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
+        paper_bgcolor: 'rgba(0,0,0,0)', // Make the chart background transparent
+        plot_bgcolor: 'rgba(0,0,0,0)', // Make the plot area background transparent
         margin: {
           l: 50,
           r: 50,
@@ -399,8 +399,8 @@ onMounted(async () => {
         showlegend: true,
         legend: {
           x: 0.3,
-          y: -0.5, // 将图例放在下方中间
-          orientation: 'w', // 图例水平排列
+          y: -0.5, // Place the legend at the bottom center
+          orientation: 'w', // Lay out legend items horizontally
           bgcolor: 'rgba(0,0,0,0)',
           bordercolor: 'grey',
           borderwidth: 1
@@ -412,7 +412,7 @@ onMounted(async () => {
     .catch(error => console.error('Error fetching gender data:', error));
 });
 //-------------------
-//获取单细胞和空转比例
+//Fetch single-cell vs. spatial transcriptomics proportions
 //-------------------
 onMounted(async () => {
   fetch(config.apiUrl + 'hv_scandstRaio.php')
@@ -445,8 +445,8 @@ onMounted(async () => {
             color: 'black'
           }
         },
-        paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
-        plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
+        paper_bgcolor: 'rgba(0,0,0,0)', // Make the chart background transparent
+        plot_bgcolor: 'rgba(0,0,0,0)', // Make the plot area background transparent
         margin: {
           l: 50,
           r: 50,
@@ -456,7 +456,7 @@ onMounted(async () => {
         showlegend: true,
         legend: {
           x: 0.2,
-          y: -0.5, // 将图例放在下方中间
+          y: -0.5, // Place the legend at the bottom center
           bgcolor: 'rgba(0,0,0,0)',
           bordercolor: 'grey',
           borderwidth: 1
@@ -468,24 +468,24 @@ onMounted(async () => {
     .catch(error => console.error('Error fetching gender data:', error));
 });
 //------------------------
-//获取单细胞和空转的umap
+//Fetch single-cell and spatial transcriptomics UMAPs
 //------------------------
 
-const currentUmapChart = ref(3); // 默认显示第0张表
-const umapData = ref({}); // 存储4张表的数据
+const currentUmapChart = ref(3); // Show chart 0 by default
+const umapData = ref({}); // Store data for the 4 charts
 const title_x = ["UMAP1", "coordinate_X", "UMAP1", "coordinate_X"];
 const title_y = ["UMAP2", "coordinate_Y", "UMAP2", "coordinate_Y"];
 
 const pointSize = [5, 2.5, 5, 2]
 
-// 切换UMAP图表
+// Switch UMAP chart
 const switchUmapChart = (index) => {
   currentUmapChart.value = index;
   renderUmapChart(index);
 };
 
 
-// 渲染UMAP图表
+// Render UMAP chart
 const renderUmapChart = (index) => {
   const data = umapData.value[index];
   if (!data) return;
@@ -497,23 +497,23 @@ const renderUmapChart = (index) => {
     const partsA = a.match(/\d+/);
     const partsB = b.match(/\d+/);
     if (partsA && partsB) {
-      // 如果两个字符串都包含数字，则按数字排序
+      // If both strings contain numbers, sort numerically
       return parseInt(partsA[0], 10) - parseInt(partsB[0], 10);
     } else if (partsA) {
-      // 如果只有 a 包含数字，则 a 排在 b 前面
+      // If only a contains a number, a comes before b
       return -1;
     } else if (partsB) {
-      // 如果只有 b 包含数字，则 b 排在 a 前面
+      // If only b contains a number, b comes before a
       return 1;
     } else {
-      // 如果两个字符串都不包含数字，则按字母顺序排序
+      // If neither string contains a number, sort alphabetically
       return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
     }
   });
 
 
   const colors = sortedClusterLabels.reduce((acc, label) => {
-    acc[label] = colorMap[label] || '#000'; // 如果没有找到对应的颜色，则使用默认颜色 #000
+    acc[label] = colorMap[label] || '#000'; // Fall back to the default color #000 if no matching color is found
     return acc;
   }, {});
 
@@ -557,7 +557,7 @@ const renderUmapChart = (index) => {
   Plotly.newPlot('hv-umap-plot', traces, layout);
 };
 const umapLoading = ref(true)
-// 加载数据
+// Load data
 onMounted(async () => {
   umapLoading.value = true
   try {
@@ -569,13 +569,13 @@ onMounted(async () => {
     const data = JSON.parse(jsonString);
 
     umapData.value = {
-      0: data[0], // 单细胞(鼠)
-      1: data[1], // 空转(鼠)
-      2: data[2], // 单细胞(人)
-      3: data[3]  // 空转(人)
+      0: data[0], // Single-cell (mouse)
+      1: data[1], // Spatial (mouse)
+      2: data[2], // Single-cell (human)
+      3: data[3]  // Spatial (human)
     };
 
-    renderUmapChart(3); // 默认渲染第0张表
+    renderUmapChart(3); // Render chart 0 by default
     umapLoading.value = false
   } catch (error) {
     console.error('Error fetching and decompressing UMAP data:', error);
@@ -598,7 +598,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', resizeMyChart);
 });
 //------------------------
-//跳转到分析页面
+//Navigate to the analysis page
 //------------------------
 /*
 const router = useRouter();
@@ -618,52 +618,52 @@ const gotoAnalyzePage = () => {
 .page-section {
   padding: 0px;
   flex: 1;
-  /* 占据剩余的空间 */
+  /* Fill the remaining space */
 }
 
 .Top-container {
   overflow-y: scroll;
   overflow-x: hidden;
   height: 92vh;
-  /* scroll-snap-type: y mandatory;  启用滚动捕获 */
+  /* scroll-snap-type: y mandatory;  enable scroll snapping */
   justify-content: center;
-  /* 水平居中 */
+  /* Center horizontally */
 }
 
-/* 滚动条整体宽度 */
+/* Overall scrollbar width */
 .Top-container::-webkit-scrollbar {
   width: 10px;
-  /* 宽度 */
+  /* Width */
 }
 
-/* 滚动条的轨道背景 */
+/* Scrollbar track background */
 .Top-container::-webkit-scrollbar-track {
   background: #f1f1f1;
-  /* 轨道背景颜色 */
+  /* Track background color */
   border-radius: 10px;
-  /* 轨道圆角 */
+  /* Track corner radius */
 }
 
-/* 滚动条的滑块（可拖动部分） */
+/* Scrollbar thumb (draggable part) */
 .Top-container::-webkit-scrollbar-thumb {
   background: rgba(093, 116, 162, 0.8);
-  /* 滑块颜色 */
+  /* Thumb color */
   border-radius: 10px;
-  /* 滑块圆角 */
+  /* Thumb corner radius */
 }
 
-/* 滑块悬停时的样式 */
+/* Thumb hover style */
 .Top-container::-webkit-scrollbar-thumb:hover {
   background: #555;
-  /* 悬停时的颜色 */
+  /* Color on hover */
 }
 
 .container {
   display: flex;
   justify-content: center;
-  /* 水平居中 */
+  /* Center horizontally */
   align-items: center;
-  /* 垂直居中 */
+  /* Center vertically */
   min-height: 80vh;
   height: auto;
   width: 100%;
@@ -701,16 +701,16 @@ const gotoAnalyzePage = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* 垂直居中 */
+  /* Center vertically */
   height: 100%;
 }
 
 .container .text {
   width: 100%;
-  /* 限制文字宽度为300px */
-  /* 或使用 width 代替 max-width 来设定固定宽度 */
+  /* Limit text width to 300px */
+  /* Or use width instead of max-width for a fixed width */
   word-wrap: break-word;
-  /* 自动换行 */
+  /* Wrap text automatically */
 }
 
 .container.fade-in {
@@ -722,24 +722,24 @@ const gotoAnalyzePage = () => {
 .test {
   display: flex;
   justify-content: center;
-  /* 水平居中 */
+  /* Center horizontally */
   align-items: flex-start;
-  /* 从容器顶部开始对齐 */
+  /* Align from the top of the container */
   margin: 0;
-  /* 容器没有额外间距 */
+  /* No extra spacing in the container */
   position: relative;
-  /* 设置相对定位 */
+  /* Use relative positioning */
 }
 
 .test video {
   width: 80%;
-  /* 图片宽度不超过容器宽度 */
+  /* Keep image width within the container */
   height: auto;
-  /* 保持图片的纵横比 */
+  /* Preserve the image's aspect ratio */
   position: relative;
-  /* 设置相对定位 */
+  /* Use relative positioning */
   top: 20px;
-  /* 图片距离顶部 20px */
+  /* Image is 20px from the top */
   padding: 30px;
 }
 
@@ -764,7 +764,7 @@ const gotoAnalyzePage = () => {
   border-radius: 50%;
   background-color: #ccc;
   margin-right: 8px;
-  /* 点和文字之间的间距 */
+  /* Spacing between the dot and the text */
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
@@ -799,15 +799,15 @@ const gotoAnalyzePage = () => {
 
 .image-text-item {
   display: flex;
-  /* 启用flex布局 */
+  /* Enable flex layout */
   align-items: center;
-  /* 垂直居中对齐 */
+  /* Center vertically */
   justify-content: center;
-  /* 水平居中对齐（可选） */
+  /* Center horizontally (optional) */
   gap: 15px;
-  /* 图片和文字之间的间距 */
+  /* Spacing between image and text */
   text-align: left;
-  /* 文字左对齐 */
+  /* Left-align text */
   padding: 10px;
 }
 
@@ -815,7 +815,7 @@ const gotoAnalyzePage = () => {
   max-width: 40%;
   height: auto;
   margin: 0;
-  /* 清除可能存在的默认边距 */
+  /* Clear any default margins */
 }
 
 .chart-wrapper {
@@ -834,29 +834,29 @@ const gotoAnalyzePage = () => {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
-  /* 鼠标悬停时显示手型指针 */
+  /* Show hand cursor on hover */
   outline: none;
-  /* 移除焦点时的轮廓 */
+  /* Remove outline on focus */
 }
 
 .execute-button:hover {
   background-color: rgba(093, 116, 162, 0.8);
-  /* 鼠标悬停时的背景颜色 */
+  /* Background color on hover */
 }
 
 
 /* ----------------------------------------------------------- */
-/* 竖屏响应*/
+/* Portrait-orientation responsive styles*/
 @media (orientation: portrait) or (max-width: 800px) {
   .test img {
     width: 100%;
-    /* 图片宽度不超过容器宽度 */
+    /* Keep image width within the container */
     height: auto;
-    /* 保持图片的纵横比 */
+    /* Preserve the image's aspect ratio */
     position: relative;
-    /* 设置相对定位 */
+    /* Use relative positioning */
     top: 20px;
-    /* 图片距离顶部 20px */
+    /* Image is 20px from the top */
   }
 
   .container1 {
@@ -867,7 +867,7 @@ const gotoAnalyzePage = () => {
 
   .image-text-container p {
     white-space: nowrap;
-    /* 阻止文本换行 */
+    /* Prevent text wrapping */
   }
 
   .image-text-item img {
@@ -877,13 +877,13 @@ const gotoAnalyzePage = () => {
 
   .image-text-item {
     flex-direction: column;
-    /* 改为纵向排列 */
+    /* Switch to vertical layout */
     align-items: center;
-    /* 居中对齐 */
+    /* Center alignment */
     text-align: center;
-    /* 文字居中 */
+    /* Center text */
     gap: 8px;
-    /* 调整间距 */
+    /* Adjust spacing */
   }
 
   .container {
@@ -895,9 +895,9 @@ const gotoAnalyzePage = () => {
     width: 100%;
     flex-direction: column;
     align-items: center;
-    /* 垂直居中 */
+    /* Center vertically */
     justify-content: center;
-    /* 水平居中 */
+    /* Center horizontally */
     gap: 50px;
   }
 

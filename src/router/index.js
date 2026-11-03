@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import NProgress from 'nprogress'; // 引入 NProgress
-import 'nprogress/nprogress.css';  // 引入 NProgress 样式
+import NProgress from 'nprogress'; // Import NProgress
+import 'nprogress/nprogress.css';  // Import NProgress styles
 
 import HomeView from '../components/HomeView.vue';
 import AnalyzePage from '../components/AnalyzePage.vue'; 
@@ -52,12 +52,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  NProgress.start(); // 开始加载进度条
-  next(); // 确保调用 next() 以继续路由导航
+  NProgress.start(); // Start the loading progress bar
+  next(); // Make sure to call next() to continue route navigation
 });
 
 router.afterEach(() => {
-  NProgress.done(); // 完成加载进度条
+  NProgress.done(); // Finish the loading progress bar
 });
 
 export default router;

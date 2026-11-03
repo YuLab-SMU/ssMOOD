@@ -13,7 +13,7 @@
                     <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu">
                         <a>{{ $t('browse') }}</a>
                         
-                        <!-- 二级菜单 -->
+                        <!-- Submenu -->
                         <ul v-if="showSubMenu" class="submenu">
                             <li>
                                 <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
@@ -188,7 +188,7 @@ async mounted() {
 
     async loadData() {
       try {
-        const response = await fetch('../php/hv_dbInfo.php'); // 示例 API
+        const response = await fetch('../php/hv_dbInfo.php'); // Example API
         const data = await response.json();
         this.cellNum = data.cellNum;
         this.geneNum = data.geneNum;
@@ -199,15 +199,15 @@ async mounted() {
       }
     },
     initCharts() {
-      // 绘制第一个图表
+      // Draw the first chart
     fetch('../php/hv_chart1.php')
       .then(response => response.json())
       .then(dataFromPhp => {
-        // 提取标签和细胞数量
+        // Extract labels and cell counts
         const labels = Object.keys(dataFromPhp);
         const cellCounts = Object.values(dataFromPhp);
     
-        // 创建条形图数据
+        // Build bar chart data
         const trace = {
           x: labels,
           y: cellCounts,
@@ -221,7 +221,7 @@ async mounted() {
           }
         };
     
-        // 创建布局
+        // Build the layout
         const layout = {
           title: '各分类样本数量',
           xaxis: {
@@ -234,12 +234,12 @@ async mounted() {
           }
         };
     
-        // 绘制图表
+        // Draw the chart
         Plotly.newPlot('myClusterChart', [trace], layout);
       })
       .catch(error => console.error('Error fetching data from chart1.php:', error));
             
-        // 绘制第二个图表
+        // Draw the second chart
         fetch('../php/hv_gender_data.php')
             .then(response => response.json())
             .then(data => {
@@ -272,8 +272,8 @@ async mounted() {
                 },
                 height: 400,
                 width: 400,
-                paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
-                plot_bgcolor: 'rgba(0,0,0,0)', // 设置绘图区域背景透明
+                paper_bgcolor: 'rgba(0,0,0,0)', // Make the chart background transparent
+                plot_bgcolor: 'rgba(0,0,0,0)', // Make the plot area background transparent
                 margin: {
                     l: 50,
                     r: 50,
@@ -295,14 +295,14 @@ async mounted() {
             .
         catch (error => console.error('Error fetching gender data:', error));
 
-        // 绘制 UMAP 图表
+        // Draw UMAP chart
         fetch('../php/hv_umap.php')
-          .then(response => response.arrayBuffer()) // 获取ArrayBuffer响应
+          .then(response => response.arrayBuffer()) // Get ArrayBuffer response
           .then(arrayBuffer => {
             const compressed = new Uint8Array(arrayBuffer);
-            const decompressed = pako.ungzip(compressed); // 使用pako解压
+            const decompressed = pako.ungzip(compressed); // Decompress with pako
             const jsonString = new TextDecoder('utf-8').decode(decompressed);
-            const data = JSON.parse(jsonString); // 解析JSON字符串
+            const data = JSON.parse(jsonString); // Parse JSON string
         
             const umapData = data.umap;
             const clusterLabels = data.cluster;
@@ -312,7 +312,7 @@ async mounted() {
                 labelMap.set(label, index);
             });
         
-            // 对clusterLabels进行排序
+            // Sort clusterLabels
             clusterLabels.sort((a, b) => {
               const partsA = a.match(/\d+/)[0];
               const partsB = b.match(/\d+/)[0];
@@ -370,7 +370,7 @@ async mounted() {
           .catch(error => console.error('Error fetching and decompressing UMAP data:', error));
   
   
-      // 绘制差异表达分析图表
+      // Draw DEG chart
       fetch('../php/hv_get_diff_exp_data.php')
         .then(response => response.json())
         .then(data => {
@@ -400,8 +400,8 @@ async mounted() {
             yaxis: {
               title: '-log10(p-value)'
             },
-              paper_bgcolor: 'rgba(0,0,0,0)', // 设置图表背景透明
-              plot_bgcolor: 'rgba(0,0,0,0)'   // 设置绘图区域背景透明
+              paper_bgcolor: 'rgba(0,0,0,0)', // Make the chart background transparent
+              plot_bgcolor: 'rgba(0,0,0,0)'   // Make the plot area background transparent
           };
 
           Plotly.newPlot('volcanoChart', [trace], layout);
@@ -418,7 +418,7 @@ async mounted() {
   })
   .then(data => {
     this.jsondata = JSON.stringify(data);
-    // 在这里使用 jsondata
+    // Use jsondata here
   })
   .catch(error => {
     console.error('There has been a problem with your fetch operation:', error);
@@ -432,24 +432,24 @@ async mounted() {
 
 
 /*
-# data变量已预加载
+# The data variable is preloaded
 data$p_value <- as.numeric(as.character(data$p_value))
 data$fold_change <- as.numeric(as.character(data$fold_change))
-# 计算负对数 p 值
+# Compute negative log p-values
 data$negLogP <- -log10(data$p_value)
-# 创建一个颜色向量，根据 fold_change 的值来设置颜色
+# Create a color vector based on fold_change values
 colors <- ifelse(data$fold_change > 1, 'red', ifelse(data$fold_change < -1, 'blue', 'black'))
-# 绘制火山图
+# Draw the volcano plot
 plot(data$fold_change, data$negLogP, xlab = "Fold Change", ylab = "-log10(p-value)",
      main = "Volcano Plot", pch = 19, col = colors)
-# 添加显著性阈值线
-abline(h = -log10(0.05), col = "blue", lty = 2) # p值阈值线
-abline(v = c(-1, 1), col = "blue", lty = 2) # 倍数变化阈值线
+# Add significance threshold lines
+abline(h = -log10(0.05), col = "blue", lty = 2) # p-value threshold line
+abline(v = c(-1, 1), col = "blue", lty = 2) # fold-change threshold lines
 
 async executeCode() {
         const canvas = document.getElementById('plot-canvas');
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-        console.log('执行的R代码:');
+        console.log('R code executed:');
         const response = await fetch('../php/get_diff_exp_data.php');
         const data = await response.json();
         let jsondata = JSON.stringify(data);
@@ -492,57 +492,57 @@ async executeCode() {
 
 .test {
     display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: flex-start; /* 靠上对齐 */
-    /*height: 100vh;  使容器高度为视口高度，以便垂直居中 */
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align to top */
+    /*height: 100vh;  make the container viewport-high for vertical centering */
 }
 
 .test img {
-    width: 100%; /* 图片宽度不超过容器宽度 */
-    height: auto; /* 保持图片的纵横比 */
+    width: 100%; /* Keep image width within the container */
+    height: auto; /* Preserve the image's aspect ratio */
 }
 .image-text-container {
     display: flex;
-    flex-wrap: wrap; /* 在较小的屏幕上换行 */
-    justify-content: space-between; /* 水平分布图片和文字 */
+    flex-wrap: wrap; /* Wrap on smaller screens */
+    justify-content: space-between; /* Lay out images and text horizontally */
 }
 
 .image-text-item {
     display: flex;
-    align-items: center; /* 图片和文字在垂直方向上居中 */
+    align-items: center; /* Vertically center images and text */
     margin: 10px;
-    text-align: left; /* 文字左对齐 */
-    max-width: calc(25% - 20px); /* 确保项目在较小屏幕上能适当排列，计算每个项目的最大宽度 */
+    text-align: left; /* Left-align text */
+    max-width: calc(25% - 20px); /* Ensure items lay out properly on small screens; compute each item's max width */
 }
 
 .image-text-item img {
-    max-width: 100px; /* 设置图片的最大宽度 */
-    height: auto; /* 保持图片的纵横比 */
-    margin-right: 10px; /* 图片和文字之间的间距 */
+    max-width: 100px; /* Max width of images */
+    height: auto; /* Preserve the image's aspect ratio */
+    margin-right: 10px; /* Spacing between image and text */
 }
 
 .image-text-item p {
-    margin: 0; /* 文字的外边距为零，防止额外间距 */
+    margin: 0; /* Zero margin on text to avoid extra spacing */
 }
 .container {
             display: flex;
-            justify-content: center; /* 水平居中 */
-            align-items: center; /* 垂直居中 */
-            height: 80vh; /* 使外部容器高度为全屏高度 */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 80vh; /* Make the outer container full-screen height */
 }
 .container[data-special="true"] {
     background-color: rgba(84, 164, 255, 0.1);
 }
 .container .image {
     margin-right: 20px;
-    /* 图片与文字之间的间距 */
+    /* Spacing between image and text */
 }
 .container .text {
     max-width: 400px;
-    /* 限制文字宽度为300px */
-    /* 或使用 width 代替 max-width 来设定固定宽度 */
+    /* Limit text width to 300px */
+    /* Or use width instead of max-width for a fixed width */
     word-wrap: break-word;
-    /* 自动换行 */
+    /* Wrap text automatically */
 }
 #umap-plot {
     width: 900px;
@@ -560,47 +560,47 @@ async executeCode() {
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  cursor: pointer; /* 鼠标悬停时显示手型指针 */
-  outline: none; /* 移除焦点时的轮廓 */
+  cursor: pointer; /* Show hand cursor on hover */
+  outline: none; /* Remove outline on focus */
 }
 
 .execute-button:hover {
-  background-color: rgba(093, 116, 162, 0.8); /* 鼠标悬停时的背景颜色 */
+  background-color: rgba(093, 116, 162, 0.8); /* Background color on hover */
 }
 
  /* ----------------------------------------------------------- */
-  /* 竖屏响应*/
+  /* Portrait-orientation responsive styles*/
  @media (orientation: portrait) or (max-width: 800px) {
     .image-text-container {
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* 在图片和文字之间均匀分布空间 */
+        justify-content: space-between; /* Distribute space evenly between images and text */
         height: auto;
         width: auto;
         gap: 5px;
     }
     
     .image-text-container p {
-        white-space: nowrap; /* 阻止文本换行 */
+        white-space: nowrap; /* Prevent text wrapping */
     }
     .container .text {
-            max-width: 800px; /* 限制文字宽度为300px */
-            /* 或使用 width 代替 max-width 来设定固定宽度 */
+            max-width: 800px; /* Limit text width to 300px */
+            /* Or use width instead of max-width for a fixed width */
         }
     .container {
         flex-direction: column;
         display: flex;
-        justify-content: center; /* 水平居中 */
-        align-items: center; /* 垂直居中 */
-        height: auto; /* 使外部容器高度为全屏高度 */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        height: auto; /* Make the outer container full-screen height */
         width: 100%;
     }
     .Top-container{
         width: 100%;
         flex-direction: column;
         display: flex;
-        align-items: center; /* 垂直居中 */
-        justify-content: center; /* 水平居中 */
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
         gap: 50px;
     }
     .main-con{
@@ -608,12 +608,12 @@ async executeCode() {
         gap: 15px;
     }
     #umap-plot {
-        width: 100%; /* 宽度填满屏幕 */
-        height: auto; /* 高度自动调整 */
+        width: 100%; /* Full screen width */
+        height: auto; /* Auto height */
     }
     #volcanoChart {
-        width: 100%; /* 宽度填满屏幕 */
-        height: auto; /* 高度自动调整 */
+        width: 100%; /* Full screen width */
+        height: auto; /* Auto height */
     }
 }
 

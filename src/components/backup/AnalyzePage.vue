@@ -11,7 +11,7 @@
           </li>
           <li @mouseover="showSubMenu = true" @mouseleave="showSubMenu = false" class="has-submenu">
             <a>{{ $t('browse') }}</a>
-            <!-- 二级菜单 -->
+            <!-- Submenu -->
             <ul v-if="showSubMenu" class="submenu">
               <li>
                 <router-link to="/browse/singlecell">{{ $t('browse-SingleCell') }}</router-link>
@@ -141,13 +141,13 @@ const isLoading = ref(true);
 const { updateEdge, addEdges ,getConnectedEdges } = useVueFlow();
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
 
-// 创建 WebR 实例
+// Create WebR instance
 const newWebR = new WebR();
 const waitNodeId = ref(null);
 
-// 异步初始化 WebR 实例
+// Initialize WebR instance asynchronously
 async function initializeWebR() {
-  await newWebR.init(); // 假设 WebR 实例需要初始化
+  await newWebR.init(); // Assume the WebR instance needs initialization
   console.log('WebR initialized');
   await newWebR.installPackages(['jsonlite'], true);
   isLoading.value = false;
@@ -164,7 +164,7 @@ const nodeComponents = {
  
 };
 
-// 定义响应式数据
+// Define reactive data
 const showSubMenu = ref(false);
 const nodes = ref([]);
 
@@ -181,7 +181,7 @@ const edges = ref([]);
   }
 
 //----------
-//连接边
+//Connect edges
 //----------
  // eslint-disable-next-line
 const onEdgeUpdateStart = (edge) => {
@@ -199,7 +199,7 @@ const onEdgeUpdate = ({ edge, connection }) => {
 
 
 const onConnect = (params) => {
-  // 为新边生成一个 UUID
+  // Generate a UUID for the new edge
   const newEdge = {
     ...params,
     id: uuidv4(), 
@@ -209,7 +209,7 @@ const onConnect = (params) => {
   addEdges([newEdge]);
 };
 //----------
-//保存和加载
+//Save and load
 //----------
 
 const { toObject } = useVueFlow();
@@ -219,13 +219,13 @@ function onSave() {
   const blob = new Blob([flowData], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
 
-  // 创建下载链接并自动触发下载
+  // Create a download link and trigger the download automatically
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'flow-data.json'; // 文件名
+  a.download = 'flow-data.json'; // File name
   a.click();
 
-  // 释放 URL 对象
+  // Release the URL object
   URL.revokeObjectURL(url);
 }
 const { fromObject } = useVueFlow();
@@ -246,8 +246,8 @@ function triggerFileInput() {
       reader.onload = (e) => {
         try {
           const flow = JSON.parse(e.target.result);
-          //console.log('Flow loaded:', flow); // Debug: 查看加载的内容
-          fromObject(flow); // 确保 `fromObject` 方法存在
+          //console.log('Flow loaded:', flow); // Debug: inspect loaded content
+          fromObject(flow); // Make sure the `fromObject` method exists
         } catch (error) {
           console.error('Error parsing flow data:', error);
         }
@@ -261,7 +261,7 @@ function autoSave() {
   localStorage.setItem(flowKey, JSON.stringify(toObject()));
 }
 
-//每10s执行一次 autoSave 函数，自动保存
+//Run autoSave every 10s for automatic saving
 setInterval(autoSave, 10000);
 
 function autoLoad() {
@@ -274,40 +274,40 @@ function autoLoad() {
 
 const isCtrlSPressed = ref(false);
 
-// 定义一个方法来处理键盘按下事件
+// Handler for keydown events
 function handleSaveKeyPress(event) {
   const { key } = event;
-  // 检查是否同时按下了 Ctrl 和 S 键
+  // Check whether Ctrl and S are pressed together
   if (key === 's' && event.ctrlKey) {
     isCtrlSPressed.value = true;
-    // 阻止浏览器默认的保存网页行为
+    // Prevent the browser's default save-page behavior
     event.preventDefault();
     localStorage.setItem(flowKey, JSON.stringify(toObject()));
     showSaveSuccess();
   }
 }
-const saveSuccess = ref(false); // 控制保存成功的提示是否显示
+const saveSuccess = ref(false); // Controls whether the save-success message is shown
 
 function showSaveSuccess() {
-  saveSuccess.value = true; // 显示保存成功的提示
-  setTimeout(() => { // 设置一个定时器，3秒后隐藏提示
+  saveSuccess.value = true; // Show the save-success message
+  setTimeout(() => { // Set a timer to hide the message after 3 seconds
     saveSuccess.value = false;
-  }, 3000); // 3000毫秒后执行
+  }, 3000); // Runs after 3000 ms
 }
 //----------
-//语言切换
+//Language switching
 //----------
 const { locale } = useI18n();
 
-// 处理语言切换
+// Handle language switch
 const onLanguageChanged = (language) => {
-  locale.value = language; // 更新语言
-  window.localStorage.setItem('selectedLanguage', language); // 可选：存储语言选择
+  locale.value = language; // Update language
+  window.localStorage.setItem('selectedLanguage', language); // Optional: persist the language choice
 };
 
 onMounted(async() => {
   const selectedLanguage = window.localStorage.getItem('selectedLanguage') || 'zh1';
-  locale.value = selectedLanguage; // 设置语言
+  locale.value = selectedLanguage; // Set language
   await initializeWebR();
   autoLoad();
   window.addEventListener('keydown', handleSaveKeyPress);
@@ -319,39 +319,39 @@ onUnmounted(() => {
 
 
 //----------
-//执行工作流
+//Run workflow
 //----------
 const eventBus = inject('eventBus');
-// 执行工作流
+// Run workflow
 const executeWorkflow = async() => {
   console.log('Executing workflow...');
-  // 定义一个队列来存储待处理的节点
+  // Queue of nodes to process
   const queue = [];
-  // 定义一个集合来存储已访问的节点
+  // Set of visited nodes
   const visited = new Set();
 
-  // 找到起始节点并将其加入队列
+  // Find the start node and enqueue it
   const startNode = nodes.value.find(node => node.type === 'start-node');
   if (startNode) {
     queue.push(startNode);
     visited.add(startNode.id);
   }
 
-  // 循环处理队列中的节点
+  // Process nodes in the queue
   while (queue.length > 0) {
-    // 从队列中取出一个节点
+    // Dequeue a node
     const currentNode = queue.shift();
     console.log(`Processing node: ${currentNode.id}`);
-    // 执行当前节点的业务逻辑
+    // Run the current node's logic
     if (currentNode.type === 'end') {
-      // 执行结束节点的逻辑
+      // Run the end node's logic
       console.log('Workflow completed.');
     }
     else {
     await eventBus.emit('perform-action', currentNode.id);
     } 
     
-    // 获取当前节点的所有邻居节点
+    // Get all neighbors of the current node
     const edgesFromCurrent = getConnectedEdges(currentNode.id ,edges).filter((edge) => edge.source === currentNode.id);
     
     for (const edge of edgesFromCurrent) {
@@ -369,11 +369,11 @@ const waitForNode = (id) => {
   return new Promise((resolve) => {
     const checkCondition = setInterval(() => {
       if (waitNodeId.value === id) {
-        //console.log('执行成功');
+        //console.log('Execution succeeded');
         clearInterval(checkCondition);
         resolve();
       }
-    }, 100); // 每 100ms 检查一次
+    }, 100); // Check every 100ms
   });
 };
 onMounted(() => {
@@ -382,16 +382,16 @@ onMounted(() => {
 });
 
 const handleTaskCompletion = (data) => {
-  waitNodeId.value = data; // 设置为 false，表示等待结束
+  waitNodeId.value = data; // Set to false to indicate waiting is over
   console.log("Node process completely:", waitNodeId.value);
-  // 执行下一个节点的逻辑...
+  // Run the next node's logic...
 };
 
 onUnmounted(() => {
   eventBus.off('task-completed', handleTaskCompletion);
 });
 
-// 更新节点状态
+// Update node status
 // eslint-disable-next-line
 const updateNodeStatus = (nodesArray, status) => {
   nodesArray.forEach(node => {
@@ -399,7 +399,7 @@ const updateNodeStatus = (nodesArray, status) => {
   });
 };
 
-// 更新节点数据
+// Update node data
 const updateNodeData = (nodeId, newData) => {
   const node = nodes.value.find(n => n.id === nodeId);
   if (node) {
@@ -434,7 +434,7 @@ const updateNodeData = (nodeId, newData) => {
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 4px;
-  /* 其他面板样式 */
+  /* Other panel styles */
 }
 
 .node-button {
@@ -477,16 +477,16 @@ const updateNodeData = (nodeId, newData) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(255, 255, 255); /* 半透明背景 */
-  z-index: 10; /* 确保遮罩层在最上层 */
+  background-color: rgb(255, 255, 255); /* Semi-transparent background */
+  z-index: 10; /* Keep the overlay on top */
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 .overlay-text {
-  font-size: 20px; /* 根据需要调整字体大小 */
-  color: #333; /* 文本颜色 */
+  font-size: 20px; /* Adjust font size as needed */
+  color: #333; /* Text color */
 }
 .loader {
   position: relative;
@@ -529,15 +529,15 @@ aside {
   font-weight: 700;
   border-right: 1px solid #eee;
   padding: 15px 10px;
-  font-size: 14px; /* 增加字体大小 */
+  font-size: 14px; /* Larger font size */
   background-color: #f9f9f9;
   -webkit-box-shadow: 0px 5px 10px 0px rgba(0,0,0,.3);
   box-shadow: 0 5px 10px #0000004d;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 设置子元素之间的间隙 */
-  border-radius: 8px; /* 添加圆角 */
-  overflow: hidden; /* 隐藏超出部分 */
+  gap: 10px; /* Gap between child elements */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Hide overflow */
 }
 
 aside .nodes {
@@ -550,15 +550,15 @@ aside .nodes {
 aside .nodes>* {
   cursor: grab;
   font-weight: 500;
-  background: white; /* 添加半透明背景 */
-  border: 1px solid black; /* 添加边框 */
-  padding: 10px 15px; /* 增加内边距 */
-  border-radius: 5px; /* 添加圆角 */
-  transition: transform 0.3s ease-in-out; /* 添加过渡效果 */
+  background: white; /* Semi-transparent background */
+  border: 1px solid black; /* Add border */
+  padding: 10px 15px; /* More padding */
+  border-radius: 5px; /* Rounded corners */
+  transition: transform 0.3s ease-in-out; /* Add transition effect */
 }
 
 aside .nodes>*:hover {
-  transform: translateY(-5px); /* 鼠标悬停时上移 */
+  transform: translateY(-5px); /* Lift up on hover */
 }
 .save-success {
   position: fixed;
