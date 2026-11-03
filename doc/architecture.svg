@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" width="1000" height="760" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>ssMOOD v1.1 architecture</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5d74a2"/>
+    </marker>
+    <style>
+      .band { fill: #f6f8fc; stroke: #d6deeb; }
+      .label { font-size: 15px; font-weight: 600; fill: #ffffff; }
+      .chip { fill: #ffffff; stroke: #c4cfe2; }
+      .chip-t { font-size: 13.5px; fill: #1f2d45; }
+      .sub { font-size: 11.5px; fill: #5b6b85; }
+      .flow { stroke: #5d74a2; stroke-width: 2; fill: none; }
+      .note { font-size: 12px; fill: #5b6b85; font-style: italic; }
+    </style>
+  </defs>
+
+  <!-- Background so the diagram stays readable in dark mode -->
+  <rect x="0" y="0" width="1000" height="760" rx="14" fill="#ffffff"/>
+
+  <!-- ── Client ── -->
+  <rect x="20" y="20" width="150" height="70" rx="10" fill="#4a7fc1"/>
+  <text x="95" y="60" class="label" text-anchor="middle">Client</text>
+  <rect x="190" y="20" width="790" height="70" rx="10" class="band"/>
+  <rect x="455" y="35" width="260" height="40" rx="8" class="chip"/>
+  <text x="585" y="60" class="chip-t" text-anchor="middle">Web browser · desktop and mobile</text>
+
+  <path d="M585 90 V118" class="flow" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+
+  <!-- ── Front end ── -->
+  <rect x="20" y="120" width="150" height="150" rx="10" fill="#5d74a2"/>
+  <text x="95" y="188" class="label" text-anchor="middle">Front end</text>
+  <text x="95" y="208" class="sub" text-anchor="middle" fill="#e6ecf7" style="fill:#e6ecf7">Vue 3 single-page app</text>
+  <rect x="190" y="120" width="790" height="150" rx="10" class="band"/>
+  <!-- row 1 -->
+  <rect x="210" y="138" width="180" height="50" rx="8" class="chip"/>
+  <text x="300" y="160" class="chip-t" text-anchor="middle">Vue 3 + Vue Router</text>
+  <text x="300" y="178" class="sub" text-anchor="middle">pages and routing</text>
+  <rect x="405" y="138" width="180" height="50" rx="8" class="chip"/>
+  <text x="495" y="160" class="chip-t" text-anchor="middle">Element Plus</text>
+  <text x="495" y="178" class="sub" text-anchor="middle">UI components</text>
+  <rect x="600" y="138" width="170" height="50" rx="8" class="chip"/>
+  <text x="685" y="160" class="chip-t" text-anchor="middle">vue-i18n</text>
+  <text x="685" y="178" class="sub" text-anchor="middle">en · zh-CN · zh-TW</text>
+  <rect x="785" y="138" width="180" height="50" rx="8" class="chip"/>
+  <text x="875" y="160" class="chip-t" text-anchor="middle">Plotly.js (WebGL)</text>
+  <text x="875" y="178" class="sub" text-anchor="middle">UMAP, spatial maps, charts</text>
+  <!-- row 2 -->
+  <rect x="210" y="202" width="275" height="50" rx="8" class="chip"/>
+  <text x="347" y="224" class="chip-t" text-anchor="middle">fetch / axios + pako</text>
+  <text x="347" y="242" class="sub" text-anchor="middle">API calls, gunzip of large payloads</text>
+  <rect x="500" y="202" width="270" height="50" rx="8" class="chip"/>
+  <text x="635" y="224" class="chip-t" text-anchor="middle">WebR</text>
+  <text x="635" y="242" class="sub" text-anchor="middle">R in the browser (Analyze page)</text>
+  <rect x="785" y="202" width="180" height="50" rx="8" class="chip"/>
+  <text x="875" y="224" class="chip-t" text-anchor="middle">Vue CLI / webpack</text>
+  <text x="875" y="242" class="sub" text-anchor="middle">build → dist/</text>
+
+  <path d="M585 270 V298" class="flow" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <text x="597" y="290" class="note">HTTPS · GET / POST · JSON or gzip binary</text>
+
+  <!-- ── Web server ── -->
+  <rect x="20" y="300" width="150" height="60" rx="10" fill="#3a8a72"/>
+  <text x="95" y="335" class="label" text-anchor="middle">Web server</text>
+  <rect x="190" y="300" width="790" height="60" rx="10" class="band"/>
+  <rect x="405" y="310" width="360" height="40" rx="8" class="chip"/>
+  <text x="585" y="335" class="chip-t" text-anchor="middle">Nginx / Apache · serves dist/ and runs php/</text>
+
+  <path d="M585 360 V388" class="flow" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+
+  <!-- ── API ── -->
+  <rect x="20" y="390" width="150" height="140" rx="10" fill="#6652a8"/>
+  <text x="95" y="455" class="label" text-anchor="middle">API</text>
+  <text x="95" y="475" class="sub" text-anchor="middle" style="fill:#ece8f7">php/*.php</text>
+  <rect x="190" y="390" width="790" height="140" rx="10" class="band"/>
+  <rect x="210" y="408" width="440" height="104" rx="8" class="chip"/>
+  <text x="430" y="432" class="chip-t" text-anchor="middle" font-weight="600">PHP endpoints (mysqli / PDO)</text>
+  <text x="430" y="456" class="sub" text-anchor="middle">dataset lists and details · UMAP and spatial coordinates</text>
+  <text x="430" y="475" class="sub" text-anchor="middle">gene expression · DEGs · cluster counts · visit statistics</text>
+  <text x="430" y="494" class="sub" text-anchor="middle">large responses gzip-compressed with zlib</text>
+  <rect x="670" y="408" width="295" height="46" rx="8" class="chip"/>
+  <text x="817" y="428" class="chip-t" text-anchor="middle">openai_proxy.php (cURL)</text>
+  <text x="817" y="445" class="sub" text-anchor="middle">AI code assistant</text>
+  <rect x="670" y="466" width="295" height="46" rx="8" class="chip"/>
+  <text x="817" y="486" class="chip-t" text-anchor="middle">enrichment.php → enrichment.py</text>
+  <text x="817" y="503" class="sub" text-anchor="middle">Python · pandas · GSEApy</text>
+  <path d="M650 431 H668" class="flow" marker-end="url(#arrow)"/>
+  <path d="M650 489 H668" class="flow" marker-end="url(#arrow)"/>
+
+
+  <!-- ── Data ── -->
+  <rect x="20" y="560" width="150" height="80" rx="10" fill="#c8a840"/>
+  <text x="95" y="605" class="label" text-anchor="middle">Data</text>
+  <rect x="190" y="560" width="770" height="80" rx="10" class="band"/>
+  <rect x="210" y="572" width="210" height="56" rx="8" class="chip"/>
+  <text x="315" y="596" class="chip-t" text-anchor="middle">MariaDB · ssmood</text>
+  <text x="315" y="614" class="sub" text-anchor="middle">datasets, cells, expression, DEGs</text>
+  <rect x="435" y="572" width="200" height="56" rx="8" class="chip"/>
+  <text x="535" y="596" class="chip-t" text-anchor="middle">MariaDB · ssmood_log</text>
+  <text x="535" y="614" class="sub" text-anchor="middle">visit statistics</text>
+  <rect x="650" y="572" width="215" height="56" rx="8" class="chip"/>
+  <text x="757" y="596" class="chip-t" text-anchor="middle">Gene-set files (.gmt)</text>
+  <text x="757" y="614" class="sub" text-anchor="middle">KEGG 2019 · GO 2018</text>
+
+  <!-- ── External ── -->
+  <rect x="20" y="660" width="150" height="70" rx="10" fill="#8a94a6"/>
+  <text x="95" y="700" class="label" text-anchor="middle">External</text>
+  <rect x="190" y="660" width="790" height="70" rx="10" class="band"/>
+  <rect x="740" y="675" width="190" height="40" rx="8" class="chip"/>
+  <text x="835" y="700" class="chip-t" text-anchor="middle">Online LLM API</text>
+
+  <!-- Connections drawn last so they sit on top of the bands -->
+  <path d="M430 512 V570" class="flow" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <path d="M757 512 V570" class="flow" marker-end="url(#arrow)"/>
+  <path d="M965 431 H974 V695 H932" class="flow" marker-end="url(#arrow)"/>
+</svg>

@@ -1,237 +1,195 @@
-[![ssMOOD cover](./doc/ssmood.jpg "ssMOOD cover")](https://ssmood.genomics.cn)
+[![ssMOOD home page](./doc/screenshots/home.png "ssMOOD home page")](https://ssmood.genomics.cn)
 
-[![AGPLv3 License](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+# ssMOOD
 
+**Spatial and single-cell Major depression disease Omics Online Database**
 
-**License Statement**
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**.
+[![Website](https://img.shields.io/badge/website-ssmood.genomics.cn-5d74a2)](https://ssmood.genomics.cn)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-* ✅ Permitted: free use, modification, and distribution
-* 🔄 Requirement: derivative works must remain open source under the same license
-* 🌐 Network services: if the project is used to provide online services, the modified source code must be made publicly available
+ssMOOD is an open, interactive database of single-cell and spatial transcriptomics data for **major depressive disorder (MDD)**. It brings human MDD data and the **chronic social defeat stress (CSDS)** mouse model into one place, so researchers can browse datasets, look up genes, and compare cell types across brain regions, conditions and species without downloading or processing raw data first.
 
-**Special Note on Network Services**
+👉 **Use it online: <https://ssmood.genomics.cn>**
 
-If you use this project to provide online services (e.g., Web API, SaaS platform), you must:
+This repository contains the full source code of the website: the Vue front end, the PHP API, and the Python enrichment script.
 
-* Make the modified source code publicly available to all users
-* Provide a clear and accessible link to the source code in a prominent location (e.g., at the bottom of the service page)
+---
 
+## Contents
 
+- [What's in the database](#whats-in-the-database)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Repository layout](#repository-layout)
+- [Run the front end locally](#run-the-front-end-locally)
+- [Deploy your own instance](#deploy-your-own-instance)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Citation](#citation)
+- [License](#license)
 
-# Introduction to ssMOOD
+---
 
-The **spatial and single-cell Major Depression Disease Omics Online Database (ssMOOD)** is a comprehensive online resource designed to integrate and provide access to spatial transcriptomics and single-cell transcriptomic datasets related to **major depressive disorder (MDD)**. Its primary aim is to facilitate in-depth exploration of the molecular mechanisms underlying MDD and to support the discovery of potential biomarkers for diagnosis and therapeutic development.
+## What's in the database
 
-ssMOOD brings together data from both human studies and **chronic social defeat stress (CSDS) mouse models**, covering spatial transcriptomics and single-nucleus RNA sequencing (snRNA-seq). Currently, the database contains multiple curated projects, comprising more than **six million entries**, offering researchers a unified platform to query, visualize, and analyze depression-related omics data at both the spatial and single-cell levels.
+| | |
+|---|---|
+| **Species** | Human (MDD and controls) · Mouse (CSDS days 0, 3 and 7, plus susceptible and resilient groups) |
+| **Modalities** | Single-nucleus RNA-seq (10x Genomics, Singleron) · Spatial transcriptomics (Stereo-seq) |
+| **Scale** | 600,000+ single-cell profiles and 5,500,000+ spatial spots, covering 49,000+ genes |
+| **Organisation** | Individual datasets, plus integrated *studies* that combine related datasets |
 
-From a technological perspective, ssMOOD is built upon a **modern, high-performance web architecture**. The frontend is developed with **Vue.js** and **Element Plus**, delivering a responsive and user-friendly interface with interactive visualization capabilities. The backend combines **PHP** and **Python** for efficient data processing and dynamic content generation, while **MariaDB** serves as the core database, providing robust and scalable data storage and management. Together, these technologies enable smooth user interaction, fast query responses, and reliable handling of large-scale omics data.
+Live counts are shown on the [home page](https://ssmood.genomics.cn). Dataset sources, protocols and processing steps are described in [Methods](public/doc/Methods.md).
 
-By integrating state-of-the-art data resources with a modern interface and optimized performance, ssMOOD aims to become a valuable tool for the neuroscience and psychiatry research communities. It empowers users to perform multi-dimensional exploration of MDD-related datasets, bridging spatial and single-cell omics to advance the understanding of this complex psychiatric disorder.
+## Features
 
+- **Browse** single-cell and spatial datasets by species, brain region, condition and platform.
+- **Dataset pages** with:
+  - an interactive UMAP (single-cell) or spatial map (ST), coloured by cell type;
+  - gene search, showing expression on the same embedding;
+  - differentially expressed genes per cell type, with sorting and filtering;
+  - KEGG and GO (BP / CC / MF) enrichment of the selected DEGs.
+- **Integrated studies** that link several datasets, with synchronised charts.
+- **Download** page with dataset links and the source code.
+- **Analyze** page with an in-browser R environment (WebR) and an AI code assistant.
+- English, Simplified Chinese and Traditional Chinese interface, chosen automatically from the browser language.
 
-## Overview of ssMOOD Page Functions
+### Screenshots
 
-### **Home**
+**Single-cell dataset page**: UMAP coloured by cell type (left) and expression of a searched gene, *Snap25* (right).
 
-The **Home** page provides a comprehensive overview of the database and highlights its core features:
+![Single-cell dataset page](./doc/screenshots/single-cell-dataset.png)
 
-* **Bar Chart of Dataset Counts**: Displays the number of datasets available across different categories, offering a quick snapshot of the data distribution.
+| Spatial dataset page | Single-cell dataset browser |
+|---|---|
+| ![Spatial transcriptomics dataset page](./doc/screenshots/spatial-dataset.png) | ![Single-cell dataset browser](./doc/screenshots/single-cell-datasets.png) |
 
-* **Species Proportion Pie Chart**: Shows the distribution of species in the database, giving users a clear understanding of the species representation.
+## Architecture
 
-* **Single-cell vs ST Proportion**: A comparison chart illustrating the proportion of single-cell data versus spatial transcriptomics (ST) data within the database.
+![ssMOOD architecture](./doc/architecture.svg "ssMOOD architecture")
 
-* **UMAP of Human and Mouse Single-cell Data**: Visualizes the clustering of single-cell data for both human and mouse species using UMAP (Uniform Manifold Approximation and Projection).
+| Layer | Technology |
+|---|---|
+| Front end | Vue 3, Vue Router, Element Plus, Plotly.js, vue-i18n, pako, WebR |
+| API | PHP (mysqli / PDO), one endpoint per `php/*.php` file; large payloads are gzip-compressed |
+| Database | MariaDB (`ssmood` for data, `ssmood_log` for visit statistics) |
+| Enrichment | Python 3 with pandas and GSEApy, run by `php/enrichment.php` against the gene sets in `php/offline_enrich_db/` |
 
-* **ST Spatial Location Map for Human and Mouse**: Displays the spatial positioning of human and mouse samples within the context of spatial transcriptomics.
-
-* **Integrated Datasets**: Showcases the integration of various datasets, providing a holistic view of the available data across species and techniques.
-
-
-### **Browse**
-
-The **Browse** section enables users to explore datasets in two primary categories:
-
-* **Single-cell datasets**
-  Includes both integrated datasets (aggregated from multiple studies) and individual datasets.As of August 2025, there are 626,425 cells.
-
-* **ST datasets**
-  Also includes both integrated and individual datasets, supporting both cross-study comparisons and single-study analyses.As of August 2025, there are 5,506,379 ST datas.
-
-This section is designed to provide intuitive access to raw and processed data, facilitating downstream analyses.
-
-
-### **About**
-
-The **About** section provides comprehensive background information:
-
-* **Methods**
-  Describes the experimental protocols and computational pipelines used for data generation, preprocessing, and integration.
-
-* **Usage**
-  Offers guidance on accessing and analyzing datasets, including search, filtering, and visualization features.
-
-* **FAQ**
-  Answers to frequently asked questions regarding data interpretation, usage, and troubleshooting.
-
-* **Contact Us**
-  Provides contact information for technical support, collaborative inquiries, and data contribution requests.
-
-
-### **Download**
-
-The **Download** section provides direct access to:
-
-* **Raw datasets**
-  Publicly available single-cell and bulk RNA-seq datasets for offline analysis.
-
-* **Source code**
-  The complete source code of the web application, enabling reproducibility, local deployment, and further customization.
-
-
-
-
-# ssMOOD Runtime Environment
-
-* **Operating System**: Ubuntu 22.04 LTS
-* **Server**: Apache 2
-* **Backend**: PHP 8.2, Python 3.10.12
-* **Database**: MariaDB 10.6
-
-# ssMOOD project
-![bp](./doc/ssMOODFarmework.png "bp")
-```
-src
-├── App.vue                 # Vue root component, entry point and layout container for the entire application
-├── assets                  # Static resources folder, such as images, icons, etc.
-├── components              # Vue component directory
-│   ├── AboutPage.vue       # About page component
-│   ├── analyze             # Subcomponents for the analysis pages
-│   ├── AnalyzePage.vue     # Main analysis page component
-│   ├── backup              # Temporarily deprecated code
-│   ├── color_map.js        # Plot color mapping
-│   ├── ContactUsPage.vue   # Contact us page component
-│   ├── css                 # Styles folder for components
-│   ├── DocPage.vue         # Documentation page component
-│   ├── DownloadPage.vue    # Download page component
-│   ├── general             # General purpose components
-│   ├── HomeView.vue        # Homepage component
-│   ├── SingleCellList.vue  # Single-cell dataset list page
-│   ├── SingleCellPage.vue  # Single-cell dataset detail page
-│   ├── ssMOODPageTemplate.vue # Blank page template component
-│   ├── STList.vue          # Spatial transcriptomics dataset list page
-│   ├── STPage.vue          # Spatial transcriptomics dataset detail page
-│   ├── study               # Integrated dataset list
-│   ├── studySingleCellPage.vue # Single-cell integrated dataset detail page
-│   ├── studySTPage.vue     # Spatial transcriptomics integrated dataset detail page
-│   └── VisitLogPage.vue    # User visit log page
-├── config                  # Configuration files folder
-│   └── index.js            # Global project configuration, such as API endpoints, parameters, etc.
-├── locales                 # Localization language files
-│   ├── en.json             # English language pack
-│   ├── zh-cn.json          # Simplified Chinese language pack
-│   └── zh-tw.json          # Traditional Chinese language pack
-├── main.js                 # Vue project entry file, mounts root component and routing
-├── router                  # Routing configuration files folder
-│   └── index.js            # Vue Router configuration file
-└── styles                  # Global styles folder
-    └── element-theme.css   # Element Plus UI framework theme styles
+## Repository layout
 
 ```
+.
+├── doc/                     # Images used in this README
+├── php/                     # PHP API endpoints, enrichment script and gene-set files
+├── public/
+│   ├── doc/                 # Methods, Usage and News pages shown on the website (Markdown)
+│   └── index.html           # HTML shell and startup loading screen
+└── src/
+    ├── App.vue              # Root component
+    ├── main.js              # App entry: router, i18n, Element Plus
+    ├── config/index.js      # API base URL for development and production
+    ├── router/index.js      # Routes
+    ├── locales/             # en / zh-cn / zh-tw translations
+    ├── styles/              # Global Element Plus theme overrides
+    └── components/
+        ├── HomeView.vue             # Home page
+        ├── SingleCellList.vue       # Single-cell dataset list
+        ├── SingleCellPage.vue       # Single-cell dataset page
+        ├── STList.vue               # Spatial dataset list
+        ├── STPage.vue               # Spatial dataset page
+        ├── studySingleCellPage.vue  # Integrated single-cell study page
+        ├── studySTPage.vue          # Integrated spatial study page
+        ├── study/                   # Study overview cards
+        ├── AnalyzePage.vue          # WebR + AI analysis page
+        ├── DownloadPage.vue, DocPage.vue, ContactUsPage.vue, VisitLogPage.vue
+        ├── general/                 # Shared components (navigation bar, loaders, footer, ...)
+        ├── analyze/                 # Sub-components of the Analyze page
+        ├── css/                     # Page styles
+        ├── color_map.js             # Cell-type colour palette
+        └── backup/                  # Deprecated components kept for reference
+```
 
-# Project Setup and Usage
+## Run the front end locally
 
-## 1. Installation
+Requirements: [Node.js](https://nodejs.org) 18 or newer, and npm.
 
-To get started, you need to install the project dependencies. Follow these steps:
+```bash
+git clone https://github.com/YuLab-SMU/ssMOOD.git
+cd ssMOOD
+npm install
+```
 
-1. Clone the repository to your local machine:
+Point the development build at a backend by editing `devConfig.apiUrl` in [`src/config/index.js`](src/config/index.js). For example, to use the public API:
 
-   ```bash
-   https://github.com/YuLab-SMU/ssMOOD.git
+```js
+const devConfig = {
+  apiUrl: 'https://ssmood.genomics.cn/php/',
+};
+```
+
+Then start the dev server:
+
+```bash
+npm run serve        # http://localhost:8787
+```
+
+To build for production:
+
+```bash
+npm run build        # outputs to dist/
+```
+
+The production build calls the API at `./php/`, on the same host that serves the site.
+
+## Deploy your own instance
+
+Reference environment: Ubuntu 22.04, Apache 2, PHP 8.2, MariaDB 10.6, Python 3.10.
+
+1. **PHP extensions**: `mysqli` (with mysqlnd), `pdo_mysql`, `zlib`, `curl`.
+2. **Python packages** for enrichment: `pip install pandas gseapy`.
+3. **Database**: create the `ssmood` and `ssmood_log` databases and load the data. Put the credentials in `/etc/ssmood/db.php`, outside the web root, and make the file readable only by the web server:
+
+   ```php
+   <?php
+   return [
+       'user' => 'db_user',
+       'pass' => 'db_password',
+   ];
    ```
 
-2. Navigate to the project directory:
-
    ```bash
-   cd ssMOOD-master
+   sudo chown www-data:www-data /etc/ssmood/db.php
+   sudo chmod 600 /etc/ssmood/db.php
    ```
 
-3. Install the required dependencies using **npm** or **yarn**:
+4. **Files**: copy the contents of `dist/` to the web root (e.g. `/var/www/html`), and the `php/` folder to `<web root>/php`.
+5. **Apache**: enable `AllowOverride` for `<web root>/php` so that `php/.htaccess` takes effect. It blocks direct access to logs, scripts and gene-set files.
+6. **AI assistant (optional)**: set the LLM endpoint, model and API key in `php/config.php` on the server. Never commit real keys.
 
-   * Using **npm**:
+## Documentation
 
-     ```bash
-     npm install
-     ```
+- [Methods](public/doc/Methods.md): data sources, preprocessing, DEG and enrichment workflows
+- [Usage](public/doc/Usage.md): a walkthrough of every page
+- [News](public/doc/News.md): release notes and version mapping. The current release is **v1.1.1** (codebase 4.8.0).
 
-   * Or using **yarn** (if you have yarn installed):
+The same pages are available on the website under **About**.
 
-     ```bash
-     yarn install
-     ```
+## Contributing
 
-This will install all necessary dependencies listed in `package.json`.
+Issues and pull requests are welcome.
 
+1. Fork the repository and create a branch from `master`.
+2. Write code comments, commit messages and pull requests in English.
+3. Run `npm run lint`, and make sure `npm run build` succeeds, before opening a pull request.
 
-## 2. Build
+## Citation
 
-To create a production build of the application, run the following command:
+The ssMOOD paper is in preparation. Until it is published, please cite the website:
 
-1. **Build the project**:
+> ssMOOD: Spatial and single-cell Major depression disease Omics Online Database. <https://ssmood.genomics.cn>
 
-   * Using **npm**:
+## License
 
-     ```bash
-     npm run build
-     ```
+ssMOOD is released under the [GNU Affero General Public License v3.0](LICENSE).
 
-   * Or using **yarn**:
-
-     ```bash
-     yarn build
-     ```
-
-This will generate optimized and minified files for production in the `dist/` directory.
-
-
-## 3. Serve
-
-To run the application locally in development mode, follow these steps:
-
-1. **Start the development server**:
-
-   * Using **npm**:
-
-     ```bash
-     npm run serve
-     ```
-
-   * Or using **yarn**:
-
-     ```bash
-     yarn serve
-     ```
-
-2. Once the server starts, open your browser and go to the following URL:
-
-   ```bash
-   http://localhost:8787
-   ```
-
-This will launch the app on the default port **8787**. You can modify the port in the `vue.config.js` file if needed.
-
-
-
-### Dependencies and Tools
-
-* **Vue.js**: Frontend framework
-* **Element Plus**: UI framework
-* **Vue Router**: Routing management
-* **npm/yarn**: Package managers
-
-
-### Citation for ssMOOD (to be updated)
-
-* Once the article is published, this section will be updated with the full bibliographic information and DOI. For now, please reference the project URL: [https://ssmood.genomics.cn](https://ssmood.genomics.cn)
+You may use, modify and redistribute it. Derivative works must be released under the same license. If you run a modified version as a network service, you must make its source code available to its users, for example with a link in the page footer.
