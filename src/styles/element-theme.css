@@ -11,3 +11,30 @@
   font-weight: 700;      /* 加粗 */
   font-size: 18px;       /* 字号，可按需调整 */
 }
+
+/* v-loading mask (tables etc.): translucent with a light blur; spinner uses the primary color */
+.el-loading-mask {
+  background-color: rgba(247, 249, 252, 0.78);
+  backdrop-filter: blur(2px);
+}
+.el-loading-spinner .path {
+  stroke: var(--el-color-primary);
+  stroke-width: 3;
+}
+.el-loading-spinner .el-loading-text {
+  color: var(--el-color-primary);
+  font-size: 13px;
+}
+
+/* Route-change progress bar (NProgress): primary-color gradient instead of the default bright blue */
+#nprogress .bar {
+  height: 3px;
+  background: linear-gradient(90deg, rgb(93, 116, 162), #5aab8a);
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px rgb(93, 116, 162), 0 0 5px rgb(93, 116, 162);
+}
+#nprogress .spinner-icon {
+  border-top-color: rgb(93, 116, 162);
+  border-left-color: rgb(93, 116, 162);
+}

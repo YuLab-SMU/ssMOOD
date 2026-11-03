@@ -74,8 +74,7 @@
                 <!-- UMAP图的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="umapLoading" src="/loading.gif" alt="Loading"
-                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
+                  <ChartLoading v-if="umapLoading" />
 
                   <!-- Plotly 图表容器 -->
                   <div id="umap-plot"
@@ -112,8 +111,7 @@
                 <!-- UMAP基因表达量图的容器 -->
                 <div style="position: relative; width: 100%; aspect-ratio: 1 / 1;">
                   <!-- 加载图 -->
-                  <img v-if="umapGeneLoading" src="/loading.gif" alt="Loading"
-                    style="position: absolute;inset: 0;margin: auto;width: 80%;height: 80%;object-fit: contain;z-index: 1;" />
+                  <ChartLoading v-if="umapGeneLoading" />
 
                   <!-- Plotly 图表容器 -->
                   <div id="umap-chart-gene"
@@ -586,6 +584,7 @@ import { useRoute } from 'vue-router';
 //----------以下为一个ssmood页面需要的最基础的东西--------------
 import BackToTop from './general/BackToTop.vue';
 import NavigationBar from './general/NavigationBar.vue';
+import ChartLoading from './general/ChartLoading.vue';
 import config from '@/config';
 //----------以上为一个ssmood页面需要的最基础的东西--------------
 import colorMap from './color_map.js';

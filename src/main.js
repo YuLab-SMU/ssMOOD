@@ -34,7 +34,9 @@ app.provide('eventBus', eventBus);
 app.use(ElementPlus)
 // 挂载应用
 app.mount('#app');
-window.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('app-loading')
-  if (loader) loader.style.display = 'none'
-})
+// Fade out the startup loading screen once the app has mounted (styles live in public/index.html)
+const loader = document.getElementById('app-loading')
+if (loader) {
+  requestAnimationFrame(() => loader.classList.add('done'))
+  setTimeout(() => { loader.style.display = 'none' }, 600)
+}
