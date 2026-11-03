@@ -5,7 +5,9 @@ $conn = new mysqli($host, $username, $password, $dbname);
 
 // 检查连接是否成功
 if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
+    error_log("Database connection failed: " . $conn->connect_error);
+    http_response_code(500);
+    die(json_encode(['error' => 'Database connection failed']));
 }
 
 // 查询 sc 和 st 的 cells 字段数值之和

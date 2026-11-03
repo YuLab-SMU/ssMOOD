@@ -10,7 +10,9 @@ $conn = new mysqli($host, $username, $password, $dbname);
 
 // 检查连接是否成功
 if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
+    error_log("Database connection failed: " . $conn->connect_error);
+    http_response_code(500);
+    die(json_encode(['error' => 'Database connection failed']));
 }
 
 // 查询各个细胞分类的数量

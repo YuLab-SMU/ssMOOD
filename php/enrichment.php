@@ -4,6 +4,14 @@ include 'config.php';
 $gene_sets = $_POST['gene_sets'] ?? '';
 $datasetId = $_POST['id'] ?? '';
 
+// Only accept gene-set files that ship in offline_enrich_db
+$allowedGeneSets = ['GO_BP_2018.gmt', 'GO_CC_2018.gmt', 'GO_MF_2018.gmt', 'KEGG_2019_Human.gmt', 'KEGG_2019_Mouse.gmt'];
+if (!in_array($gene_sets, $allowedGeneSets, true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid gene_sets']);
+    exit();
+}
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     file_put_contents("../log/redis_error_log.txt", "Connection failed: " . $conn->connect_error . PHP_EOL, FILE_APPEND);

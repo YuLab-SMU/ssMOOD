@@ -6,7 +6,9 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // 检查连接
 if ($conn->connect_error) {
-    die("连接失败: " . $conn->connect_error);
+    error_log("Database connection failed: " . $conn->connect_error);
+    http_response_code(500);
+    die(json_encode(['error' => 'Database connection failed']));
 }
 
 // 初始化结果数组

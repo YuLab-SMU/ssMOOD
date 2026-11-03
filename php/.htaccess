@@ -1,0 +1,5 @@
+# Block direct web access to logs, debug output, Python scripts and enrichment gene-set files
+# (requires AllowOverride for this directory; otherwise add the same rule to the site config)
+<FilesMatch "\.(log|txt|py|gmt|json|md)$">
+    Require all denied
+</FilesMatch>

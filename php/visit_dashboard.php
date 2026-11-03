@@ -34,7 +34,7 @@ $prev30Count = getVisitCount($db, $prev30Start, $prev30End);
 $totalCount = getVisitCount($db, '2020-01-01', $today);
 
 // 最近访客列表
-$stmt = $db->query("SELECT ip, browser, os, visit_time, country, region FROM visit_logs ORDER BY visit_time DESC LIMIT 100");
+$stmt = $db->query("SELECT browser, os, visit_time, country, region FROM visit_logs ORDER BY visit_time DESC LIMIT 100");
 $visitors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 地图打点数据
